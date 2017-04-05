@@ -1,0 +1,98 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+    <!-- Detail Theme -->
+    <style name="DetailTheme" parent="AppTheme">
+        <!-- Customize your theme here. -->
+
+    </style>
+
+    <!-- Search view theme -->
+    <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="layout">@layout/toolbar_search_view</item>
+        <item name="commitIcon">@drawable/ic_search_commit</item>
+        <item name="colorControlNormal">@color/material_light_active_icon</item>
+        <item name="colorControlHighlight">@color/material_ripple_light</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+        <item name="suggestionRowLayout">@layout/search_view_suggestion_row</item>
+        <item name="android:maxWidth">9999dp</item>
+    </style>
+
+    <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:popupBackground">@drawable/search_suggestions_bg</item>
+       <!-- <item name="android:popupElevation">0dp</item>-->
+    </style>
+
+    <style name="SearchToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="searchViewStyle">@style/SearchViewTheme</item>
+    </style>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
+    <!-- App Login Theme -->
+    <style name="AppLoginTheme" parent="Theme.AccountKit">
+        <item name="com_accountkit_primary_color">@color/colorPrimary</item>
+        <item name="com_accountkit_primary_text_color">@android:color/white</item>
+        <item name="com_accountkit_secondary_text_color">@color/app_textcolor</item>
+        <item name="com_accountkit_status_bar_color">@color/colorPrimaryDark</item>
+
+        <item name="com_accountkit_input_accent_color">?attr/com_accountkit_primary_color</item>
+        <item name="com_accountkit_input_border_color">?attr/com_accountkit_primary_color</item>
+    </style>
+
+    <!-- Text view Styles-->
+    <style name="txtview_small_widget">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/app_textcolor</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_3</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="txtview_standard_widget">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/app_textcolor</item>
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:paddingLeft">@dimen/activity_margin_3</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="txtview_info_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <!--CArd view-->
+    <style name="widget_cardview" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="widget_cardview_no_padding" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/musicplayer_contaner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/player_bottomsheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/bottom_sheet_behavior">
+
+                <include
+                    android:id="@+id/bottomsheet_layout"
+                    layout="@layout/fragment_player" />
+            </FrameLayout>
+        </android.support.design.widget.CoordinatorLayout>
+
+        <include
+            android:id="@+id/layout_progress"
+            layout="@layout/layout_progress" />
+    </RelativeLayout>
+
+</layout>

@@ -1,0 +1,25 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="card_margin">16dp</dimen>
+    <dimen name="nav_drawer_width">260dp</dimen>
+
+    <dimen name="activity_margin_16">16dp</dimen>
+    <dimen name="activity_margin_15">15dp</dimen>
+    <dimen name="activity_margin_10">10dp</dimen>
+    <dimen name="activity_margin_32">32dp</dimen>
+    <dimen name="activity_margin_5">5dp</dimen>
+    <dimen name="activity_margin_3">3dp</dimen>
+
+    <!-- Text size -->
+    <dimen name="text_size">14sp</dimen>
+    <dimen name="text_size_big">16sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_microcmall">10sp</dimen>
+
+    <!-- Bottomsheet player -->
+    <dimen name="peek_height">80dp</dimen>
+
+</resources>

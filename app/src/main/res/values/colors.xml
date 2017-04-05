@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#94d60a</color>
+
+    <color name="windowBackground">#edeaea</color>
+    <color name="splash_bg">#21271F</color>
+    <color name="app_textcolor_heading">#444444</color>
+    <color name="app_textcolor">#110F10</color>
+    <color name="app_hintcolor">#3e3e3e</color>
+    <color name="light_transpirant_black">#79666565</color>
+    <color name="transpirant_red">#79d73f3f</color>
+
+    <color name="btn_bg">#212820</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="light_gray">#a7aca0</color>
+    <color name="dark_gray">#a1a8a0</color>
+    <color name="red">#d73f3f</color>
+    <color name="green">#94d60a</color>
+    <color name="transparent">#00fafafa</color>
+
+    <!-- Search Module -->
+    <color name="material_light_primary_text">#DE000000</color>
+    <color name="material_light_hint_text">#61000000</color>
+    <color name="material_light_active_icon">#8A000000</color>
+    <color name="material_ripple_light">#1F000000</color>
+    <color name="divider_color">#1F000000</color>
+    <color name="active_icon_color">#8A000000</color>
+    <color name="cards_and_dialogs_color">@android:color/white</color>
+    <color name="quantum_grey_600">#757575</color>
+
+   <!-- <color name="divider_color">#1FFFFFFF</color>
+    <color name="active_icon_color">@android:color/white</color>
+    <color name="cards_and_dialogs_color">#424242</color>-->
+</resources>
