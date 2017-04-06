@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sampleboard.R;
-import com.sampleboard.adapter.CompletedJobsAdapter;
+import com.sampleboard.adapter.DownloadedAdapter;
 import com.sampleboard.view.BaseFragment;
 
 import java.util.ArrayList;
@@ -19,11 +19,11 @@ import java.util.List;
  * Created by Anuj Sharma on 4/5/2017.
  */
 
-public class CompletedFragment extends BaseFragment {
+public class DownloadedFragment extends BaseFragment {
 
     private View rootView;
     private RecyclerView mRecyclerView;
-    private CompletedJobsAdapter mAdapter;
+    private DownloadedAdapter mAdapter;
     private List<String> jobsList;
 
     @Nullable
@@ -65,7 +65,7 @@ public class CompletedFragment extends BaseFragment {
             jobsList.add(new String("Seventh Job"));
         }
         if(mAdapter==null){
-            mAdapter = new CompletedJobsAdapter(getActivity(),jobsList);
+            mAdapter = new DownloadedAdapter(getActivity(),jobsList);
             mRecyclerView.setAdapter(mAdapter);
         }else{
             mAdapter.updateData(jobsList);

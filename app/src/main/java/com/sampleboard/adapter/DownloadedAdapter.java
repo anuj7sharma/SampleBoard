@@ -1,6 +1,7 @@
 package com.sampleboard.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,10 +17,10 @@ import java.util.List;
  * Created by Anuj Sharma on 4/5/2017.
  */
 
-public class CompletedJobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     List<String> list;
     Context context;
-    public CompletedJobsAdapter(Context ctx, List<String> listing){
+    public DownloadedAdapter(Context ctx, List<String> listing){
         this.context = ctx;
         this.list = listing;
     }
@@ -31,15 +32,15 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_completed_task,parent,false);
-        CompletedJobHolder vh = new CompletedJobHolder(view);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_downloaded,parent,false);
+        DownloadedHolder vh = new DownloadedHolder(view);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof CompletedJobHolder){
-            CompletedJobHolder vh = (CompletedJobHolder)holder;
+        if (holder instanceof DownloadedHolder){
+            DownloadedHolder vh = (DownloadedHolder)holder;
             vh.mJobId.setText("123");
             vh.mJobTitle.setText(list.get(position));
         }
@@ -52,11 +53,11 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
 
-    private class CompletedJobHolder extends RecyclerView.ViewHolder{
+    private class DownloadedHolder extends RecyclerView.ViewHolder{
         CardView parentView;
         TextView mJobId,mJobTitle;
 
-        public CompletedJobHolder(View itemView) {
+        public DownloadedHolder(View itemView) {
             super(itemView);
             mJobId = (TextView)itemView.findViewById(R.id.jobID);
             mJobTitle = (TextView)itemView.findViewById(R.id.jobTitle);

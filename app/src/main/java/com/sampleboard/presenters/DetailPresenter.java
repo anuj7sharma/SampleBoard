@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.View;
 
 import com.sampleboard.R;
@@ -46,6 +47,9 @@ public class DetailPresenter implements View.OnClickListener{
 
     private void onCreate() {
         subscribeDownloadReceiver();
+        //initially download button hidden
+        binder.btnDownload.hide();
+
         //get intent info and place into View
         detailActivity.setSupportActionBar(binder.toolbar);
         detailActivity.getSupportActionBar().setTitle("");
@@ -67,6 +71,16 @@ public class DetailPresenter implements View.OnClickListener{
                     .into(binder.detailImage);
             detailActivity.getSupportActionBar().setTitle(photosBean.title);
         }
+
+        //show download image after 500 ms
+        Handler handler = new Handler();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //visible download button
+                binder.btnDownload.show();
+            }
+        },500);
     }
 
 
@@ -98,7 +112,16 @@ public class DetailPresenter implements View.OnClickListener{
     }
 
     public void onBackPressed(){
-            if(detailActivity!=null)detailActivity.oneStepBack();
+            if(detailActivity!=null){
+                binder.btnDownload.hide();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        detailActivity.oneStepBack();
+                    }
+                },500);
+
+            }
     }
 
 

@@ -155,11 +155,10 @@ public class ProfileFragment extends BaseFragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-        adapter.addFragment(new CompletedFragment(), "Completed");
-        adapter.addFragment(new CompletedFragment(), "Accepted");
-        adapter.addFragment(new CompletedFragment(), "Denied");
+        adapter.addFragment(new LikedFragment(), "Liked");
+        adapter.addFragment(new DownloadedFragment(), "Downloaded");
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

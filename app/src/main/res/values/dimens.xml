@@ -19,6 +19,10 @@
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_microcmall">10sp</dimen>
 
+    <!-- default image sizes -->
+    <dimen name="profile_pic_size">96dp</dimen>
+    <dimen name="liked_pic_size">200dp</dimen>
+
     <!-- Bottomsheet player -->
     <dimen name="peek_height">80dp</dimen>
 

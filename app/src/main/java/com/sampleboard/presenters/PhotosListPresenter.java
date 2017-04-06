@@ -51,7 +51,7 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
     private void init() {
         //init Toolbar
         ((AppCompatActivity) mFragment.getActivity()).setSupportActionBar(binder.toolbar);
-        ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar().setTitle("List");
+        ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar().setTitle(mFragment.getActivity().getString(R.string.app_name));
 
 
         // initialize RecyclerView
