@@ -103,8 +103,8 @@ public class LoginActivity extends MainActivity {
         configurationBuilder.setReadPhoneStateEnabled(true);
         configurationBuilder.setFacebookNotificationsEnabled(true);
         configurationBuilder.setReceiveSMS(true);
-        String whiteListCountries[] = {"IN"};
-        configurationBuilder.setSMSWhitelist(whiteListCountries);
+//        String whiteListCountries[] = {"IN"};
+//        configurationBuilder.setSMSWhitelist(whiteListCountries);
 
         configurationBuilder.setUIManager(uiManager);
         // ... perform additional configuration ...

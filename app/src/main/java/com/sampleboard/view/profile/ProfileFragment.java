@@ -21,12 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sampleboard.R;
-import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.utils.AnimateSearchMenu;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
-import com.sampleboard.view.DashBoardActivity;
 import com.sampleboard.view.SettingsActivity;
 import com.sampleboard.view.otpLogin.LoginActivity;
 import com.facebook.accountkit.AccountKit;
@@ -110,31 +108,9 @@ public class ProfileFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_editProfile:
-                ProfileActivity.getInstance().changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false,true, null);
-                break;
             case R.id.action_settings:
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.action_logout:
-                Utils.getInstance().confirmDialog(getActivity(), "Do you want to Logout ?", "logout", new Utils.ConfirmDialogCallbackInterface() {
-                    @Override
-                    public void onYesClick(String tag) {
-                        AccountKit.logOut();
-                        SharedPreferencesHandler.clearAll(getActivity());
-                        //Move to Login Screen
-                        Intent logoutintent = new Intent(getActivity(), LoginActivity.class);
-                        logoutintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(logoutintent);
-                    }
-
-                    @Override
-                    public void onNoClick(String tag) {
-
-                    }
-                });
-
                 break;
         }
         return true;
@@ -161,10 +137,9 @@ public class ProfileFragment extends BaseFragment {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DashBoardActivity.getInstance().oneStepBack();
+                ProfileActivity.getInstance().oneStepBack();
             }
         });
-//        ((DashBoardActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);

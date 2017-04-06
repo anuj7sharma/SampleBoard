@@ -23,6 +23,12 @@ public class ProfileActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         instance = this;
-        changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false,false,null);
+        if(getIntent()!=null && getIntent().getStringExtra("destination")!=null){
+            //destination extra came, need to move to edit profile page
+            changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, true,true,null);
+        }else{
+            changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false,false,null);
+        }
+
     }
 }

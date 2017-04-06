@@ -98,6 +98,7 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="logout">Logout</string>
     <string name="see_terms_privacy"><![CDATA[See Terms & Privacy]]></string>
     <string name="get_help">Get help</string>
 
