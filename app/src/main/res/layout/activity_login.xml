@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/login_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:background="@drawable/app_background">
+    <TextView
+        style="@style/txtview_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:text="Welcome to Sample Board"/>
     <Button
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        style="@style/txtview_standard_widget"
+        android:background="@color/white"
+        android:foreground="?attr/selectableItemBackground"
+        android:elevation="@dimen/activity_margin_5"
         android:layout_margin="@dimen/activity_margin_16"
         android:text="Login via Phone"
         android:gravity="center"/>
-</LinearLayout>
+</RelativeLayout>

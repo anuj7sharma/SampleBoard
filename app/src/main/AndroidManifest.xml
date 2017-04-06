@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.androidpay">
+    package="com.sampleboard">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
-        android:name=".GlobalActivity"
+        android:name="com.sampleboard.GlobalActivity"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -25,9 +25,9 @@
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
 
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.sampleboard.MainActivity" />
         <activity
-            android:name=".view.SplashActivity"
+            android:name="com.sampleboard.view.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,20 +35,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.otpLogin.LoginActivity" />
+        <activity android:name="com.sampleboard.view.otpLogin.LoginActivity" />
         <activity
-            android:name=".view.DashBoardActivity"
+            android:name="com.sampleboard.view.DashBoardActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|touchscreen" />
         <activity
-            android:name=".view.detail.DetailActivity"
+            android:name="com.sampleboard.view.detail.DetailActivity"
             android:theme="@style/DetailTheme" />
         <activity
-            android:name=".view.SettingsActivity"
+            android:name="com.sampleboard.view.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
 
         <!-- Music player Activity -->
         <activity
-            android:name=".view.musicModule.MusicPlayerActivity"
+            android:name="com.sampleboard.view.musicModule.MusicPlayerActivity"
             android:screenOrientation="portrait"></activity>
 
         <!-- Facebook Account kit -->
@@ -86,13 +86,13 @@
 
         <!-- Services in App -->
         <service
-            android:name=".services.DownloadDataService"
+            android:name="com.sampleboard.services.DownloadDataService"
             android:exported="false"
             android:process=".services.DownloadDataService" />
         <service
-            android:name=".services.MusicService"
+            android:name="com.sampleboard.services.MusicService"
             android:exported="false" />
-        <service android:name=".services.NotificationForegroundService" />
+        <service android:name="com.sampleboard.services.NotificationForegroundService" />
 
 
     </application>
