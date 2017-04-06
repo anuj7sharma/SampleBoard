@@ -52,11 +52,11 @@ public class DashBoardActivity extends MainActivity {
         setContentView(R.layout.activity_dashboard);
         instance = DashBoardActivity.this;
 //        changeScreen(CurrentScreen.DIGITAL_SIGNATURE_SCREEN, false, false, null);
-        changeScreen(CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
+        changeScreen(R.id.dashboard_container,CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
 
     }
 
-    public void changeScreen(CurrentScreen currentScreen, boolean isAddFragment, boolean isBackStack, Bundle bundle) {
+    /*public void changeScreen(CurrentScreen currentScreen, boolean isAddFragment, boolean isBackStack, Bundle bundle) {
         Fragment currentFragment = null;
         switch (currentScreen) {
             case ITEM_LIST_SCREEN:
@@ -102,5 +102,5 @@ public class DashBoardActivity extends MainActivity {
         }
 
 
-    }
+    }*/
 }

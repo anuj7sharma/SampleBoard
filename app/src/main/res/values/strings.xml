@@ -7,6 +7,7 @@
     <string name="action_logout">Logout</string>
     <string name="action_profile">Profile</string>
     <string name="action_clear">Clear</string>
+    <string name="action_editProfile">Edit Profile</string>
 
     <!-- Sharedprefrence keys -->
     <string name="pref_user_id">prefUserID</string>

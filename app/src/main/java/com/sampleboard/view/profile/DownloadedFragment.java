@@ -47,23 +47,21 @@ public class DownloadedFragment extends BaseFragment {
         LinearLayoutManager lm = new LinearLayoutManager(getActivity());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(lm);
-        if(jobsList==null){
-            jobsList = new ArrayList<>();
-            jobsList.add(new String("First Job"));
-            jobsList.add(new String("Second Job"));
-            jobsList.add(new String("Third Job"));
-            jobsList.add(new String("Fourth Job"));
-            jobsList.add(new String("Fifth Job"));
-            jobsList.add(new String("Sixth Job"));
-            jobsList.add(new String("Seventh Job"));
-            jobsList.add(new String("First Job"));
-            jobsList.add(new String("Second Job"));
-            jobsList.add(new String("Third Job"));
-            jobsList.add(new String("Fourth Job"));
-            jobsList.add(new String("Fifth Job"));
-            jobsList.add(new String("Sixth Job"));
-            jobsList.add(new String("Seventh Job"));
-        }
+        jobsList = new ArrayList<>();
+        jobsList.add(new String("First Job"));
+        jobsList.add(new String("Second Job"));
+        jobsList.add(new String("Third Job"));
+        jobsList.add(new String("Fourth Job"));
+        jobsList.add(new String("Fifth Job"));
+        jobsList.add(new String("Sixth Job"));
+        jobsList.add(new String("Seventh Job"));
+        jobsList.add(new String("First Job"));
+        jobsList.add(new String("Second Job"));
+        jobsList.add(new String("Third Job"));
+        jobsList.add(new String("Fourth Job"));
+        jobsList.add(new String("Fifth Job"));
+        jobsList.add(new String("Sixth Job"));
+        jobsList.add(new String("Seventh Job"));
         if(mAdapter==null){
             mAdapter = new DownloadedAdapter(getActivity(),jobsList);
             mRecyclerView.setAdapter(mAdapter);

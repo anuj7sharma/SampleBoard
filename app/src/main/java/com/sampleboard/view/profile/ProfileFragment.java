@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sampleboard.R;
+import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.utils.AnimateSearchMenu;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
@@ -57,7 +58,7 @@ public class ProfileFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_profile,menu);
+        inflater.inflate(R.menu.menu_profile, menu);
         mSearchItem = menu.findItem(R.id.action_search);
 
         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
@@ -65,7 +66,7 @@ public class ProfileFragment extends BaseFragment {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Called when SearchView is collapsing
                 if (mSearchItem.isActionViewExpanded()) {
-                    AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar,getActivity(),2, false, false);
+                    AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, false, false);
                 }
                 return true;
             }
@@ -73,7 +74,7 @@ public class ProfileFragment extends BaseFragment {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 // Called when SearchView is expanding
-                AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar,getActivity(),2, true, true);
+                AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, true, true);
                 return true;
             }
         });
@@ -97,7 +98,7 @@ public class ProfileFragment extends BaseFragment {
                 //perform the final search
 
                 if (!TextUtils.isEmpty(newText) && newText.length() > 0) {
-                    Utils.d("SearchModule","Entered value-> " + newText);
+                    Utils.d("SearchModule", "Entered value-> " + newText);
 //                    Utils.getInstance().showToast(newText);
 //                    tagsHandler.sendMessageDelayed(tagsHandler.obtainMessage(QUERY_CHANGED),DEFAULT_DELAY);
                 }
@@ -108,18 +109,32 @@ public class ProfileFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
+            case R.id.action_editProfile:
+                ProfileActivity.getInstance().changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false,true, null);
+                break;
             case R.id.action_settings:
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_logout:
-                AccountKit.logOut();
-                SharedPreferencesHandler.clearAll(getActivity());
-                //Move to Login Screen
-                Intent logoutintent = new Intent(getActivity(), LoginActivity.class);
-                logoutintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(logoutintent);
+                Utils.getInstance().confirmDialog(getActivity(), "Do you want to Logout ?", "logout", new Utils.ConfirmDialogCallbackInterface() {
+                    @Override
+                    public void onYesClick(String tag) {
+                        AccountKit.logOut();
+                        SharedPreferencesHandler.clearAll(getActivity());
+                        //Move to Login Screen
+                        Intent logoutintent = new Intent(getActivity(), LoginActivity.class);
+                        logoutintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(logoutintent);
+                    }
+
+                    @Override
+                    public void onNoClick(String tag) {
+
+                    }
+                });
+
                 break;
         }
         return true;
@@ -129,14 +144,19 @@ public class ProfileFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        initViews();
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews();
     }
 
     private void initViews() {
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ((DashBoardActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((DashBoardActivity) getActivity()).setTitle("");
+        ((ProfileActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((ProfileActivity) getActivity()).setTitle("");
         mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +164,7 @@ public class ProfileFragment extends BaseFragment {
                 DashBoardActivity.getInstance().oneStepBack();
             }
         });
-        ((DashBoardActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        ((DashBoardActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);

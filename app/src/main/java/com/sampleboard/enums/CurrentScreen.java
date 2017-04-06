@@ -19,6 +19,8 @@ public enum CurrentScreen {
     //Search Screen
     SEARCH_SCREEN,
     PROFILE_SCREEN,
+    EDIT_PROFILE_SCREEN,
+
 
 
 }

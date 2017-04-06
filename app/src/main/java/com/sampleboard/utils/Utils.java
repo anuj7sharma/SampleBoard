@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -173,6 +174,7 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
 
     /*
     COnfirmation Dialog

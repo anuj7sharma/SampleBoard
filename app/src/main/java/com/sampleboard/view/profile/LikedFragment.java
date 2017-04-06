@@ -32,42 +32,45 @@ public class LikedFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_liked,container,false);
-        initViews();
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews();
     }
 
     private void initViews() {
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         mLikeRecycler = (RecyclerView)rootView.findViewById(R.id.recycler_liked);
         mLikeRecycler.setLayoutManager(sm);
-        if(likeList==null){
-            likeList = new ArrayList<>();
+        likeList = new ArrayList<>();
 
-            LikedBean obj = new LikedBean();
-            obj.imageUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
+        LikedBean obj = new LikedBean();
+        obj.imageUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
 
-            likeList.add(obj);
+        likeList.add(obj);
 
-            obj = new LikedBean();
-            obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
+        obj = new LikedBean();
+        obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
 
-            likeList.add(obj);
+        likeList.add(obj);
 
-            obj = new LikedBean();
-            obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
+        obj = new LikedBean();
+        obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
 
-            likeList.add(obj);
+        likeList.add(obj);
 
-            obj = new LikedBean();
-            obj.imageUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
+        obj = new LikedBean();
+        obj.imageUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
 
-            likeList.add(obj);
+        likeList.add(obj);
 
-            obj = new LikedBean();
-            obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
+        obj = new LikedBean();
+        obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
 
-            likeList.add(obj);
-        }
+        likeList.add(obj);
         if(mAdapter==null){
             mAdapter = new LikedAdapter(getActivity(),likeList);
             mLikeRecycler.setAdapter(mAdapter);

@@ -42,6 +42,8 @@
         <activity
             android:name="com.sampleboard.view.detail.DetailActivity"
             android:theme="@style/DetailTheme" />
+        <activity android:name=".view.profile.ProfileActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|touchscreen"></activity>
         <activity
             android:name="com.sampleboard.view.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>

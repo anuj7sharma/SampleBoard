@@ -1,5 +1,6 @@
 package com.sampleboard.view.photosModule;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.sampleboard.databinding.FragmentItemsBinding;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.presenters.PhotosListPresenter;
 import com.sampleboard.view.DashBoardActivity;
+import com.sampleboard.view.profile.ProfileActivity;
 
 /**
  * Created by Mobilyte India Pvt Ltd on 2/28/2017.
@@ -44,7 +46,9 @@ public class PhotosListFragment extends Fragment implements ItemView {
 //                DashBoardActivity.getInstance().changeScreen(CurrentScreen.SEARCH_SCREEN,true,true,null);
                 break;
             case R.id.action_profile:
-                DashBoardActivity.getInstance().changeScreen(CurrentScreen.PROFILE_SCREEN,false,true,null);
+//                DashBoardActivity.getInstance().changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,false,true,null);
+                Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);
+                startActivity(profileIntent);
                 break;
         }
         return true;
