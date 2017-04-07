@@ -15,6 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.facebook.accountkit.Account;
+import com.facebook.accountkit.AccountKitCallback;
+import com.facebook.accountkit.AccountKitError;
+import com.facebook.accountkit.PhoneNumber;
 import com.sampleboard.MainActivity;
 import com.sampleboard.R;
 import com.sampleboard.utils.SharedPreferencesHandler;
@@ -68,6 +72,7 @@ public class LoginActivity extends MainActivity {
         if (accessToken != null) {
             //Handle Returning User
             Utils.getInstance().showToast("User is already logged in");
+            getAccount();
         } else {
             //Handle new or logged out user
         }
@@ -126,35 +131,74 @@ public class LoginActivity extends MainActivity {
             String toastMessage;
             if (loginResult.getError() != null) {
                 toastMessage = loginResult.getError().getErrorType().getMessage();
+                Utils.getInstance().showToast(toastMessage);
             } else if (loginResult.wasCancelled()) {
                 toastMessage = "Login Cancelled";
+                Utils.getInstance().showToast(toastMessage);
             } else {
                 if (loginResult.getAccessToken() != null) {
                     toastMessage = "Success:" + loginResult.getAccessToken().getAccountId();
+                    getAccount();
                 } else {
                     toastMessage = String.format(
                             "Success:%s...",
                             loginResult.getAuthorizationCode().substring(0,10));
+                    System.out.println("AuthorizationCode-> " + loginResult.getAuthorizationCode());
+                    Utils.getInstance().showToast(toastMessage);
+
+                    //Store token to SharedPref
+                    SharedPreferencesHandler.setStringValues(LoginActivity.this,getString(R.string.pref_user_id),"loggedin");
+                    // Success! Start your next activity...
+                    Intent intent = new Intent(LoginActivity.this, DashBoardActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+//                    String phoneNumberString = AccountKit.getCurrentPhoneNumberLogInModel().getPhoneNumber().getPhoneNumber();
+//                    String countryCode  = AccountKit.getCurrentPhoneNumberLogInModel().getPhoneNumber().getCountryCode();
+//                    Utils.getInstance().showToast("Phone-> " + countryCode + " " + phoneNumberString);
                 }
                 // If you have an authorization code, retrieve it from
                 // loginResult.getAuthorizationCode()
                 // and pass it to your server and exchange it for an access token.
+
+            }
+        }
+    }
+
+    /**
+     * Gets current account from Facebook Account Kit which include user's phone number.
+     */
+    private void getAccount(){
+        AccountKit.getCurrentAccount(new AccountKitCallback<Account>() {
+            @Override
+            public void onSuccess(final Account account) {
+                // Get Account Kit ID
+                String accountKitId = account.getId();
+
+                // Get phone number
+                PhoneNumber phoneNumber = account.getPhoneNumber();
+                String phoneNumberString = phoneNumber.toString();
+                String countryCode  = account.getPhoneNumber().getCountryCode();
+
+                Utils.getInstance().showToast("Phone-> " + countryCode + " " + phoneNumberString);
+
                 //Store token to SharedPref
-                SharedPreferencesHandler.setStringValues(this,getString(R.string.pref_user_id),"loggedin");
+                SharedPreferencesHandler.setStringValues(LoginActivity.this,getString(R.string.pref_user_id),"loggedin");
                 // Success! Start your next activity...
-                Intent intent = new Intent(this, DashBoardActivity.class);
+                Intent intent = new Intent(LoginActivity.this, DashBoardActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
+
             }
 
-            // Surface the result to your user in an appropriate way.
-            Toast.makeText(
-                    this,
-                    toastMessage,
-                    Toast.LENGTH_LONG)
-                    .show();
-        }
+            @Override
+            public void onError(final AccountKitError error) {
+                Log.e("AccountKit",error.toString());
+                // Handle Error
+                Utils.getInstance().showToast(error.toString());
+            }
+        });
     }
 
 }
