@@ -4,14 +4,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.sampleboard.R;
 import com.sampleboard.adapter.DownloadedAdapter;
+import com.sampleboard.bean.LikedBean;
+import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.view.BaseFragment;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +30,8 @@ public class DownloadedFragment extends BaseFragment {
     private View rootView;
     private RecyclerView mRecyclerView;
     private DownloadedAdapter mAdapter;
-    private List<String> jobsList;
+    private List<LikedBean> sdCardImagesList;
+    private RelativeLayout mEmptyView;
 
     @Nullable
     @Override
@@ -43,30 +50,45 @@ public class DownloadedFragment extends BaseFragment {
     }
 
     private void initViews() {
+        mEmptyView = (RelativeLayout)rootView.findViewById(R.id.included_emptyview);
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.completed_recycler);
-        LinearLayoutManager lm = new LinearLayoutManager(getActivity());
-        lm.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(lm);
-        jobsList = new ArrayList<>();
-        jobsList.add(new String("First Job"));
-        jobsList.add(new String("Second Job"));
-        jobsList.add(new String("Third Job"));
-        jobsList.add(new String("Fourth Job"));
-        jobsList.add(new String("Fifth Job"));
-        jobsList.add(new String("Sixth Job"));
-        jobsList.add(new String("Seventh Job"));
-        jobsList.add(new String("First Job"));
-        jobsList.add(new String("Second Job"));
-        jobsList.add(new String("Third Job"));
-        jobsList.add(new String("Fourth Job"));
-        jobsList.add(new String("Fifth Job"));
-        jobsList.add(new String("Sixth Job"));
-        jobsList.add(new String("Seventh Job"));
-        if(mAdapter==null){
-            mAdapter = new DownloadedAdapter(getActivity(),jobsList);
-            mRecyclerView.setAdapter(mAdapter);
+        StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(sm);
+
+        getFromSdcard(); // get images from particular folder
+    }
+
+    public void getFromSdcard()
+    {
+        File folder = new File(android.os.Environment.getExternalStorageDirectory(),getString(R.string.app_name));
+
+        File[] allFiles = folder.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png"));
+            }
+
+        });
+
+        if(allFiles!=null && allFiles.length==0){
+            //show empty view
+            mEmptyView.setVisibility(View.VISIBLE);
         }else{
-            mAdapter.updateData(jobsList);
+            mEmptyView.setVisibility(View.INVISIBLE);
+            System.out.println("Total Files-> " + allFiles.length);
+            LikedBean obj;
+            if(sdCardImagesList==null)sdCardImagesList = new ArrayList<>();
+            for (int i = 0; i < allFiles.length; i++) {
+                obj = new LikedBean();
+                if (allFiles[i].isFile()) {
+                    System.out.println("File " + allFiles[i].getName());
+                    System.out.println("File " + allFiles[i].getAbsolutePath());
+                    obj.imageName = allFiles[i].getName();
+                    obj.imageUrl = allFiles[i].getAbsolutePath();
+                    sdCardImagesList.add(obj);
+                }
+            }
+            mAdapter = new DownloadedAdapter(getActivity(), sdCardImagesList);
+            mRecyclerView.setAdapter(mAdapter);
         }
     }
 }

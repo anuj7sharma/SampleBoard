@@ -16,7 +16,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_margin_16">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -36,17 +37,6 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:src="@drawable/profile_img" />
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/btn_edit_profile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:src="@drawable/ic_edit"
-                    android:tint="@color/white"
-                    app:fabSize="mini"
-                    app:layout_anchor="@id/profile_image"
-                    app:layout_anchorGravity="right|top" />
             </FrameLayout>
 
             <LinearLayout
@@ -59,6 +49,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_margin_5"
                     android:layout_marginTop="@dimen/activity_margin_10">
 
                     <EditText
@@ -66,10 +57,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_profile"
-                        android:drawableTint="@color/colorPrimary"
                         android:drawablePadding="@dimen/activity_margin_10"
+                        android:drawableTint="@color/colorPrimary"
                         android:hint="First Name"
-                        android:padding="@dimen/activity_margin_3"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLines="1"
+                        android:padding="@dimen/activity_margin_5"
                         android:textColor="@color/app_textcolor"
                         android:textColorHint="@color/app_hintcolor"
                         android:textSize="@dimen/text_size" />
@@ -85,10 +79,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_profile"
-                        android:drawableTint="@color/colorPrimary"
                         android:drawablePadding="@dimen/activity_margin_10"
+                        android:drawableTint="@color/colorPrimary"
                         android:hint="Last Name"
-                        android:padding="@dimen/activity_margin_3"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLines="1"
+                        android:padding="@dimen/activity_margin_5"
                         android:textColor="@color/app_textcolor"
                         android:textColorHint="@color/app_hintcolor"
                         android:textSize="@dimen/text_size" />
@@ -104,10 +101,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_email"
-                        android:drawableTint="@color/colorPrimary"
                         android:drawablePadding="@dimen/activity_margin_10"
-                        android:hint="First Name"
-                        android:padding="@dimen/activity_margin_3"
+                        android:drawableTint="@color/colorPrimary"
+                        android:hint="Email"
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:padding="@dimen/activity_margin_5"
                         android:textColor="@color/app_textcolor"
                         android:textColorHint="@color/app_hintcolor"
                         android:textSize="@dimen/text_size" />
@@ -118,20 +118,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_margin_32">
+
                     <Button
                         android:id="@+id/btn_saveProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorPrimary"
+                        android:clickable="true"
                         android:elevation="@dimen/activity_margin_5"
                         android:foreground="?attr/selectableItemBackgroundBorderless"
-                        android:background="@color/colorPrimary"
-                        android:textColor="@color/windowBackground"
                         android:text="Save Profile"
-                        android:textSize="@dimen/text_size"/>
+                        android:textColor="@color/windowBackground"
+                        android:textSize="@dimen/text_size" />
                 </android.support.v7.widget.ButtonBarLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_edit"
+        android:tint="@color/white"
+        app:fabSize="mini"
+        app:layout_anchor="@id/profile_image"
+        app:layout_anchorGravity="right|top" />
 </android.support.design.widget.CoordinatorLayout>

@@ -7,9 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sampleboard.R;
+import com.sampleboard.bean.LikedBean;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,14 +21,14 @@ import java.util.List;
  */
 
 public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    List<String> list;
+    List<LikedBean> list;
     Context context;
-    public DownloadedAdapter(Context ctx, List<String> listing){
+    public DownloadedAdapter(Context ctx,List<LikedBean> listing){
         this.context = ctx;
         this.list = listing;
     }
-    public void updateData(List<String> jobsList) {
-        this.list = jobsList;
+    public void updateData(List<LikedBean> downloadedList) {
+        this.list = downloadedList;
         notifyDataSetChanged();
     }
 
@@ -41,8 +44,7 @@ public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DownloadedHolder){
             DownloadedHolder vh = (DownloadedHolder)holder;
-            vh.mJobId.setText("123");
-            vh.mJobTitle.setText(list.get(position));
+            Picasso.with(context).load("file://" + list.get(position).imageUrl).resize(200,200).centerCrop().into(vh.mDownloadedImg);
         }
     }
 
@@ -54,13 +56,11 @@ public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     private class DownloadedHolder extends RecyclerView.ViewHolder{
-        CardView parentView;
-        TextView mJobId,mJobTitle;
+        ImageView mDownloadedImg;
 
         public DownloadedHolder(View itemView) {
             super(itemView);
-            mJobId = (TextView)itemView.findViewById(R.id.jobID);
-            mJobTitle = (TextView)itemView.findViewById(R.id.jobTitle);
+            mDownloadedImg = (ImageView) itemView.findViewById(R.id.img_download);
         }
     }
 }

@@ -25,7 +25,7 @@ public class ProfileActivity extends MainActivity {
         instance = this;
         if(getIntent()!=null && getIntent().getStringExtra("destination")!=null){
             //destination extra came, need to move to edit profile page
-            changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, true,true,null);
+            changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false,false,null);
         }else{
             changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false,false,null);
         }
