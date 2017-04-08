@@ -29,14 +29,31 @@
                     android:alpha="0.6"
                     android:background="@drawable/app_background" />
 
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/profile_image"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:transitionName="profile_pic"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
                     android:src="@drawable/profile_img" />
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/btn_edit_profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        app:backgroundTint="@color/colorPrimary"
+                        android:src="@drawable/ic_edit"
+                        android:tint="@color/white"
+                        app:fabSize="mini"/>
+
+                </FrameLayout>
             </FrameLayout>
 
             <LinearLayout
@@ -135,15 +152,15 @@
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.design.widget.FloatingActionButton
+   <!-- <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_edit_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_edit"
         android:tint="@color/white"
         app:fabSize="mini"
         app:layout_anchor="@id/profile_image"
-        app:layout_anchorGravity="right|top" />
+        app:layout_anchorGravity="right|bottom" />-->
 </android.support.design.widget.CoordinatorLayout>

@@ -69,7 +69,7 @@ public class DownloadedFragment extends BaseFragment {
 
         });
 
-        if(allFiles!=null && allFiles.length==0){
+        if(allFiles==null){
             //show empty view
             mEmptyView.setVisibility(View.VISIBLE);
         }else{

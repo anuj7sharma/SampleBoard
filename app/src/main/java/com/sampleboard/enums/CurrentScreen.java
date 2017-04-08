@@ -20,6 +20,8 @@ public enum CurrentScreen {
     SEARCH_SCREEN,
     PROFILE_SCREEN,
     EDIT_PROFILE_SCREEN,
+    PROFILE_PIC_SCREEN,
+
 
 
 

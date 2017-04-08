@@ -13,6 +13,7 @@ import com.sampleboard.view.digitalSignature.PrintBitmapFragment;
 import com.sampleboard.view.photosModule.PhotosListFragment;
 import com.sampleboard.view.profile.EditProfileFragment;
 import com.sampleboard.view.profile.ProfileFragment;
+import com.sampleboard.view.profile.ProfilePicFragment;
 import com.sampleboard.view.searchView.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case EDIT_PROFILE_SCREEN:
                 currentFragment = new EditProfileFragment();
+                break;
+            case PROFILE_PIC_SCREEN:
+                currentFragment = new ProfilePicFragment();
                 break;
             case CALANDER_SCREEN:
 //                currentFragment = initializeCalanderFragment();
