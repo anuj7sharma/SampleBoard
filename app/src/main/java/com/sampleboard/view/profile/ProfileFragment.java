@@ -44,8 +44,9 @@ public class ProfileFragment extends BaseFragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private MenuItem mSearchItem;
 
+    private MenuItem mSearchItem;
+    MenuItem settingIcon;
     @Override
     public void onStart() {
         super.onStart();
@@ -58,12 +59,14 @@ public class ProfileFragment extends BaseFragment {
         menu.clear();
         inflater.inflate(R.menu.menu_profile, menu);
         mSearchItem = menu.findItem(R.id.action_search);
-
+        settingIcon = menu.findItem(R.id.action_settings);
         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Called when SearchView is collapsing
                 if (mSearchItem.isActionViewExpanded()) {
+                    //change setting icon to gray
+                    settingIcon.setIcon(R.drawable.ic_settings);
                     AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, false, false);
                 }
                 return true;
@@ -72,6 +75,7 @@ public class ProfileFragment extends BaseFragment {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 // Called when SearchView is expanding
+                settingIcon.setIcon(R.drawable.ic_settings_gray);
                 AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, true, true);
                 return true;
             }
@@ -137,7 +141,7 @@ public class ProfileFragment extends BaseFragment {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfileActivity.getInstance().oneStepBack();
+                ((ProfileActivity)getActivity()).oneStepBack();
             }
         });
 

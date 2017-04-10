@@ -11,6 +11,7 @@ public interface Constants {
     API BASE URL
      */
     String LIVE_APIURL ="http://starlord.hackerearth.com/";
+    String DEF_PROFILE_URL = "https://organicthemes.com/demo/profile/files/2012/12/profile_img.png";
 
     String MUSIC_API = "edfora/cokestudio";
 

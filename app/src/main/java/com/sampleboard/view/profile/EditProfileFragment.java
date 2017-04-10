@@ -17,11 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.sampleboard.R;
 import com.sampleboard.enums.CurrentScreen;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +39,7 @@ public class EditProfileFragment extends BaseFragment implements View.OnClickLis
     private EditText etFirstName,etLastName,etEmail;
     private FloatingActionButton btnEditProfile;
     private CircleImageView mCircleImageView;
+    private ProgressBar mProgressBar;
     private Button btnSaveProfile;
 
     @Nullable
@@ -58,49 +63,67 @@ public class EditProfileFragment extends BaseFragment implements View.OnClickLis
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfileActivity.getInstance().oneStepBack();
+                ((ProfileActivity)getActivity()).oneStepBack();
             }
         });
         mCircleImageView = (CircleImageView)rootView.findViewById(R.id.profile_image);
+        mProgressBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
         etFirstName = (EditText)rootView.findViewById(R.id.et_firstname);
         etLastName = (EditText)rootView.findViewById(R.id.et_lastname);
         etEmail = (EditText)rootView.findViewById(R.id.et_email);
         btnEditProfile = (FloatingActionButton)rootView.findViewById(R.id.btn_edit_profile);
         btnSaveProfile = (Button)rootView.findViewById(R.id.btn_saveProfile);
 
+        mCircleImageView.setOnClickListener(this);
         btnEditProfile.setOnClickListener(this);
         btnSaveProfile.setOnClickListener(this);
+
+        //load information
+        Picasso.with(getActivity()).load(Constants.DEF_PROFILE_URL).into(mCircleImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.profile_image:
+                moveToProfilePicFragment();
+                break;
             case R.id.btn_edit_profile:
-                btnEditProfile.hide();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        btnEditProfile.show();
-                        Intent profilePicIntent = new Intent(getActivity(),ProfileActivity.class);
-                        profilePicIntent.putExtra("destination","profile_pic");
-                        if (Utils.getInstance().isEqualLollipop()) {
-                            Pair<View, String> p1 = Pair.create((View) mCircleImageView, "profile_pic");
-                            ActivityOptions options =
-                                    ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
-                            getActivity().startActivity(profilePicIntent, options.toBundle());
-                        } else {
-                            getActivity().startActivity(profilePicIntent);
-                        }
-                    }
-                },500);
-
-//                Bundle bundle = new Bundle();
-//                bundle.putString("profile_pic","https://organicthemes.com/demo/profile/files/2012/12/profile_img.png");
-//                ProfileActivity.getInstance().changeScreen(R.id.profile_container, CurrentScreen.PROFILE_PIC_SCREEN,true,true,bundle);
+                moveToProfilePicFragment();
                 break;
             case R.id.btn_saveProfile:
                 Utils.getInstance().showToast("Save clicked");
                 break;
         }
+    }
+
+    private void moveToProfilePicFragment() {
+        btnEditProfile.hide();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnEditProfile.show();
+                Intent profilePicIntent = new Intent(getActivity(),ProfileActivity.class);
+                profilePicIntent.putExtra("destination","profile_pic");
+                if (Utils.getInstance().isEqualLollipop()) {
+                    Pair<View, String> p1 = Pair.create((View) mCircleImageView, "profile_pic");
+                    ActivityOptions options =
+                            ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
+                    getActivity().startActivity(profilePicIntent, options.toBundle());
+                } else {
+                    getActivity().startActivity(profilePicIntent);
+                }
+            }
+        },500);
     }
 }
