@@ -20,6 +20,7 @@
     <dimen name="text_size_microcmall">10sp</dimen>
 
     <!-- default image sizes -->
+    <dimen name="profile_pic_size_small">48dp</dimen>
     <dimen name="profile_pic_size">96dp</dimen>
     <dimen name="liked_pic_size">200dp</dimen>
 

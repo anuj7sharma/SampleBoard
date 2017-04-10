@@ -1,9 +1,12 @@
 package com.sampleboard.adapter;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,11 @@ import android.widget.TextView;
 
 import com.sampleboard.R;
 import com.sampleboard.bean.LikedBean;
+import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.utils.Utils;
+import com.sampleboard.view.DashBoardActivity;
+import com.sampleboard.view.profile.DownloadedFragment;
+import com.sampleboard.view.profile.ProfileActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -23,9 +31,11 @@ import java.util.List;
 public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     List<LikedBean> list;
     Context context;
-    public DownloadedAdapter(Context ctx,List<LikedBean> listing){
+    DownloadedFragment fragment;
+    public DownloadedAdapter(Context ctx,List<LikedBean> listing,DownloadedFragment fragment){
         this.context = ctx;
         this.list = listing;
+        this.fragment = fragment;
     }
     public void updateData(List<LikedBean> downloadedList) {
         this.list = downloadedList;
@@ -61,6 +71,32 @@ public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public DownloadedHolder(View itemView) {
             super(itemView);
             mDownloadedImg = (ImageView) itemView.findViewById(R.id.img_download);
+
+            mDownloadedImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Move to Image
+                    PostDetailBean detailBean = new PostDetailBean();
+                    detailBean.photoName = list.get(getAdapterPosition()).imageName;
+                    detailBean.photoUrl = list.get(getAdapterPosition()).imageUrl;
+                    detailBean.likeCount = 514;
+                    detailBean.commentCount = 356;
+                    detailBean.isLiked = true;
+                    detailBean.ownerName = "Anuj Sharma";
+
+                    Intent profilePicIntent = new Intent(context,ProfileActivity.class);
+                    profilePicIntent.putExtra("post_detail",detailBean);
+                    profilePicIntent.putExtra("destination","post_detail");
+                    if (Utils.getInstance().isEqualLollipop() && fragment!=null) {
+                        Pair<View, String> p1 = Pair.create((View) mDownloadedImg, "detail_image");
+                        ActivityOptions options =
+                                ActivityOptions.makeSceneTransitionAnimation(fragment.getActivity(), p1);
+                        context.startActivity(profilePicIntent, options.toBundle());
+                    } else {
+                        context.startActivity(profilePicIntent);
+                    }
+                }
+            });
         }
     }
 }

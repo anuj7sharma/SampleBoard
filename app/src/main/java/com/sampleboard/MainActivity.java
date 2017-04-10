@@ -12,6 +12,7 @@ import com.sampleboard.view.digitalSignature.DigitalSignatureFragment;
 import com.sampleboard.view.digitalSignature.PrintBitmapFragment;
 import com.sampleboard.view.photosModule.PhotosListFragment;
 import com.sampleboard.view.profile.EditProfileFragment;
+import com.sampleboard.view.profile.PostDetailFragment;
 import com.sampleboard.view.profile.ProfileFragment;
 import com.sampleboard.view.profile.ProfilePicFragment;
 import com.sampleboard.view.searchView.SearchFragment;
@@ -92,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case PROFILE_PIC_SCREEN:
                 currentFragment = new ProfilePicFragment();
+                break;
+            case POST_DETAIL_SCREEN:
+                currentFragment = new PostDetailFragment();
+                currentFragment.setArguments(bundle);
                 break;
             case CALANDER_SCREEN:
 //                currentFragment = initializeCalanderFragment();

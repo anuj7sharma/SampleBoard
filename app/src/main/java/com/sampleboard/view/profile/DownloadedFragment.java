@@ -87,7 +87,7 @@ public class DownloadedFragment extends BaseFragment {
                     sdCardImagesList.add(obj);
                 }
             }
-            mAdapter = new DownloadedAdapter(getActivity(), sdCardImagesList);
+            mAdapter = new DownloadedAdapter(getActivity(), sdCardImagesList, DownloadedFragment.this);
             mRecyclerView.setAdapter(mAdapter);
         }
     }

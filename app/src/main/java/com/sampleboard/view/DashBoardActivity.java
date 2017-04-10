@@ -51,7 +51,7 @@ public class DashBoardActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         instance = DashBoardActivity.this;
-//        changeScreen(CurrentScreen.DIGITAL_SIGNATURE_SCREEN, false, false, null);
+
         changeScreen(R.id.dashboard_container,CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
 
     }

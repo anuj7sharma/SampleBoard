@@ -72,7 +72,7 @@ public class LikedFragment extends BaseFragment {
 
         likeList.add(obj);
         if(mAdapter==null){
-            mAdapter = new LikedAdapter(getActivity(),likeList);
+            mAdapter = new LikedAdapter(getActivity(),likeList,LikedFragment.this);
             mLikeRecycler.setAdapter(mAdapter);
         }else{
             mAdapter.updateData(likeList);

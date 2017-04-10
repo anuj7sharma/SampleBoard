@@ -108,7 +108,7 @@ public class EditProfileFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void moveToProfilePicFragment() {
-        btnEditProfile.hide();
+        /*btnEditProfile.hide();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -124,6 +124,17 @@ public class EditProfileFragment extends BaseFragment implements View.OnClickLis
                     getActivity().startActivity(profilePicIntent);
                 }
             }
-        },500);
+        },500);*/
+
+        Intent profilePicIntent = new Intent(getActivity(),ProfileActivity.class);
+        profilePicIntent.putExtra("destination","profile_pic");
+        if (Utils.getInstance().isEqualLollipop()) {
+            Pair<View, String> p1 = Pair.create((View) mCircleImageView, "profile_pic");
+            ActivityOptions options =
+                    ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
+            getActivity().startActivity(profilePicIntent, options.toBundle());
+        } else {
+            getActivity().startActivity(profilePicIntent);
+        }
     }
 }
