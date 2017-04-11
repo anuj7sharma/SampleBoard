@@ -7,9 +7,10 @@ This app contains Phone verification using Facebook AccountKit. Dashboard screen
 3. Like button just as in Twitter App without using any external library.
 4. Activity Transitions (Material Design)
 5. Download File and user can see notification while downloading.
+6. Finger print protected Profile View. (Only above **Android N** and having finger print hardware.)
+
+
 
 
 
 Some app screenshots:
-
-
