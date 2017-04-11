@@ -1,12 +1,17 @@
 package com.sampleboard.view;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 
 import com.facebook.accountkit.AccountKit;
 import com.sampleboard.MainActivity;
@@ -21,7 +26,8 @@ import java.util.List;
 
 public class SettingsActivity extends MainActivity implements View.OnClickListener {
     private Toolbar mToolbar;
-    private RelativeLayout btnEditProfile, btnTerms, btnLogout;
+    private RelativeLayout btnEditProfile,containerFingerPrint, btnTerms, btnLogout;
+    private Switch mTouchSwitch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,12 +46,50 @@ public class SettingsActivity extends MainActivity implements View.OnClickListen
         });
 
         btnEditProfile = (RelativeLayout)findViewById(R.id.btn_editProfile);
+        containerFingerPrint = (RelativeLayout)findViewById(R.id.finger_print_container);
+        mTouchSwitch = (Switch) findViewById(R.id.btn_switch);
         btnTerms = (RelativeLayout)findViewById(R.id.btn_terms);
         btnLogout = (RelativeLayout)findViewById(R.id.btn_logout);
 
         btnEditProfile.setOnClickListener(this);
         btnTerms.setOnClickListener(this);
         btnLogout.setOnClickListener(this);
+
+        //First check FInger touch hardware is present or not
+        boolean isFingerPrintAvailable = false;
+        FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
+        if (!fingerprintManager.isHardwareDetected()) {
+            // Device doesn't support fingerprint authentication
+        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+            // User hasn't enrolled any fingerprints to authenticate with
+        } else {
+            // Everything is ready for fingerprint authentication
+            isFingerPrintAvailable = true;
+        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isFingerPrintAvailable){
+            containerFingerPrint.setVisibility(View.VISIBLE);
+        }else{
+            containerFingerPrint.setVisibility(View.GONE);
+        }
+        boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(SettingsActivity.this, getString(R.string.pref_isFingertouchEnable));
+        if(isFingerTouchEnable){
+            // Enable Touch Switch
+            mTouchSwitch.setChecked(true);
+        }else{
+            //Disable Touch Switch
+            mTouchSwitch.setChecked(false);
+        }
+
+        mTouchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this,getString(R.string.pref_isFingertouchEnable),true);
+                }else{
+                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this,getString(R.string.pref_isFingertouchEnable),false);
+                }
+            }
+        });
     }
 
     @Override

@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private List<PhotosBean> mResponse;
     private PhotosListPresenter presenter;
     private AnimationDrawable frameAnimation;
+    private int lastPosition = -1;
 
     public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter){
         this.mContext = ctx;
@@ -38,7 +41,6 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.mResponse = response;
         notifyDataSetChanged();
     }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -60,9 +62,25 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
             //set true if you want to animate only once
             frameAnimation.setOneShot(true);
+
+            // Here you apply the animation when the view is bound
+            setAnimation(holder.itemView, position);
         }
         catch (Exception e){
             e.printStackTrace();
+        }
+    }
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.bottom_anim);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
         }
     }
 

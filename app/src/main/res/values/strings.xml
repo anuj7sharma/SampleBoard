@@ -13,6 +13,7 @@
 
     <!-- Sharedprefrence keys -->
     <string name="pref_user_id">prefUserID</string>
+    <string name="pref_isFingertouchEnable">isFingerTouchEnable</string>
 
     <!-- API Keys -->
     <string name="FACEBOOK_APP_ID">109979009547724</string>
@@ -38,10 +39,30 @@
         based on your message history
     </string>
 
+    <!-- Setting screen strings-->
 
     <string name="edit_profile">Edit Profile</string>
+    <string name="enable_fingerprint">Enable FingerPrint</string>
     <string name="logout">Logout</string>
     <string name="see_terms_privacy"><![CDATA[See Terms & Privacy]]></string>
     <string name="get_help">Get help</string>
+
+    <!-- Password Strings-->
+    <string name="fingerprint_not_recognized">Fingerprint not recognized. Try again</string>
+    <string name="fingerprint_success">Fingerprint recognized</string>
+    <string name="cancel">Cancel</string>
+    <string name="use_password">Use password</string>
+    <string name="verify">Verify</string>
+    <string name="ok">OK</string>
+    <string name="password">Password</string>
+    <string name="fingerprint_description">Confirm fingerprint to continue</string>
+    <string name="fingerprint_hint">Touch sensor</string>
+    <string name="password_description">Enter password to continue</string>
+    <string name="new_fingerprint_enrolled_description">A new fingerprint was added to this device, so your password is required.</string>
+    <string name="use_fingerprint_in_future">Use fingerprint in the future</string>
+    <string name="use_fingerprint_to_authenticate_title">Use fingerprint to authenticate</string>
+    <string name="use_fingerprint_to_authenticate_key" >use_fingerprint_to_authenticate_key</string>
+    <string name="description_bugdroid_icon">Android bugdroid image</string>
+    <string name="description_fingerprint_icon">Fingerprint icon</string>
 
 </resources>
