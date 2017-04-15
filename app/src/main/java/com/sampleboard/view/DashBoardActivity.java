@@ -1,12 +1,16 @@
 package com.sampleboard.view;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.view.MenuItem;
 
 import com.sampleboard.MainActivity;
 import com.sampleboard.R;
 import com.sampleboard.enums.CurrentScreen;
+import com.sampleboard.utils.Utils;
 import com.sampleboard.view.calander.CalanderFragment;
 import com.sampleboard.view.digitalSignature.DigitalSignatureFragment;
 import com.sampleboard.view.digitalSignature.PrintBitmapFragment;
@@ -26,6 +30,7 @@ public class DashBoardActivity extends MainActivity {
     }
 
     private static CalanderFragment calanderFragment;
+    private BottomNavigationView bottomNavigationView;
 
     private static CalanderFragment initializeCalanderFragment() {
         if (calanderFragment == null) calanderFragment = new CalanderFragment();
@@ -51,9 +56,35 @@ public class DashBoardActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         instance = DashBoardActivity.this;
-
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
         changeScreen(R.id.dashboard_container,CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
 
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_home:
+                        Utils.getInstance().showToast("home");
+                        changeScreen(R.id.dashboard_container,CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
+                        break;
+                    case R.id.action_search:
+                        Utils.getInstance().showToast("search");
+                        changeScreen(R.id.dashboard_container,CurrentScreen.SEARCH_SCREEN, false, false, null);
+                        break;
+                    case R.id.action_feed:
+                        Utils.getInstance().showToast("feed");
+                        break;
+                    case R.id.action_profile:
+                        Utils.getInstance().showToast("profile");
+                        break;
+                    case R.id.action_settings:
+                        Utils.getInstance().showToast("settings");
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     /*public void changeScreen(CurrentScreen currentScreen, boolean isAddFragment, boolean isBackStack, Bundle bundle) {

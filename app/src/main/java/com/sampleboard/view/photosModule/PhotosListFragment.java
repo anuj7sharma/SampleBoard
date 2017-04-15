@@ -97,7 +97,7 @@ public class PhotosListFragment extends Fragment implements ItemView {
                     // Everything is ready for fingerprint authentication
                     isFingerPrintAvailable = true;
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isFingerPrintAvailable && isFingerTouchEnable) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isFingerPrintAvailable && isFingerTouchEnable) {
                     manageFingerPrint();
                 }else{
                     Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);

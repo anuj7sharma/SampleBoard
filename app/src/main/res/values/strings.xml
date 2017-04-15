@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Sample Board</string>
+    <string name="action_home">Home</string>
     <string name="action_search">Search</string>
+    <string name="action_feed">Feed</string>
     <string name="action_print">Print</string>
     <string name="action_done">Done</string>
     <string name="action_setting">Settings</string>

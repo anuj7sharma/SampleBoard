@@ -158,4 +158,9 @@ public class PostDetailFragment extends BaseFragment implements View.OnClickList
                 break;
         }
     }
+
+
+    /**
+     * Shared Element Transition
+     */
 }

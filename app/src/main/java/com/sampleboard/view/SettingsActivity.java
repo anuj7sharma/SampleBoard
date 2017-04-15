@@ -66,7 +66,7 @@ public class SettingsActivity extends MainActivity implements View.OnClickListen
             // Everything is ready for fingerprint authentication
             isFingerPrintAvailable = true;
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isFingerPrintAvailable){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isFingerPrintAvailable){
             containerFingerPrint.setVisibility(View.VISIBLE);
         }else{
             containerFingerPrint.setVisibility(View.GONE);
