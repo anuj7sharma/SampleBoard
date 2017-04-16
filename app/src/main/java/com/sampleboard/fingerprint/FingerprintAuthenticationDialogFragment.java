@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sampleboard.R;
+import com.sampleboard.view.DashBoardActivity;
 import com.sampleboard.view.photosModule.PhotosListFragment;
 
 /**
@@ -59,6 +60,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
     private PhotosListFragment mFragment;
+    private DashBoardActivity mActivity;
 
     private InputMethodManager mInputMethodManager;
     private SharedPreferences mSharedPreferences;
@@ -73,8 +75,12 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
     }
 
-    public void setCurrentFragment(PhotosListFragment fragment){
+    public void setCurrentFragment(PhotosListFragment fragment) {
         mFragment = fragment;
+    }
+
+    public void setCurrentActivity(DashBoardActivity activity) {
+        mActivity = activity;
     }
 
     @Override
@@ -110,10 +116,18 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
                 v.findViewById(R.id.use_fingerprint_in_future_check);
         mNewFingerprintEnrolledTextView = (TextView)
                 v.findViewById(R.id.new_fingerprint_enrolled_description);
-        mFingerprintUiHelper = new FingerprintUiHelper(
-                mFragment.getActivity().getSystemService(FingerprintManager.class),
-                (ImageView) v.findViewById(R.id.fingerprint_icon),
-                (TextView) v.findViewById(R.id.fingerprint_status), this);
+        if (mFragment != null) {
+            mFingerprintUiHelper = new FingerprintUiHelper(
+                    mFragment.getActivity().getSystemService(FingerprintManager.class),
+                    (ImageView) v.findViewById(R.id.fingerprint_icon),
+                    (TextView) v.findViewById(R.id.fingerprint_status), this);
+        } else if (mActivity != null) {
+            mFingerprintUiHelper = new FingerprintUiHelper(
+                    mActivity.getSystemService(FingerprintManager.class),
+                    (ImageView) v.findViewById(R.id.fingerprint_icon),
+                    (TextView) v.findViewById(R.id.fingerprint_status), this);
+        }
+
         updateStage();
 
         // If fingerprint authentication is not available, switch immediately to the backup
@@ -190,12 +204,22 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
             if (mUseFingerprintFutureCheckBox.isChecked()) {
                 // Re-create the key so that fingerprints including new ones are validated.
-                mFragment.createKey(PhotosListFragment.DEFAULT_KEY_NAME, true);
+                if (mFragment != null) {
+//                    mFragment.createKey(PhotosListFragment.DEFAULT_KEY_NAME, true);
+                } else if (mActivity != null) {
+                    mActivity.createKey(DashBoardActivity.DEFAULT_KEY_NAME, true);
+                }
+
                 mStage = Stage.FINGERPRINT;
             }
         }
         mPassword.setText("");
-        mFragment.onPurchased(false /* without Fingerprint */, null);
+        if (mFragment != null) {
+//            mFragment.onPurchased(false /* without Fingerprint */, null);
+        } else if (mActivity != null) {
+            mActivity.onPurchased(false /* without Fingerprint */, null);
+        }
+
         dismiss();
     }
 
@@ -252,7 +276,12 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     public void onAuthenticated() {
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
-        mFragment.onPurchased(true /* withFingerprint */, mCryptoObject);
+        if(mFragment!=null){
+//            mFragment.onPurchased(true /* withFingerprint */, mCryptoObject);
+        }else if(mActivity!=null){
+            mActivity.onPurchased(true /* withFingerprint */, mCryptoObject);
+        }
+
         dismiss();
     }
 

@@ -59,12 +59,12 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
             vh.mTitle.setText(mResponse.get(position).title);
             vh.mPrice.setText(mResponse.get(position).price);
-            frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
+//            frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
             //set true if you want to animate only once
-            frameAnimation.setOneShot(true);
+//            frameAnimation.setOneShot(true);
 
             // Here you apply the animation when the view is bound
-            setAnimation(holder.itemView, position);
+//            setAnimation(holder.itemView, position);
         }
         catch (Exception e){
             e.printStackTrace();

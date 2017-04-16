@@ -25,6 +25,7 @@ import com.sampleboard.utils.AnimateSearchMenu;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
+import com.sampleboard.view.DashBoardActivity;
 import com.sampleboard.view.SettingsActivity;
 import com.sampleboard.view.otpLogin.LoginActivity;
 import com.facebook.accountkit.AccountKit;
@@ -135,15 +136,15 @@ public class ProfileFragment extends BaseFragment {
 
     private void initViews() {
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ((ProfileActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((ProfileActivity) getActivity()).setTitle("");
-        mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+        ((DashBoardActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((DashBoardActivity) getActivity()).setTitle("");
+        /*mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((ProfileActivity)getActivity()).oneStepBack();
             }
-        });
+        });*/
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -153,7 +154,7 @@ public class ProfileFragment extends BaseFragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new LikedFragment(), "Liked");
         adapter.addFragment(new DownloadedFragment(), "Downloaded");
         viewPager.setAdapter(adapter);

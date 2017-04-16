@@ -12,6 +12,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.sampleboard.R;
@@ -75,7 +77,7 @@ public class PhotosListFragment extends Fragment implements ItemView {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_dashboard,menu);
+//        inflater.inflate(R.menu.menu_print,menu);
     }
 
     @Override
@@ -84,8 +86,8 @@ public class PhotosListFragment extends Fragment implements ItemView {
             case R.id.action_search:
 //                DashBoardActivity.getInstance().changeScreen(CurrentScreen.SEARCH_SCREEN,true,true,null);
                 break;
-            case R.id.action_profile:
-                //Fingerprint API only available on from Android 6.0 (M)
+            case R.id.action_print:
+               /* //Fingerprint API only available on from Android 6.0 (M)
                 boolean isFingerPrintAvailable = false;
                 boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(getActivity(), getString(R.string.pref_isFingertouchEnable));
                 FingerprintManager fingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
@@ -102,10 +104,17 @@ public class PhotosListFragment extends Fragment implements ItemView {
                 }else{
                     Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);
                     startActivity(profileIntent);
-                }
+                }*/
                 break;
         }
         return true;
+    }
+
+    private void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(getActivity(), v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_customprofile, popup.getMenu());
+        popup.show();
     }
 
     @Nullable
@@ -130,7 +139,7 @@ public class PhotosListFragment extends Fragment implements ItemView {
 
     /**
      * Manage FingerPrint
-     */
+     *//*
     private void manageFingerPrint(){
         try {
             mKeyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -203,14 +212,14 @@ public class PhotosListFragment extends Fragment implements ItemView {
 
     }
 
-    /**
+    *//**
      *
      *
      * @param keyName the key name to init the cipher
      * @return {@code true} if initialization is successful, {@code false} if the lock screen has
      * been disabled or reset after the key was generated, or if a fingerprint got enrolled after
      * the key was generated.
-     */
+     *//*
     private boolean initCipher(Cipher cipher, String keyName) {
         try {
             mKeyStore.load(null);
@@ -225,7 +234,7 @@ public class PhotosListFragment extends Fragment implements ItemView {
         }
     }
 
-    /**
+    *//**
      * Creates a symmetric key in the Android Key Store which can only be used after the user has
      * authenticated with fingerprint.
      *
@@ -238,7 +247,7 @@ public class PhotosListFragment extends Fragment implements ItemView {
      *                                         enrolled.). Note that this parameter is only valid if
      *                                         the app works on Android N developer preview.
      *
-     */
+     *//*
     public void createKey(String keyName, boolean invalidatedByBiometricEnrollment) {
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
         // for your flow. Use of keys is necessary if you need to know if the set of
@@ -273,12 +282,12 @@ public class PhotosListFragment extends Fragment implements ItemView {
         }
     }
 
-    /**
+    *//**
      * Proceed the purchase operation
      *
      * @param withFingerprint {@code true} if the purchase was made by using a fingerprint
      * @param cryptoObject the Crypto object
-     */
+     *//*
     public void onPurchased(boolean withFingerprint,
                             @Nullable FingerprintManager.CryptoObject cryptoObject) {
         if (withFingerprint) {
@@ -299,5 +308,5 @@ public class PhotosListFragment extends Fragment implements ItemView {
             // Authentication happened with backup password. Just show the confirmation message.
 
         }
-    }
+    }*/
 }
