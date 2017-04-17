@@ -1,8 +1,10 @@
 package com.sampleboard.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
-import android.support.v7.widget.CardView;
+import android.graphics.drawable.Drawable;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +12,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sampleboard.R;
 import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.presenters.PhotosListPresenter;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
+import com.sampleboard.utils.Utils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -30,6 +36,9 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private PhotosListPresenter presenter;
     private AnimationDrawable frameAnimation;
     private int lastPosition = -1;
+
+    public final static int COLOR_ANIMATION_DURATION = 1000;
+    private int mDefaultBackgroundColor;
 
     public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter){
         this.mContext = ctx;
@@ -54,11 +63,61 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        LoadMoreViewHolder vh = (LoadMoreViewHolder)holder;
+        final LoadMoreViewHolder vh = (LoadMoreViewHolder)holder;
         try {
-            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
             vh.mTitle.setText(mResponse.get(position).title);
             vh.mPrice.setText(mResponse.get(position).price);
+
+//            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
+
+            Picasso.with(mContext)
+                    .load(mResponse.get(position).photoUrl)
+                    .resize(500,500).centerCrop()
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                            /* Save the bitmap or do something with it here */
+                            //Set it in the ImageView
+                            vh.mImage.setImageBitmap(bitmap);
+                            /*
+                            Use Pallet For Getting Color
+                             */
+                            Palette palette = Palette.from(bitmap).generate();
+                            if (palette != null) {
+                                Palette.Swatch s = palette.getVibrantSwatch();
+                                if (s == null) {
+                                    s = palette.getDarkVibrantSwatch();
+                                }
+                                if (s == null) {
+                                    s = palette.getLightVibrantSwatch();
+                                }
+                                if (s == null) {
+                                    s = palette.getMutedSwatch();
+                                }
+
+                                if (s != null) {
+                                    vh.mParentLayout.setBackgroundColor(s.getTitleTextColor());
+                                    vh.mInfoContainer.setBackgroundColor(s.getTitleTextColor());
+                                    vh.mTitle.setTextColor(s.getTitleTextColor());
+                                    vh.mPrice.setTextColor(s.getTitleTextColor());
+                                }
+                                Utils.getInstance().animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, s.getRgb());
+                            }
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+
+
+
 //            frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
             //set true if you want to animate only once
 //            frameAnimation.setOneShot(true);
@@ -94,13 +153,15 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      */
     public class LoadMoreViewHolder extends RecyclerView.ViewHolder {
         //        CardView mCardView;
-        private CardView mParentLayout;
+        private LinearLayout mParentLayout;
+        private RelativeLayout mInfoContainer;
         private ImageView mImage, mLikeImgInitial, mLikeImgFinal;;
         private TextView mTitle, mPrice, mLikesCount;
 
         private LoadMoreViewHolder(View itemView) {
             super(itemView);
-            mParentLayout = (CardView)itemView.findViewById(R.id.parent);
+            mParentLayout = (LinearLayout)itemView.findViewById(R.id.parent);
+            mInfoContainer = (RelativeLayout)itemView.findViewById(R.id.info_container);
             mImage = (ImageView)itemView.findViewById(R.id.image);
             mTitle = (TextView) itemView.findViewById(R.id.title);
             mPrice = (TextView) itemView.findViewById(R.id.price);

@@ -3,6 +3,9 @@ package com.sampleboard.utils;
 import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -26,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.PathInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -287,6 +291,25 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Animate COlor if using Pallet library
+     */
+    public final static int COLOR_ANIMATION_DURATION = 1000;
+    public final static int DEFAULT_DELAY = 0;
+
+    @SuppressLint("NewApi")
+    public static void animateViewColor(View v, int startColor, int endColor) {
+
+        ObjectAnimator animator = ObjectAnimator.ofObject(v, "backgroundColor",
+                new ArgbEvaluator(), startColor, endColor);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            animator.setInterpolator(new PathInterpolator(0.4f, 0f, 1f, 1f));
+        }
+        animator.setDuration(COLOR_ANIMATION_DURATION);
+        animator.start();
     }
 
     /*

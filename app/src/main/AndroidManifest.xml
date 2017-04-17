@@ -37,6 +37,7 @@
         <activity android:name="com.sampleboard.view.otpLogin.LoginActivity" />
         <activity
             android:name="com.sampleboard.view.DashBoardActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|touchscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

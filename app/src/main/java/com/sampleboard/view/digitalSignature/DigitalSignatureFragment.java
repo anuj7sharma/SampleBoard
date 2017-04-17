@@ -192,7 +192,7 @@ public class DigitalSignatureFragment extends BaseFragment {
 
     private void saveSignature() {
         try {
-            signatureFile = Utils.getInstance().saveToDirectory(getActivity(), "signature", "png");
+            signatureFile = saveToDirectory(getActivity(), "signature", "png");
             if (signatureFile != null && signatureFile.isFile())
                 signatureFile.delete();
 
@@ -223,8 +223,25 @@ public class DigitalSignatureFragment extends BaseFragment {
             //Move to Print Screen
 //            DashBoardActivity.getInstance().changeScreen(CurrentScreen.PRINT_BITMAP_SCREEN, false, true, null);
 
-            doPrint();
+//            doPrint();
         }
+    }
+
+    public File saveToDirectory(Context ctx, String name, String fileExtension) {
+        File dir = new File(Environment.getExternalStorageDirectory() + File.separator +
+                ctx.getString(R.string.app_name));
+        if (!dir.isDirectory()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, name + "." +  fileExtension);
+        if (file.isFile()) file.delete();
+        try {
+            file.createNewFile();
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

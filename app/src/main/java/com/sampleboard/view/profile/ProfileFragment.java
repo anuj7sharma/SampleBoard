@@ -147,6 +147,7 @@ public class ProfileFragment extends BaseFragment {
         });*/
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        viewPager.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);

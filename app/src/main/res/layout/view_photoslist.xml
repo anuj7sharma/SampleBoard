@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
@@ -10,6 +9,7 @@
     app:cardPreventCornerOverlap="false"
     app:cardUseCompatPadding="true">
     <LinearLayout
+        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -20,73 +20,81 @@
                 android:id="@+id/image"
                 android:transitionName="transition_img"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/liked_pic_size"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"/>
 
         </RelativeLayout>
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:padding="@dimen/activity_margin_3"/>
         <RelativeLayout
+            android:id="@+id/info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:background="@android:color/white">
             <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/txtview_standard_widget"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:text="Rs 6000"
-                android:textColor="@color/app_textcolor"
-                android:padding="5dp"/>
-            <LinearLayout
-                android:id="@+id/likes_container"
-                android:layout_width="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="Title"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:padding="@dimen/activity_margin_3"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_margin_10"
-                android:gravity="center_vertical"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:id="@+id/like_area"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true">
-                    <ImageView
-                        android:id="@+id/ic_heart_initial"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/ic_heart_1"
-                        android:scaleType="fitXY"
-                        />
-                    <ImageView
-                        android:id="@+id/ic_heart_final"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/ic_heart_29"
-                        android:scaleType="fitXY"
-                        android:visibility="gone" />
-                </LinearLayout>
+                android:layout_below="@+id/title">
                 <TextView
-                    android:id="@+id/likes_count"
+                    android:id="@+id/price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/txtview_standard_widget"
-                    android:maxLines="1"
+                    android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/like_area"
-                    android:text="123"
-                    android:textColor="@color/app_textcolor_heading" />
-            </LinearLayout>
+                    android:text="Rs 6000"
+                    android:textColor="@color/app_textcolor"
+                    android:padding="5dp"/>
+                <LinearLayout
+                    android:id="@+id/likes_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/activity_margin_10"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentRight="true"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:id="@+id/like_area"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true">
+                        <ImageView
+                            android:id="@+id/ic_heart_initial"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/ic_heart_1"
+                            android:scaleType="fitXY"
+                            />
+                        <ImageView
+                            android:id="@+id/ic_heart_final"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/ic_heart_29"
+                            android:scaleType="fitXY"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/likes_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/txtview_standard_widget"
+                        android:maxLines="1"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/like_area"
+                        android:text="123"
+                        android:textColor="@color/app_textcolor_heading" />
+                </LinearLayout>
+            </RelativeLayout>
+
 
         </RelativeLayout>
     </LinearLayout>
