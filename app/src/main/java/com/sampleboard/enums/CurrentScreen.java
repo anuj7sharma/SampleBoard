@@ -21,6 +21,7 @@ public enum CurrentScreen {
     PROFILE_SCREEN,
     EDIT_PROFILE_SCREEN,
     PROFILE_PIC_SCREEN,
+    SETTING_SCREEN,
 
     POST_DETAIL_SCREEN,
 

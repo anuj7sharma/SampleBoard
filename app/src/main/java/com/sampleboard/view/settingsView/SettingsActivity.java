@@ -1,4 +1,4 @@
-package com.sampleboard.view;
+package com.sampleboard.view.settingsView;
 
 
 import android.content.Context;
@@ -21,8 +21,6 @@ import com.sampleboard.utils.Utils;
 import com.sampleboard.view.otpLogin.LoginActivity;
 import com.sampleboard.view.profile.ProfileActivity;
 
-import java.util.List;
-
 
 public class SettingsActivity extends MainActivity implements View.OnClickListener {
     private Toolbar mToolbar;
@@ -32,7 +30,7 @@ public class SettingsActivity extends MainActivity implements View.OnClickListen
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.fragment_settings);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");

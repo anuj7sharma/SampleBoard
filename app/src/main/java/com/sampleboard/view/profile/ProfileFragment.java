@@ -22,13 +22,10 @@ import android.view.ViewGroup;
 
 import com.sampleboard.R;
 import com.sampleboard.utils.AnimateSearchMenu;
-import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.DashBoardActivity;
-import com.sampleboard.view.SettingsActivity;
-import com.sampleboard.view.otpLogin.LoginActivity;
-import com.facebook.accountkit.AccountKit;
+import com.sampleboard.view.settingsView.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +44,8 @@ public class ProfileFragment extends BaseFragment {
 
 
     private MenuItem mSearchItem;
-    MenuItem settingIcon;
+
+    //    MenuItem settingIcon;
     @Override
     public void onStart() {
         super.onStart();
@@ -60,15 +58,15 @@ public class ProfileFragment extends BaseFragment {
         menu.clear();
         inflater.inflate(R.menu.menu_profile, menu);
         mSearchItem = menu.findItem(R.id.action_search);
-        settingIcon = menu.findItem(R.id.action_settings);
+//        settingIcon = menu.findItem(R.id.action_settings);
         MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Called when SearchView is collapsing
                 if (mSearchItem.isActionViewExpanded()) {
                     //change setting icon to gray
-                    settingIcon.setIcon(R.drawable.ic_settings);
-                    AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, false, false);
+//                    settingIcon.setIcon(R.drawable.ic_settings);
+                    AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 1, false, false);
                 }
                 return true;
             }
@@ -76,8 +74,8 @@ public class ProfileFragment extends BaseFragment {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 // Called when SearchView is expanding
-                settingIcon.setIcon(R.drawable.ic_settings_gray);
-                AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 2, true, true);
+//                settingIcon.setIcon(R.drawable.ic_settings_gray);
+                AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 1, true, true);
                 return true;
             }
         });
@@ -108,17 +106,6 @@ public class ProfileFragment extends BaseFragment {
                 return true;
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                startActivity(intent);
-                break;
-        }
-        return true;
     }
 
     @Nullable

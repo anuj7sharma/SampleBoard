@@ -1,55 +1,24 @@
 package com.sampleboard.view.photosModule;
 
-import android.app.KeyguardManager;
-import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.hardware.fingerprint.FingerprintManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyPermanentlyInvalidatedException;
-import android.security.keystore.KeyProperties;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.sampleboard.R;
 import com.sampleboard.databinding.FragmentItemsBinding;
-import com.sampleboard.enums.CurrentScreen;
-import com.sampleboard.fingerprint.FingerprintAuthenticationDialogFragment;
 import com.sampleboard.presenters.PhotosListPresenter;
-import com.sampleboard.utils.SharedPreferencesHandler;
-import com.sampleboard.utils.Utils;
 import com.sampleboard.view.DashBoardActivity;
-import com.sampleboard.view.SettingsActivity;
-import com.sampleboard.view.profile.ProfileActivity;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 /**
  * Created by Mobilyte India Pvt Ltd on 2/28/2017.
@@ -108,13 +77,6 @@ public class PhotosListFragment extends Fragment implements ItemView {
                 break;
         }
         return true;
-    }
-
-    private void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(getActivity(), v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_customprofile, popup.getMenu());
-        popup.show();
     }
 
     @Nullable

@@ -16,6 +16,7 @@ import com.sampleboard.view.profile.PostDetailFragment;
 import com.sampleboard.view.profile.ProfileFragment;
 import com.sampleboard.view.profile.ProfilePicFragment;
 import com.sampleboard.view.searchView.SearchFragment;
+import com.sampleboard.view.settingsView.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity {
     public void navigateTo(int container, Fragment fragment, boolean isBackStack) {
@@ -85,8 +86,14 @@ public class MainActivity extends AppCompatActivity {
             case ITEM_LIST_SCREEN:
                 currentFragment = new PhotosListFragment();
                 break;
+            case SEARCH_SCREEN:
+                currentFragment = new SearchFragment();
+                break;
             case PROFILE_SCREEN:
                 currentFragment = new ProfileFragment();
+                break;
+            case SETTING_SCREEN:
+                currentFragment = new SettingsFragment();
                 break;
             case EDIT_PROFILE_SCREEN:
                 currentFragment = new EditProfileFragment();
@@ -109,9 +116,7 @@ public class MainActivity extends AppCompatActivity {
 //                currentFragment = initializePrintBitmapFragment();
                 currentFragment = new PrintBitmapFragment();
                 break;
-            case SEARCH_SCREEN:
-                currentFragment = new SearchFragment();
-                break;
+
 
         }
         if (currentFragment == null) {

@@ -55,7 +55,7 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
 
 
         // initialize RecyclerView
-        sm = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         binder.recyclerItems.setLayoutManager(sm);
 
         PhotosBean obj;
