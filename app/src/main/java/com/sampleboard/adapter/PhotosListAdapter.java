@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -186,33 +187,26 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(final View v) {
+                    final FragmentManager manager = ((DashBoardActivity)mContext).getSupportFragmentManager();
+                    final ShortCutFragment dialog = new ShortCutFragment();
+                    dialog.setCancelable(false);
+                    dialog.show(manager, "shortview");
 
-                    // Create a system to run the physics loop for a set of springs.
-                    SpringSystem springSystem = SpringSystem.create();
-
-                    // Add a spring to the system.
-                    Spring spring = springSystem.createSpring();
-
-                    // Add a listener to observe the motion of the spring.
-                    spring.addListener(new SimpleSpringListener() {
-
+                    v.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public void onSpringUpdate(Spring spring) {
-                            // You can observe the updates in the spring
-                            // state by asking its current value in onSpringUpdate.
-
-
-                            float value = (float) spring.getCurrentValue();
-                            float scale = 1f - (value * 0.5f);
-                            v.setScaleX(scale);
-                            v.setScaleY(scale);
+                        public boolean onTouch(View v, MotionEvent event) {
+                            switch (event.getAction()){
+                                case MotionEvent.ACTION_CANCEL:
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                    dialog.dismiss();
+                                    break;
+                                case MotionEvent.ACTION_DOWN:
+                                    break;
+                            }
+                            return false;
                         }
                     });
-
-// Set the spring in motion; moving from 0 to 1
-                    spring.setEndValue(1);
-
-
                     return false;
                 }
             });

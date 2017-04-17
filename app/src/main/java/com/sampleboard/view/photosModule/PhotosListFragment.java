@@ -29,13 +29,13 @@ public class PhotosListFragment extends Fragment implements ItemView {
     private PhotosListPresenter presenter;
 
     //For finger print sendor if user go to profile page
-    private static final String DIALOG_FRAGMENT_TAG = "myFragment";
-    private static final String SECRET_MESSAGE = "Very secret message";
-    private static final String KEY_NAME_NOT_INVALIDATED = "key_not_invalidated";
-    public static final String DEFAULT_KEY_NAME = "default_key";
-
-    private KeyStore mKeyStore;
-    private KeyGenerator mKeyGenerator;
+//    private static final String DIALOG_FRAGMENT_TAG = "myFragment";
+//    private static final String SECRET_MESSAGE = "Very secret message";
+//    private static final String KEY_NAME_NOT_INVALIDATED = "key_not_invalidated";
+//    public static final String DEFAULT_KEY_NAME = "default_key";
+//
+//    private KeyStore mKeyStore;
+//    private KeyGenerator mKeyGenerator;
 
     @Override
     public void onStart() {
@@ -46,15 +46,11 @@ public class PhotosListFragment extends Fragment implements ItemView {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.menu_print,menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_search:
-//                DashBoardActivity.getInstance().changeScreen(CurrentScreen.SEARCH_SCREEN,true,true,null);
-                break;
             case R.id.action_print:
                /* //Fingerprint API only available on from Android 6.0 (M)
                 boolean isFingerPrintAvailable = false;
