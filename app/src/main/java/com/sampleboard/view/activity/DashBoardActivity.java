@@ -83,23 +83,27 @@ public class DashBoardActivity extends MainActivity {
                     case R.id.action_profile:
 //                        Utils.getInstance().showToast("profile");
                         //Fingerprint API only available on from Android 6.0 (M)
-                        boolean isFingerPrintAvailable = false;
-                        boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(DashBoardActivity.this, getString(R.string.pref_isFingertouchEnable));
-                        FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
-                        if (!fingerprintManager.isHardwareDetected()) {
-                            // Device doesn't support fingerprint authentication
-                        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                            // User hasn't enrolled any fingerprints to authenticate with
-                        } else {
-                            // Everything is ready for fingerprint authentication
-                            isFingerPrintAvailable = true;
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isFingerPrintAvailable && isFingerTouchEnable) {
-                            manageFingerPrint();
-                        } else {
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                            boolean isFingerPrintAvailable = false;
+                            boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(DashBoardActivity.this, getString(R.string.pref_isFingertouchEnable));
+                            FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
+                            if (!fingerprintManager.isHardwareDetected()) {
+                                // Device doesn't support fingerprint authentication
+                            } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                                // User hasn't enrolled any fingerprints to authenticate with
+                            } else {
+                                // Everything is ready for fingerprint authentication
+                                isFingerPrintAvailable = true;
+                            }
+
+                            if (isFingerPrintAvailable && isFingerTouchEnable) {
+                                manageFingerPrint();
+                            } else {
+                                changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,true,false,null);
+                            }
+                        }else{
                             changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,true,false,null);
                         }
-                        changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,true,false,null);
                         break;
                     case R.id.action_settings:
                         changeScreen(R.id.dashboard_container,CurrentScreen.SETTING_SCREEN,true,false,null);
