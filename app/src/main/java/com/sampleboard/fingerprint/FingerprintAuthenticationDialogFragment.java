@@ -22,7 +22,6 @@ import android.content.SharedPreferences;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +35,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sampleboard.R;
-import com.sampleboard.view.DashBoardActivity;
-import com.sampleboard.view.photosModule.PhotosListFragment;
+import com.sampleboard.view.activity.DashBoardActivity;
+import com.sampleboard.view.fragment.PhotosListFragment;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password

@@ -14,8 +14,8 @@ import com.sampleboard.R;
 import com.sampleboard.bean.LikedBean;
 import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.utils.Utils;
-import com.sampleboard.view.profile.LikedFragment;
-import com.sampleboard.view.profile.ProfileActivity;
+import com.sampleboard.view.fragment.profile.LikedFragment;
+import com.sampleboard.view.activity.ProfileActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

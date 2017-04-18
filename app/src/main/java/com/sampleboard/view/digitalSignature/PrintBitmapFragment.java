@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import com.sampleboard.R;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
-import com.sampleboard.view.DashBoardActivity;
+import com.sampleboard.view.activity.DashBoardActivity;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -91,7 +91,7 @@ public class PrintBitmapFragment extends BaseFragment implements View.OnClickLis
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DashBoardActivity.getInstance().oneStepBack();
+                ((DashBoardActivity)getActivity()).oneStepBack();
             }
         });
         mImageView = (ImageView)rootView.findViewById(R.id.print_image);

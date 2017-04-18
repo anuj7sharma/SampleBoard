@@ -26,7 +26,7 @@ import com.sampleboard.services.NotificationForegroundService;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.musicModule.MusicPlayerActivity;
-import com.sampleboard.view.photosModule.PhotosListFragment;
+import com.sampleboard.view.fragment.PhotosListFragment;
 import com.sampleboard.view.musicModule.MusicListFragment;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;

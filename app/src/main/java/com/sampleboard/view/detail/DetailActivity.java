@@ -4,7 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.sampleboard.MainActivity;
+import com.sampleboard.view.MainActivity;
 import com.sampleboard.R;
 import com.sampleboard.databinding.ActivityDetailBinding;
 import com.sampleboard.presenters.DetailPresenter;

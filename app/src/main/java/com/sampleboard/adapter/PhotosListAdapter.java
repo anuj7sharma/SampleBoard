@@ -4,31 +4,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringSystem;
+import com.peekandpop.shalskar.peekandpop.PeekAndPop;
 import com.sampleboard.R;
 import com.sampleboard.bean.PhotosBean;
-import com.sampleboard.presenters.PhotosListPresenter;
+import com.sampleboard.presenters.home.PhotosListPresenter;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
-import com.sampleboard.view.DashBoardActivity;
-import com.sampleboard.view.shortcutView.ShortCutFragment;
+import com.sampleboard.view.fragment.PhotosListFragment;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -44,14 +43,16 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private PhotosListPresenter presenter;
     private AnimationDrawable frameAnimation;
     private int lastPosition = -1;
+    private PhotosListFragment fragment;
 
     public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
 
-    public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter) {
+    public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter, PhotosListFragment fragment) {
         this.mContext = ctx;
         this.mResponse = response;
         this.presenter = presenter;
+        this.fragment = fragment;
     }
 
     public void updateList(List<PhotosBean> response) {
@@ -76,7 +77,7 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             vh.mTitle.setText(mResponse.get(position).title);
             vh.mPrice.setText(mResponse.get(position).price);
 
-//            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
+            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
 
             Picasso.with(mContext)
                     .load(mResponse.get(position).photoUrl)
@@ -123,7 +124,6 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         }
                     });
-
 
 //            frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
             //set true if you want to animate only once
@@ -175,6 +175,13 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mLikeImgFinal = (ImageView) itemView.findViewById(R.id.ic_heart_final);
             mLikesCount = (TextView) itemView.findViewById(R.id.likes_count);
 
+            mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    manageShortView(v, mResponse.get(getAdapterPosition()));
+                    return false;
+                }
+            });
             mParentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -184,32 +191,38 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });
 
-            mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
+           /* mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(final View v) {
-                    final FragmentManager manager = ((DashBoardActivity)mContext).getSupportFragmentManager();
-                    final ShortCutFragment dialog = new ShortCutFragment();
-                    dialog.setCancelable(false);
-                    dialog.show(manager, "shortview");
+                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 
-                    v.setOnTouchListener(new View.OnTouchListener() {
+
+//                    final FragmentManager manager = ((DashBoardActivity)mContext).getSupportFragmentManager();
+//                    final ShortViewFragment dialog = new ShortViewFragment();
+//                    dialog.setCancelable(false);
+//                    dialog.show(manager, "shortview");
+                   *//* v.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             switch (event.getAction()){
                                 case MotionEvent.ACTION_CANCEL:
                                     break;
                                 case MotionEvent.ACTION_UP:
-                                    dialog.dismiss();
+                                    if (dialog != null) {
+                                        if (dialog.isVisible()) {
+                                            dialog.dismiss();
+                                        }
+                                    }
                                     break;
-                                case MotionEvent.ACTION_DOWN:
+                                case MotionEvent.ACTION_MOVE:
                                     break;
                             }
                             return false;
                         }
-                    });
+                    });*//*
                     return false;
                 }
-            });
+            });*/
 
             mLikeImgInitial.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -242,6 +255,69 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });
         }
+    }
 
+    private void manageShortView(View v, PhotosBean bean){
+        v.setHapticFeedbackEnabled(true);
+        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        PeekAndPop peekAndPop = new PeekAndPop.Builder(fragment.getActivity())
+                .peekLayout(R.layout.fragment_shortview)
+                .longClickViews(v)
+                .blurBackground(true)
+                .parentViewGroupToDisallowTouchEvents((ViewGroup) fragment.getView())
+                .build();
+        View peekView = peekAndPop.getPeekView();
+        CardView cardView = (CardView)peekView.findViewById(R.id.parent_shortView);
+        ImageView imageView = (ImageView) peekView.findViewById(R.id.img_shortview);
+        ImageView likeImg = (ImageView) peekView.findViewById(R.id.btn_like);
+        ImageView commentImg = (ImageView) peekView.findViewById(R.id.btn_message);
+        ImageView shareImg = (ImageView) peekView.findViewById(R.id.btn_share);
+        final ProgressBar progressBar = (ProgressBar)peekView.findViewById(R.id.progress_bar);
+
+        peekAndPop.addLongHoldView(R.id.parent_shortView,false);
+        peekAndPop.addHoldAndReleaseView(R.id.btn_like);
+        peekAndPop.addHoldAndReleaseView(R.id.btn_message);
+        peekAndPop.addHoldAndReleaseView(R.id.btn_share);
+        peekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
+            @Override
+            public void onHold(View view, int position) {
+                switch (view.getId()){
+                    case R.id.btn_like:
+                        Toast.makeText(mContext, "Like", 300).show();
+                        break;
+                    case R.id.btn_message:
+                        Toast.makeText(mContext, "Message", 300).show();
+                        break;
+                    case R.id.btn_share:
+                        Toast.makeText(mContext, "Share", 300).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onLeave(View view, int position) {
+
+            }
+
+            @Override
+            public void onRelease(View view, int position) {
+
+            }
+        });
+
+//                    peekAndPop.addHoldAndReleaseView(R.id.img_shortview);
+
+        Picasso.with(mContext).load(bean.photoUrl).resize(500,500).
+                centerCrop().into(imageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 }

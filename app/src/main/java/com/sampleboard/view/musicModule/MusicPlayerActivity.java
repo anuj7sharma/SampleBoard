@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.view.Menu;
 
-import com.sampleboard.MainActivity;
+import com.sampleboard.view.MainActivity;
 import com.sampleboard.R;
 import com.sampleboard.databinding.ActivityMusicplayerBinding;
 import com.sampleboard.presenters.MusicPlayerPresenter;

@@ -30,7 +30,7 @@ import com.sampleboard.R;
 import com.sampleboard.permission.PermissionsAndroid;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
-import com.sampleboard.view.DashBoardActivity;
+import com.sampleboard.view.activity.DashBoardActivity;
 
 
 import java.io.File;

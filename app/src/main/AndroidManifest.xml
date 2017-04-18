@@ -22,15 +22,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.sampleboard.MainActivity" />
+        <activity android:name="com.sampleboard.view.MainActivity" />
         <activity
-            android:name="com.sampleboard.view.SplashActivity"
+            android:name="com.sampleboard.view.activity.SplashActivity"
             android:theme="@style/SplashTheme">
 
         </activity>
         <activity android:name="com.sampleboard.view.otpLogin.LoginActivity" />
         <activity
-            android:name="com.sampleboard.view.DashBoardActivity"
+            android:name="com.sampleboard.view.activity.DashBoardActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|touchscreen">
             <intent-filter>
@@ -42,12 +42,12 @@
         <activity
             android:name="com.sampleboard.view.detail.DetailActivity"
             android:theme="@style/DetailTheme" />
-        <activity android:name=".view.profile.ProfileActivity"
+        <activity android:name=".view.activity.ProfileActivity"
             android:launchMode="standard"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|touchscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
-            android:name="com.sampleboard.view.settingsView.SettingsActivity"
+            android:name="com.sampleboard.view.activity.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
 
         <!-- Music player Activity -->
