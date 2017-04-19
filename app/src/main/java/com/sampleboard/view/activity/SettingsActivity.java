@@ -29,7 +29,7 @@ public class SettingsActivity extends MainActivity implements View.OnClickListen
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_settings);
+        setContentView(R.layout.activity_settings);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
@@ -53,21 +53,26 @@ public class SettingsActivity extends MainActivity implements View.OnClickListen
         btnLogout.setOnClickListener(this);
 
         //First check FInger touch hardware is present or not
-        boolean isFingerPrintAvailable = false;
-        FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
-        if (!fingerprintManager.isHardwareDetected()) {
-            // Device doesn't support fingerprint authentication
-        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-            // User hasn't enrolled any fingerprints to authenticate with
-        } else {
-            // Everything is ready for fingerprint authentication
-            isFingerPrintAvailable = true;
-        }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isFingerPrintAvailable){
-            containerFingerPrint.setVisibility(View.VISIBLE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            boolean isFingerPrintAvailable = false;
+            FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
+            if (!fingerprintManager.isHardwareDetected()) {
+                // Device doesn't support fingerprint authentication
+            } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                // User hasn't enrolled any fingerprints to authenticate with
+            } else {
+                // Everything is ready for fingerprint authentication
+                isFingerPrintAvailable = true;
+            }
+            if(isFingerPrintAvailable){
+                containerFingerPrint.setVisibility(View.VISIBLE);
+            }else{
+                containerFingerPrint.setVisibility(View.GONE);
+            }
         }else{
             containerFingerPrint.setVisibility(View.GONE);
         }
+
         boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(SettingsActivity.this, getString(R.string.pref_isFingertouchEnable));
         if(isFingerTouchEnable){
             // Enable Touch Switch

@@ -3,6 +3,7 @@ package com.sampleboard.presenters.home;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
@@ -13,9 +14,13 @@ import android.widget.ImageView;
 import com.sampleboard.R;
 import com.sampleboard.adapter.PhotosListAdapter;
 import com.sampleboard.bean.PhotosBean;
+import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.interfaces.GenericAdapterInterface;
+import com.sampleboard.view.activity.DashBoardActivity;
+import com.sampleboard.view.activity.ProfileActivity;
 import com.sampleboard.view.detail.DetailActivity;
+import com.sampleboard.view.fragment.ChangeCategorySheet;
 import com.sampleboard.view.fragment.PhotosListFragment;
 
 import java.lang.ref.WeakReference;
@@ -104,12 +109,21 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
     }
 
     public void onItemClick(PhotosBean photosBean, View view) {
+        PostDetailBean detailBean = new PostDetailBean();
+        detailBean.photoName = photosBean.photoName;
+        detailBean.photoUrl = photosBean.photoUrl;
+        detailBean.likeCount = 514;
+        detailBean.commentCount = 356;
+        detailBean.isLiked = true;
+        detailBean.ownerName = "Anuj Sharma";
+
         //Move to Detail Activity
         ImageView img = (ImageView) view;
-        Intent intent = new Intent(mFragment.getActivity(), DetailActivity.class);
-        intent.putExtra("image_detail",photosBean);
+        Intent intent = new Intent(mFragment.getActivity(), ProfileActivity.class);
+        intent.putExtra("destination","post_detail");
+        intent.putExtra("post_detail",detailBean);
         if (Utils.getInstance().isEqualLollipop()) {
-            Pair<View, String> p1 = Pair.create((View) img, "photo_detail");
+            Pair<View, String> p1 = Pair.create((View) img, "detail_image");
 //            Pair<View, String> p2 = Pair.create((View)priceView, "price");
 //            Pair<View, String> p3 = Pair.create(null, "content");
             ActivityOptions options =
@@ -148,6 +162,9 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
             case R.id.category_type:
                 //show bottomsheet dialog
                 Utils.getInstance().showToast("open bottomsheet");
+                ChangeCategorySheet sheet = new ChangeCategorySheet();
+                ((BottomSheetDialogFragment) sheet).show(((DashBoardActivity)mFragment.getActivity()).getSupportFragmentManager(), "category");
+
                 break;
         }
     }

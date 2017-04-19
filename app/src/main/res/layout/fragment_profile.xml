@@ -37,7 +37,7 @@
                     android:layout_toLeftOf="@+id/profile_image"
                     android:padding="@dimen/activity_margin_5"
                     android:text="Anuj Sharma"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_textcolor"
                     android:textSize="@dimen/activity_margin_32"
                     android:textStyle="bold" />
 

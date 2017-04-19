@@ -1,6 +1,7 @@
 package com.sampleboard.view.fragment.profile;
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -24,6 +25,7 @@ import com.sampleboard.utils.AnimateSearchMenu;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DashBoardActivity;
+import com.sampleboard.view.activity.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +43,6 @@ public class ProfileFragment extends BaseFragment {
     private ViewPager viewPager;
 
 
-    private MenuItem mSearchItem;
-
     //    MenuItem settingIcon;
     @Override
     public void onStart() {
@@ -55,55 +55,17 @@ public class ProfileFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_profile, menu);
-        mSearchItem = menu.findItem(R.id.action_search);
-//        settingIcon = menu.findItem(R.id.action_settings);
-        MenuItemCompat.setOnActionExpandListener(mSearchItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Called when SearchView is collapsing
-                if (mSearchItem.isActionViewExpanded()) {
-                    //change setting icon to gray
-//                    settingIcon.setIcon(R.drawable.ic_settings);
-                    AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 1, false, false);
-                }
-                return true;
-            }
+    }
 
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // Called when SearchView is expanding
-//                settingIcon.setIcon(R.drawable.ic_settings_gray);
-                AnimateSearchMenu.getInstance().animateSearchToolbar(mToolbar, getActivity(), 1, true, true);
-                return true;
-            }
-        });
-
-        //get search query
-        // Retrieve the SearchView and plug it into SearchManager
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
-        //search query listener
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //text has changed apply filter
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //perform the final search
-
-                if (!TextUtils.isEmpty(newText) && newText.length() > 0) {
-                    Utils.d("SearchModule", "Entered value-> " + newText);
-//                    Utils.getInstance().showToast(newText);
-//                    tagsHandler.sendMessageDelayed(tagsHandler.obtainMessage(QUERY_CHANGED),DEFAULT_DELAY);
-                }
-                return true;
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_settings:
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 
     @Nullable

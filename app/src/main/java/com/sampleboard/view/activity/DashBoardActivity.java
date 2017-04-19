@@ -70,39 +70,39 @@ public class DashBoardActivity extends MainActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_home:
-//                        Utils.getInstance().showToast("home");
                         changeScreen(R.id.dashboard_container, CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
                         break;
                     case R.id.action_search:
-//                        Utils.getInstance().showToast("search");
                         changeScreen(R.id.dashboard_container, CurrentScreen.SEARCH_SCREEN, false, false, null);
+                        break;
+                    case R.id.action_camera:
+                        Utils.getInstance().showToast("camera");
                         break;
                     case R.id.action_feed:
 //                        Utils.getInstance().showToast("feed");
                         break;
                     case R.id.action_profile:
-//                        Utils.getInstance().showToast("profile");
                         //Fingerprint API only available on from Android 6.0 (M)
-                        boolean isFingerPrintAvailable = false;
-                        boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(DashBoardActivity.this, getString(R.string.pref_isFingertouchEnable));
-                        FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
-                        if (!fingerprintManager.isHardwareDetected()) {
-                            // Device doesn't support fingerprint authentication
-                        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                            // User hasn't enrolled any fingerprints to authenticate with
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            boolean isFingerPrintAvailable = false;
+                            boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(DashBoardActivity.this, getString(R.string.pref_isFingertouchEnable));
+                            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+                            if (!fingerprintManager.isHardwareDetected()) {
+                                // Device doesn't support fingerprint authentication
+                            } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                                // User hasn't enrolled any fingerprints to authenticate with
+                            } else {
+                                // Everything is ready for fingerprint authentication
+                                isFingerPrintAvailable = true;
+                            }
+                            if (isFingerPrintAvailable && isFingerTouchEnable) {
+                                manageFingerPrint();
+                            } else {
+                                changeScreen(R.id.dashboard_container, CurrentScreen.PROFILE_SCREEN, true, false, null);
+                            }
                         } else {
-                            // Everything is ready for fingerprint authentication
-                            isFingerPrintAvailable = true;
+                            changeScreen(R.id.dashboard_container, CurrentScreen.PROFILE_SCREEN, true, false, null);
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isFingerPrintAvailable && isFingerTouchEnable) {
-                            manageFingerPrint();
-                        } else {
-                            changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,true,false,null);
-                        }
-                        changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,true,false,null);
-                        break;
-                    case R.id.action_settings:
-                        changeScreen(R.id.dashboard_container,CurrentScreen.SETTING_SCREEN,true,false,null);
                         break;
                 }
                 return true;
@@ -113,7 +113,7 @@ public class DashBoardActivity extends MainActivity {
     /**
      * Manage FingerPrint
      */
-    private void manageFingerPrint(){
+    private void manageFingerPrint() {
         try {
             mKeyStore = KeyStore.getInstance("AndroidKeyStore");
         } catch (KeyStoreException e) {
@@ -164,7 +164,7 @@ public class DashBoardActivity extends MainActivity {
         createKey(KEY_NAME_NOT_INVALIDATED, false);
 
         //initiate touch id container
-        if (initCipher(defaultCipher, DEFAULT_KEY_NAME)){
+        if (initCipher(defaultCipher, DEFAULT_KEY_NAME)) {
             // Show the fingerprint dialog. The user has the option to use the fingerprint with
             // crypto, or you can fall back to using a server-side verified password.
             FingerprintAuthenticationDialogFragment fragment
@@ -177,7 +177,7 @@ public class DashBoardActivity extends MainActivity {
                     FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
             fragment.setCurrentActivity(this);
             fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
-        }else{
+        } else {
             Utils.getInstance().showToast("Not intitialized yet");
         }
 
@@ -186,8 +186,6 @@ public class DashBoardActivity extends MainActivity {
     }
 
     /**
-     *
-     *
      * @param keyName the key name to init the cipher
      * @return {@code true} if initialization is successful, {@code false} if the lock screen has
      * been disabled or reset after the key was generated, or if a fingerprint got enrolled after
@@ -211,7 +209,7 @@ public class DashBoardActivity extends MainActivity {
      * Creates a symmetric key in the Android Key Store which can only be used after the user has
      * authenticated with fingerprint.
      *
-     * @param keyName the name of the key to be created
+     * @param keyName                          the name of the key to be created
      * @param invalidatedByBiometricEnrollment if {@code false} is passed, the created key will not
      *                                         be invalidated even if a new fingerprint is enrolled.
      *                                         The default value is {@code true}, so passing
@@ -219,7 +217,6 @@ public class DashBoardActivity extends MainActivity {
      *                                         (the key will be invalidated if a new fingerprint is
      *                                         enrolled.). Note that this parameter is only valid if
      *                                         the app works on Android N developer preview.
-     *
      */
     public void createKey(String keyName, boolean invalidatedByBiometricEnrollment) {
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
@@ -259,7 +256,7 @@ public class DashBoardActivity extends MainActivity {
      * Proceed the purchase operation
      *
      * @param withFingerprint {@code true} if the purchase was made by using a fingerprint
-     * @param cryptoObject the Crypto object
+     * @param cryptoObject    the Crypto object
      */
     public void onPurchased(boolean withFingerprint,
                             @Nullable FingerprintManager.CryptoObject cryptoObject) {
@@ -274,7 +271,7 @@ public class DashBoardActivity extends MainActivity {
                 Log.e("", "Failed to encrypt the data with the generated key." + e.getMessage());
             }
             //After Successful Authentication
-            changeScreen(R.id.dashboard_container,CurrentScreen.PROFILE_SCREEN,false,false,null);
+            changeScreen(R.id.dashboard_container, CurrentScreen.PROFILE_SCREEN, false, false, null);
 
         } else {
             // Authentication happened with backup password. Just show the confirmation message.

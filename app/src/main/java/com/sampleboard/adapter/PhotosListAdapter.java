@@ -191,39 +191,6 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });
 
-           /* mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(final View v) {
-                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-
-
-//                    final FragmentManager manager = ((DashBoardActivity)mContext).getSupportFragmentManager();
-//                    final ShortViewFragment dialog = new ShortViewFragment();
-//                    dialog.setCancelable(false);
-//                    dialog.show(manager, "shortview");
-                   *//* v.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            switch (event.getAction()){
-                                case MotionEvent.ACTION_CANCEL:
-                                    break;
-                                case MotionEvent.ACTION_UP:
-                                    if (dialog != null) {
-                                        if (dialog.isVisible()) {
-                                            dialog.dismiss();
-                                        }
-                                    }
-                                    break;
-                                case MotionEvent.ACTION_MOVE:
-                                    break;
-                            }
-                            return false;
-                        }
-                    });*//*
-                    return false;
-                }
-            });*/
-
             mLikeImgInitial.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

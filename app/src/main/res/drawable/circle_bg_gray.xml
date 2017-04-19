@@ -7,6 +7,6 @@
         android:right="0dp"
         android:top="0dp" >
     </padding>
-    <solid android:color="@color/green" >
+    <solid android:color="@color/color_icon" >
     </solid>
 </shape>
