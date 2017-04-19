@@ -16,6 +16,7 @@ import com.sampleboard.view.fragment.profile.PostDetailFragment;
 import com.sampleboard.view.fragment.profile.ProfileFragment;
 import com.sampleboard.view.fragment.profile.ProfilePicFragment;
 import com.sampleboard.view.fragment.SearchFragment;
+import com.sampleboard.view.fragment.profile.UserProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     public void navigateTo(int container, Fragment fragment, boolean isBackStack) {
@@ -96,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case PROFILE_PIC_SCREEN:
                 currentFragment = new ProfilePicFragment();
+                break;
+            case USER_PROFILE_SCREEN:
+                currentFragment = new UserProfileFragment();
                 break;
             case POST_DETAIL_SCREEN:
                 currentFragment = new PostDetailFragment();

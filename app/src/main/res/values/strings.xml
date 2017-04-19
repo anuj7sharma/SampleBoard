@@ -12,6 +12,9 @@
     <string name="action_setting">Settings</string>
     <string name="action_logout">Logout</string>
 
+    <string name="action_report">Report</string>
+    <string name="action_copy_url">Copy URL</string>
+
     <string name="action_clear">Clear</string>
     <string name="action_editProfile">Edit Profile</string>
     <string name="action_edit">Edit</string>
@@ -71,4 +74,12 @@
     <string name="description_bugdroid_icon">Android bugdroid image</string>
     <string name="description_fingerprint_icon">Fingerprint icon</string>
 
+    <string name="show_more">Show More</string>
+    <string name="show_less">Show Less</string>
+    <string name="message">Message</string>
+    <string name="fork">Fork</string>
+    <string name="posts">Posts</string>
+    <string name="groups">Groups</string>
+    <string name="forking">Forking</string>
+    <string name="forked_by">Forked By</string>
 </resources>

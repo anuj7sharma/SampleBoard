@@ -19,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.sampleboard.R;
 import com.sampleboard.utils.AnimateSearchMenu;
@@ -29,6 +31,8 @@ import com.sampleboard.view.activity.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.SEARCH_SERVICE;
 
@@ -41,6 +45,9 @@ public class ProfileFragment extends BaseFragment {
     private Toolbar mToolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
+    private CircleImageView mProfileImg;
+    private TextView mName,mBio,mPostsCount, mGroupCount, mForkingCount, mForkedByCount;
 
 
     //    MenuItem settingIcon;
@@ -85,16 +92,18 @@ public class ProfileFragment extends BaseFragment {
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((DashBoardActivity) getActivity()).setSupportActionBar(mToolbar);
         ((DashBoardActivity) getActivity()).setTitle("");
-        /*mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ProfileActivity)getActivity()).oneStepBack();
-            }
-        });*/
+
+        mProfileImg = (CircleImageView)rootView.findViewById(R.id.profile_image);
+        mName = (TextView)rootView.findViewById(R.id.name);
+        mBio = (TextView)rootView.findViewById(R.id.bio);
+        mPostsCount = (TextView)rootView.findViewById(R.id.count_post);
+        mGroupCount = (TextView)rootView.findViewById(R.id.count_group);
+        mForkingCount = (TextView)rootView.findViewById(R.id.count_forking);
+        mForkedByCount = (TextView)rootView.findViewById(R.id.count_forkedBy);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         viewPager.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);

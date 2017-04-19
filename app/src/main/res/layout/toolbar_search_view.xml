@@ -68,7 +68,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
                 android:background="@null"
-                android:dropDownAnchor="@id/anchor_dropdown"
+
                 android:dropDownHeight="wrap_content"
                 android:dropDownHorizontalOffset="0dp"
                 android:dropDownVerticalOffset="0dp"
@@ -80,7 +80,7 @@
                 android:textColor="@android:color/black"
                 android:textColorHint="@color/material_light_hint_text"
                 android:textSize="20sp"/>
-
+           <!-- android:dropDownAnchor="@id/anchor_dropdown"-->
             <ImageView
                 android:id="@+id/search_close_btn"
                 android:layout_width="wrap_content"

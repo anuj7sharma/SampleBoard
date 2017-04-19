@@ -40,13 +40,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends MainActivity {
     RelativeLayout mContainer;
-    UIManager uiManager;    //for  Account kit skin
+//    UIManager uiManager;    //for  Account kit skin
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        printHashKey(this);
         initViews();
     }
     public void printHashKey(Context pContext) {
@@ -76,12 +75,12 @@ public class LoginActivity extends MainActivity {
         }
 
         //set skin
-        uiManager = new SkinManager(LoginType.PHONE,
-                SkinManager.Skin.CONTEMPORARY,
-                R.color.colorPrimary,
-                R.drawable.app_background,
-                SkinManager.Tint.WHITE,
-               0.35);
+//        uiManager = new SkinManager(LoginType.PHONE,
+//                SkinManager.Skin.CONTEMPORARY,
+//                R.color.colorPrimary,
+//                R.drawable.app_background,
+//                SkinManager.Tint.WHITE,
+//               0.35d);
 
         mContainer = (RelativeLayout)findViewById(R.id.login_container);
 
@@ -109,7 +108,7 @@ public class LoginActivity extends MainActivity {
 //        String whiteListCountries[] = {"IN"};
 //        configurationBuilder.setSMSWhitelist(whiteListCountries);
 
-        configurationBuilder.setUIManager(uiManager);
+//        configurationBuilder.setUIManager(uiManager);
         // ... perform additional configuration ...
         intent.putExtra(
                 AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
