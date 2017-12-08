@@ -21,12 +21,13 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         String userID = SharedPreferencesHandler.getStringValues(this,getString(R.string.pref_user_id));
         Intent intent = null;
-        if(TextUtils.isEmpty(userID)){
+        /*if(TextUtils.isEmpty(userID)){
             //navigate to Login Screen
             intent = new Intent(this,LoginActivity.class);
         }else{
             intent = new Intent(this,DashBoardActivity.class);
-        }
+        }*/
+        intent = new Intent(this,DashBoardActivity.class);
         startActivity(intent);
         finish();
     }

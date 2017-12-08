@@ -15,12 +15,13 @@
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="230dp">
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/image"
                 android:transitionName="detail_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="200dp"
+                android:minHeight="200dp"
                 android:scaleType="centerCrop"/>
         </RelativeLayout>
         <RelativeLayout
@@ -28,12 +29,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             android:background="@android:color/white">
             <TextView
                 android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/txtview_standard_widget"
                 android:layout_alignParentTop="true"
                 android:text="Title"
                 android:textSize="18sp"
@@ -47,7 +47,7 @@
                     android:id="@+id/price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/txtview_standard_widget"
+                    style="@style/txtview_small_widgett"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="Rs 6000"
@@ -86,8 +86,9 @@
                         android:id="@+id/likes_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/txtview_standard_widget"
+                        style="@style/txtview_small_widget"
                         android:maxLines="1"
+                        android:ellipsize="end"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/like_area"
                         android:text="123"

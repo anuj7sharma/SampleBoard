@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.view.Menu;
 
-import com.sampleboard.view.MainActivity;
+import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.databinding.ActivityMusicplayerBinding;
 import com.sampleboard.presenters.MusicPlayerPresenter;
@@ -15,7 +15,7 @@ import com.sampleboard.presenters.MusicPlayerPresenter;
  * Created by Anuj Sharma on 3/1/2017.
  */
 
-public class MusicPlayerActivity extends MainActivity {
+public class MusicPlayerActivity extends BaseActivity {
     ActivityMusicplayerBinding binder;
     private MusicPlayerPresenter presenter;
 

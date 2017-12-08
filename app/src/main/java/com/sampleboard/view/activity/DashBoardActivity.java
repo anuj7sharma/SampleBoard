@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.sampleboard.view.MainActivity;
+import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.fingerprint.FingerprintAuthenticationDialogFragment;
@@ -43,7 +43,7 @@ import javax.crypto.SecretKey;
  * Created by Anuj Sharma on 3/27/2017.
  */
 
-public class DashBoardActivity extends MainActivity {
+public class DashBoardActivity extends BaseActivity {
 
     //For finger print sendor if user go to profile page
     private static final String DIALOG_FRAGMENT_TAG = "myFragment";
@@ -72,15 +72,15 @@ public class DashBoardActivity extends MainActivity {
                     case R.id.action_home:
                         changeScreen(R.id.dashboard_container, CurrentScreen.ITEM_LIST_SCREEN, false, false, null);
                         break;
-                    case R.id.action_search:
-                        changeScreen(R.id.dashboard_container, CurrentScreen.SEARCH_SCREEN, false, false, null);
-                        break;
+//                    case R.id.action_search:
+//                        changeScreen(R.id.dashboard_container, CurrentScreen.SEARCH_SCREEN, false, false, null);
+//                        break;
                     case R.id.action_camera:
                         Utils.getInstance().showToast("camera");
                         break;
-                    case R.id.action_feed:
+//                    case R.id.action_feed:
 //                        Utils.getInstance().showToast("feed");
-                        break;
+//                        break;
                     case R.id.action_profile:
                         //Fingerprint API only available on from Android 6.0 (M)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

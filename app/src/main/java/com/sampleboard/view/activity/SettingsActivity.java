@@ -14,14 +14,14 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.facebook.accountkit.AccountKit;
-import com.sampleboard.view.MainActivity;
+import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.otpLogin.LoginActivity;
 
 
-public class SettingsActivity extends MainActivity implements View.OnClickListener {
+public class SettingsActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar mToolbar;
     private RelativeLayout btnEditProfile,containerFingerPrint, btnTerms, btnLogout;
     private Switch mTouchSwitch;

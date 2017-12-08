@@ -16,7 +16,7 @@ import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.fragment.profile.LikedFragment;
 import com.sampleboard.view.activity.ProfileActivity;
-import com.sampleboard.view.fragment.profile.PostDetailFragment;
+import com.sampleboard.view.fragment.detail.DetailFragment;
 import com.sampleboard.view.fragment.profile.UserProfileFragment;
 import com.squareup.picasso.Picasso;
 
@@ -30,14 +30,14 @@ public class LikedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     List<LikedBean> list;
     Context context;
     LikedFragment fragment;
-    PostDetailFragment detailFragment;
+    DetailFragment detailFragment;
     UserProfileFragment userProfileFragment;
     public LikedAdapter(Context ctx, List<LikedBean> listing, LikedFragment fragment){
         this.context = ctx;
         this.list = listing;
         this.fragment = fragment;
     }
-    public LikedAdapter(Context ctx, List<LikedBean> listing, PostDetailFragment fragment){
+    public LikedAdapter(Context ctx, List<LikedBean> listing, DetailFragment fragment){
         this.context = ctx;
         this.list = listing;
         this.detailFragment = fragment;

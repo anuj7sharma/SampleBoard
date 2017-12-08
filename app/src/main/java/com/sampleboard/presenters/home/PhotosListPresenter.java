@@ -2,11 +2,8 @@ package com.sampleboard.presenters.home;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.os.Build;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.transition.ChangeBounds;
-import android.transition.TransitionManager;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,9 +16,8 @@ import com.sampleboard.utils.Utils;
 import com.sampleboard.interfaces.GenericAdapterInterface;
 import com.sampleboard.view.activity.DashBoardActivity;
 import com.sampleboard.view.activity.ProfileActivity;
-import com.sampleboard.view.detail.DetailActivity;
 import com.sampleboard.view.fragment.ChangeCategorySheet;
-import com.sampleboard.view.fragment.PhotosListFragment;
+import com.sampleboard.view.fragment.dashboard.HomeFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,7 +29,7 @@ import java.util.List;
 
 public class PhotosListPresenter implements View.OnClickListener, GenericAdapterInterface<PhotosListAdapter> {
     private WeakReference<PhotosListView> photosView;
-    private PhotosListFragment mFragment;
+    private HomeFragment mFragment;
 //    private FragmentItemsBinding binder;
     private // Add Sample Data
             List<PhotosBean> list =new ArrayList<>();
@@ -43,7 +39,7 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
     private StaggeredGridLayoutManager sm;
     private PhotosListAdapter mAdapter;
 
-    public PhotosListPresenter(PhotosListView itemView, PhotosListFragment fragment) {
+    public PhotosListPresenter(PhotosListView itemView, HomeFragment fragment) {
         this.photosView = new WeakReference<>(itemView);
         this.mFragment = fragment;
         init();
@@ -141,7 +137,7 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_list_type:
+            /*case R.id.btn_list_type:
                 if(photosView.get()!=null){
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         TransitionManager.beginDelayedTransition(photosView.get().getRecyclerView(), new ChangeBounds());
@@ -158,7 +154,7 @@ public class PhotosListPresenter implements View.OnClickListener, GenericAdapter
                         gridType = 0;
                     }
                 }
-                break;
+                break;*/
             case R.id.category_type:
                 //show bottomsheet dialog
                 Utils.getInstance().showToast("open bottomsheet");

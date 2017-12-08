@@ -17,7 +17,7 @@ import com.facebook.accountkit.Account;
 import com.facebook.accountkit.AccountKitCallback;
 import com.facebook.accountkit.AccountKitError;
 import com.facebook.accountkit.PhoneNumber;
-import com.sampleboard.view.MainActivity;
+import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
@@ -28,8 +28,6 @@ import com.facebook.accountkit.AccountKitLoginResult;
 import com.facebook.accountkit.ui.AccountKitActivity;
 import com.facebook.accountkit.ui.AccountKitConfiguration;
 import com.facebook.accountkit.ui.LoginType;
-import com.facebook.accountkit.ui.SkinManager;
-import com.facebook.accountkit.ui.UIManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -38,7 +36,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by Anuj Sharma on 4/4/2017.
  */
 
-public class LoginActivity extends MainActivity {
+public class LoginActivity extends BaseActivity {
     RelativeLayout mContainer;
 //    UIManager uiManager;    //for  Account kit skin
 

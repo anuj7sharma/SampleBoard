@@ -26,7 +26,7 @@ import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.presenters.home.PhotosListPresenter;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
-import com.sampleboard.view.fragment.PhotosListFragment;
+import com.sampleboard.view.fragment.dashboard.HomeFragment;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -43,12 +43,12 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private PhotosListPresenter presenter;
     private AnimationDrawable frameAnimation;
     private int lastPosition = -1;
-    private PhotosListFragment fragment;
+    private HomeFragment fragment;
 
     public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
 
-    public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter, PhotosListFragment fragment) {
+    public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter, HomeFragment fragment) {
         this.mContext = ctx;
         this.mResponse = response;
         this.presenter = presenter;

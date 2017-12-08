@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.sampleboard.view.MainActivity;
+import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.fingerprint.FingerprintAuthenticationDialogFragment;
@@ -39,7 +39,7 @@ import javax.crypto.SecretKey;
  * Created by Anuj Sharma on 4/6/2017.
  */
 
-public class ProfileActivity extends MainActivity {
+public class ProfileActivity extends BaseActivity {
 
     private static final String DIALOG_FRAGMENT_TAG = "myFragment";
     private static final String SECRET_MESSAGE = "Very secret message";

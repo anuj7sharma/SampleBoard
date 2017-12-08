@@ -8,13 +8,13 @@
         android:visible="true"
         android:icon="@drawable/ic_home"
         />
-    <item
+   <!-- <item
         android:id="@+id/action_search"
         android:title="@string/action_search"
         app:showAsAction="ifRoom"
         android:visible="true"
         android:icon="@drawable/ic_search"
-        />
+        />-->
     <item
         android:id="@+id/action_camera"
         android:title="@string/action_camera"
@@ -22,13 +22,13 @@
         android:visible="true"
         android:icon="@drawable/ic_camera"
         />
-    <item
+   <!-- <item
         android:id="@+id/action_feed"
         android:title="@string/action_feed"
         app:showAsAction="ifRoom"
         android:visible="true"
         android:icon="@drawable/ic_toys"
-        />
+        />-->
     <item
         android:id="@+id/action_profile"
         android:title="@string/action_profile"

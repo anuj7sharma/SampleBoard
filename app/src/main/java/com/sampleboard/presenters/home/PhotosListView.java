@@ -14,5 +14,5 @@ public interface PhotosListView {
 
     RelativeLayout getCategory();
     RecyclerView getRecyclerView();
-    ImageView getListTypeBtn();
+//    ImageView getListTypeBtn();
 }

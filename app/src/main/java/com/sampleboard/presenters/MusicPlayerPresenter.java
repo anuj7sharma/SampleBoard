@@ -26,7 +26,7 @@ import com.sampleboard.services.NotificationForegroundService;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.musicModule.MusicPlayerActivity;
-import com.sampleboard.view.fragment.PhotosListFragment;
+import com.sampleboard.view.fragment.dashboard.HomeFragment;
 import com.sampleboard.view.musicModule.MusicListFragment;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -132,9 +132,9 @@ public class MusicPlayerPresenter implements View.OnClickListener{
         else binder.layoutProgress.progressParent.setVisibility(View.GONE);
     }
 
-    public static PhotosListFragment itemsListFragment;
-    public PhotosListFragment initializeItemFragment(){
-        if(itemsListFragment == null)itemsListFragment = new PhotosListFragment();
+    public static HomeFragment itemsListFragment;
+    public HomeFragment initializeItemFragment(){
+        if(itemsListFragment == null)itemsListFragment = new HomeFragment();
         return itemsListFragment;
     }
 

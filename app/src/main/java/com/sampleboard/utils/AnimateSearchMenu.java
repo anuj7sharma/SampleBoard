@@ -94,7 +94,7 @@ public class AnimateSearchMenu {
                 });
                 mToolbar.startAnimation(animationSet);
             }
-//            mDrawerLayout.setStatusBarBackgroundColor(ThemeUtils.getThemeColor(MainActivity.this, R.attr.colorPrimaryDark));
+//            mDrawerLayout.setStatusBarBackgroundColor(ThemeUtils.getThemeColor(BaseActivity.this, R.attr.colorPrimaryDark));
             if(Utils.getInstance().isEqualLollipop())
                 activity.getWindow().setStatusBarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark));
         }

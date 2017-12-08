@@ -36,7 +36,7 @@ import android.widget.TextView;
 
 import com.sampleboard.R;
 import com.sampleboard.view.activity.DashBoardActivity;
-import com.sampleboard.view.fragment.PhotosListFragment;
+import com.sampleboard.view.fragment.dashboard.HomeFragment;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
@@ -58,7 +58,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
-    private PhotosListFragment mFragment;
+    private HomeFragment mFragment;
     private DashBoardActivity mActivity;
 
     private InputMethodManager mInputMethodManager;
@@ -74,7 +74,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
     }
 
-    public void setCurrentFragment(PhotosListFragment fragment) {
+    public void setCurrentFragment(HomeFragment fragment) {
         mFragment = fragment;
     }
 
@@ -204,7 +204,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
             if (mUseFingerprintFutureCheckBox.isChecked()) {
                 // Re-create the key so that fingerprints including new ones are validated.
                 if (mFragment != null) {
-//                    mFragment.createKey(PhotosListFragment.DEFAULT_KEY_NAME, true);
+//                    mFragment.createKey(HomeFragment.DEFAULT_KEY_NAME, true);
                 } else if (mActivity != null) {
                     mActivity.createKey(DashBoardActivity.DEFAULT_KEY_NAME, true);
                 }

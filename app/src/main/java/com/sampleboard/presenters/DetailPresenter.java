@@ -15,7 +15,7 @@ import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.databinding.ActivityDetailBinding;
 import com.sampleboard.permission.PermissionsAndroid;
 import com.sampleboard.utils.Utils;
-import com.sampleboard.view.detail.DetailActivity;
+import com.sampleboard.view.activity.DetailActivity;
 import com.sampleboard.view.detail.DetailView;
 import com.squareup.picasso.Picasso;
 
