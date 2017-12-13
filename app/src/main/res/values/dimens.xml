@@ -7,6 +7,7 @@
     <dimen name="nav_drawer_width">260dp</dimen>
 
     <dimen name="activity_margin_16">16dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
     <dimen name="activity_margin_15">15dp</dimen>
     <dimen name="activity_margin_10">10dp</dimen>
     <dimen name="activity_margin_32">32dp</dimen>

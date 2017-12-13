@@ -13,7 +13,10 @@ import android.widget.ImageView;
 import com.sampleboard.R;
 import com.sampleboard.bean.LikedBean;
 import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
+import com.sampleboard.view.activity.DetailActivityV2;
+import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.view.fragment.profile.LikedFragment;
 import com.sampleboard.view.activity.ProfileActivity;
 import com.sampleboard.view.fragment.detail.DetailFragment;
@@ -81,7 +84,7 @@ public class LikedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public LIkedHolder(View itemView) {
             super(itemView);
-            mLikedImg = (ImageView) itemView.findViewById(R.id.img_like);
+            mLikedImg =  itemView.findViewById(R.id.img_like);
 
             mLikedImg.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -95,29 +98,29 @@ public class LikedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     detailBean.isLiked = true;
                     detailBean.ownerName = "Anuj Sharma";
 
-                    Intent profilePicIntent = new Intent(context,ProfileActivity.class);
-                    profilePicIntent.putExtra("post_detail",detailBean);
-                    profilePicIntent.putExtra("destination","post_detail");
+                    Intent intent = new Intent(context, DetailActivityV2.class);
+                    intent.putExtra(Constants.DESTINATION, Constants.DETAIL_SCREEN);
+                    intent.putExtra(Constants.OBJ_DETAIL,detailBean);
                     if (Utils.getInstance().isEqualLollipop() && fragment!=null) {
-                        Pair<View, String> p1 = Pair.create((View) mLikedImg, "detail_image");
+                        Pair<View, String> p1 = Pair.create((View) mLikedImg, mLikedImg.getTransitionName());
                         ActivityOptions options =
                                 ActivityOptions.makeSceneTransitionAnimation(fragment.getActivity(), p1);
-                        context.startActivity(profilePicIntent, options.toBundle());
+                        context.startActivity(intent, options.toBundle());
                     }
                     else if (Utils.getInstance().isEqualLollipop() && detailFragment!=null) {
                         Pair<View, String> p1 = Pair.create((View) mLikedImg, "detail_image");
                         ActivityOptions options =
                                 ActivityOptions.makeSceneTransitionAnimation(detailFragment.getActivity(), p1);
-                        context.startActivity(profilePicIntent, options.toBundle());
+                        context.startActivity(intent, options.toBundle());
                     }
                     else if (Utils.getInstance().isEqualLollipop() && userProfileFragment!=null) {
                         Pair<View, String> p1 = Pair.create((View) mLikedImg, "detail_image");
                         ActivityOptions options =
                                 ActivityOptions.makeSceneTransitionAnimation(userProfileFragment.getActivity(), p1);
-                        context.startActivity(profilePicIntent, options.toBundle());
+                        context.startActivity(intent, options.toBundle());
                     }
                     else {
-                        context.startActivity(profilePicIntent);
+                        context.startActivity(intent);
                     }
                 }
             });

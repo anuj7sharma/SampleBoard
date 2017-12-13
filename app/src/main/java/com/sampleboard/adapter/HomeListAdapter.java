@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.peekandpop.shalskar.peekandpop.PeekAndPop;
 import com.sampleboard.R;
 import com.sampleboard.bean.PhotosBean;
-import com.sampleboard.presenters.home.PhotosListPresenter;
+import com.sampleboard.interfaces.MediaListInterface;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.fragment.dashboard.HomeFragment;
@@ -37,22 +37,19 @@ import java.util.List;
  * Created by Mobilyte India Pvt Ltd on 3/1/2017.
  */
 
-public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<PhotosBean> mResponse;
-    private PhotosListPresenter presenter;
     private AnimationDrawable frameAnimation;
     private int lastPosition = -1;
-    private HomeFragment fragment;
-
     public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
+    private MediaListInterface listener;
 
-    public PhotosListAdapter(Context ctx, List<PhotosBean> response, PhotosListPresenter presenter, HomeFragment fragment) {
+    public HomeListAdapter(Context ctx, List<PhotosBean> response, MediaListInterface listener) {
         this.mContext = ctx;
         this.mResponse = response;
-        this.presenter = presenter;
-        this.fragment = fragment;
+        this.listener = listener;
     }
 
     public void updateList(List<PhotosBean> response) {
@@ -64,7 +61,7 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowView;
         RecyclerView.ViewHolder vh;
-        rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_photoslist, parent, false);
+        rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_list, parent, false);
         vh = new LoadMoreViewHolder(rowView);
 
         return vh;
@@ -77,7 +74,7 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             vh.mTitle.setText(mResponse.get(position).title);
             vh.mPrice.setText(mResponse.get(position).price);
 
-            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500,500).centerCrop().into(vh.mImage);
+            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500, 500).centerCrop().into(vh.mImage);
 
             Picasso.with(mContext)
                     .load(mResponse.get(position).photoUrl)
@@ -166,65 +163,56 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private LoadMoreViewHolder(View itemView) {
             super(itemView);
-            mParentLayout = (LinearLayout) itemView.findViewById(R.id.parent);
-            mInfoContainer = (RelativeLayout) itemView.findViewById(R.id.info_container);
-            mImage = (ImageView) itemView.findViewById(R.id.image);
-            mTitle = (TextView) itemView.findViewById(R.id.title);
-            mPrice = (TextView) itemView.findViewById(R.id.price);
-            mLikeImgInitial = (ImageView) itemView.findViewById(R.id.ic_heart_initial);
-            mLikeImgFinal = (ImageView) itemView.findViewById(R.id.ic_heart_final);
-            mLikesCount = (TextView) itemView.findViewById(R.id.likes_count);
+            mParentLayout = itemView.findViewById(R.id.parent);
+            mInfoContainer = itemView.findViewById(R.id.info_container);
+            mImage = itemView.findViewById(R.id.image);
+            mTitle = itemView.findViewById(R.id.title);
+            mPrice = itemView.findViewById(R.id.price);
+            mLikeImgInitial = itemView.findViewById(R.id.ic_heart_initial);
+            mLikeImgFinal = itemView.findViewById(R.id.ic_heart_final);
+            mLikesCount = itemView.findViewById(R.id.likes_count);
 
-            mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    manageShortView(v, mResponse.get(getAdapterPosition()));
-                    return false;
-                }
-            });
+//            mParentLayout.setOnLongClickListener(v -> {
+////                manageShortView(v, mResponse.get(getAdapterPosition()));
+//                return false;
+//            });
             mParentLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (presenter != null) {
-                        presenter.onItemClick(mResponse.get(getAdapterPosition()), mImage);
-                    }
+                    if (listener != null)
+                        listener.onItemClick(mResponse.get(getAdapterPosition()), mImage);
+
                 }
             });
 
-            mLikeImgInitial.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLikeImgInitial.setClickable(false);
-                    CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) mContext.getResources().getDrawable(
-                            R.drawable.animation_list_layout)) {
-                        @Override
-                        public void onAnimationFinish() {
-                            mLikeImgInitial.setVisibility(View.GONE);
-                            mLikeImgFinal.setVisibility(View.VISIBLE);
-                            mLikeImgFinal.setClickable(true);
+            mLikeImgInitial.setOnClickListener(v -> {
+                mLikeImgInitial.setClickable(false);
+                CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) mContext.getResources().getDrawable(
+                        R.drawable.animation_list_layout)) {
+                    @Override
+                    public void onAnimationFinish() {
+                        mLikeImgInitial.setVisibility(View.GONE);
+                        mLikeImgFinal.setVisibility(View.VISIBLE);
+                        mLikeImgFinal.setClickable(true);
 //                            updateLikesCounter(1,true);
-                        }
-                    };
-                    mLikeImgInitial.setBackgroundDrawable(cad);
-                    cad.start();
-                }
+                    }
+                };
+                mLikeImgInitial.setBackgroundDrawable(cad);
+                cad.start();
             });
 
-            mLikeImgFinal.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLikeImgInitial.setVisibility(View.VISIBLE);
-                    mLikeImgInitial.setClickable(true);
-                    mLikeImgFinal.setVisibility(View.GONE);
-                    mLikeImgFinal.setClickable(false);
-                    mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
+            mLikeImgFinal.setOnClickListener(v -> {
+                mLikeImgInitial.setVisibility(View.VISIBLE);
+                mLikeImgInitial.setClickable(true);
+                mLikeImgFinal.setVisibility(View.GONE);
+                mLikeImgFinal.setClickable(false);
+                mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
 //                    updateLikesCounter(1,false);
-                }
             });
         }
     }
 
-    private void manageShortView(View v, PhotosBean bean){
+    /*private void manageShortView(View v, PhotosBean bean) {
         v.setHapticFeedbackEnabled(true);
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         PeekAndPop peekAndPop = new PeekAndPop.Builder(fragment.getActivity())
@@ -234,29 +222,29 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .parentViewGroupToDisallowTouchEvents((ViewGroup) fragment.getView())
                 .build();
         View peekView = peekAndPop.getPeekView();
-        CardView cardView = (CardView)peekView.findViewById(R.id.parent_shortView);
+        CardView cardView = (CardView) peekView.findViewById(R.id.parent_shortView);
         ImageView imageView = (ImageView) peekView.findViewById(R.id.img_shortview);
         ImageView likeImg = (ImageView) peekView.findViewById(R.id.btn_like);
         ImageView commentImg = (ImageView) peekView.findViewById(R.id.btn_message);
         ImageView shareImg = (ImageView) peekView.findViewById(R.id.btn_share);
-        final ProgressBar progressBar = (ProgressBar)peekView.findViewById(R.id.progress_bar);
+        final ProgressBar progressBar = (ProgressBar) peekView.findViewById(R.id.progress_bar);
 
-        peekAndPop.addLongHoldView(R.id.parent_shortView,false);
+        peekAndPop.addLongHoldView(R.id.parent_shortView, false);
         peekAndPop.addHoldAndReleaseView(R.id.btn_like);
         peekAndPop.addHoldAndReleaseView(R.id.btn_message);
         peekAndPop.addHoldAndReleaseView(R.id.btn_share);
         peekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
             @Override
             public void onHold(View view, int position) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.btn_like:
-                        Toast.makeText(mContext, "Like", 300).show();
+                        Toast.makeText(mContext, "Like", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.btn_message:
-                        Toast.makeText(mContext, "Message", 300).show();
+                        Toast.makeText(mContext, "Message", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.btn_share:
-                        Toast.makeText(mContext, "Share", 300).show();
+                        Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -274,7 +262,7 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 //                    peekAndPop.addHoldAndReleaseView(R.id.img_shortview);
 
-        Picasso.with(mContext).load(bean.photoUrl).resize(500,500).
+        Picasso.with(mContext).load(bean.photoUrl).resize(500, 500).
                 centerCrop().into(imageView, new Callback() {
             @Override
             public void onSuccess() {
@@ -286,5 +274,5 @@ public class PhotosListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 progressBar.setVisibility(View.GONE);
             }
         });
-    }
+    }*/
 }

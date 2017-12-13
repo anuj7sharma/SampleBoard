@@ -278,4 +278,9 @@ public class DashBoardActivity extends BaseActivity {
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        oneStepBack();
+    }
 }

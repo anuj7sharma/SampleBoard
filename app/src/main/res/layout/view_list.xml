@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="200dp"
+    android:minWidth="200dp"
     android:foreground="?attr/selectableItemBackground"
     app:cardElevation="5dp"
     app:cardCornerRadius="5dp"
@@ -20,9 +23,9 @@
                 android:id="@+id/image"
                 android:transitionName="detail_image"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="match_parent"
                 android:minHeight="200dp"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/info_container"
@@ -47,7 +50,7 @@
                     android:id="@+id/price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/txtview_small_widgett"
+                    style="@style/txtview_small_widget"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="Rs 6000"

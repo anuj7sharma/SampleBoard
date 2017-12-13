@@ -1,8 +1,17 @@
 package com.sampleboard.view.fragment.detail;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
@@ -22,44 +31,48 @@ import com.sampleboard.adapter.LikedAdapter;
 import com.sampleboard.bean.LikedBean;
 import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.enums.CurrentScreen;
+import com.sampleboard.permission.PermissionsAndroid;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
+import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
-import com.sampleboard.view.activity.ProfileActivity;
+import com.sampleboard.view.activity.DetailActivityV2;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by Anuj Sharma on 4/10/2017.
+ * @author Anuj Sharma on 4/10/2017.
  */
 
 public class DetailFragment extends BaseFragment implements View.OnClickListener {
     private View rootVIew;
 
-    private Toolbar mToolbar;
     private ImageView mDetailImage, mLikeImgInitial, mLikeImgFinal;
     private ProgressBar mProgresbar;
-    private CircleImageView mOwnerImg;
     private TextView mOwnerName, mLikeCount, mCommentCount, mTags, mDesc, mReadMore;
-    private LinearLayout ownerProfileView;
+    private PostDetailBean bean;
 
     private RecyclerView relatedRecycler;
+    private LikedAdapter mAdapter;
 
 
     private String tagString = "#office #nature #wild #beauty";
     private String descString = "testing testing testing testing testing testing testing testing testing testing testing testing testing" +
             "testing testing testing";
 
-    private AnimationDrawable frameAnimation;
+//    private AnimationDrawable frameAnimation;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootVIew = inflater.inflate(R.layout.fragment_post_detail, container, false);
+        subscribeDownloadReceiver();
         return rootVIew;
     }
 
@@ -70,34 +83,40 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         loadIntiialData();
     }
 
+    @Override
+    public void onDestroyView() {
+        unSubscribeDownloadReceiver();
+        super.onDestroyView();
+    }
+
     private void initViews() {
-        mToolbar = (Toolbar) rootVIew.findViewById(R.id.toolbar);
-        ((ProfileActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((ProfileActivity) getActivity()).getSupportActionBar().setTitle("Detail");
-        mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ProfileActivity) getActivity()).oneStepBack();
-            }
-        });
+        Toolbar mToolbar = rootVIew.findViewById(R.id.toolbar);
+        if (getActivity() instanceof DetailActivityV2) {
+            ((DetailActivityV2) getActivity()).setSupportActionBar(mToolbar);
+            ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle("Detail");
+            mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+            mToolbar.setNavigationOnClickListener(v -> ((DetailActivityV2) getActivity()).oneStepBack());
+        }
 
-        mDetailImage = (ImageView) rootVIew.findViewById(R.id.post_detail_img);
-        mProgresbar = (ProgressBar) rootVIew.findViewById(R.id.progress_bar);
-        mOwnerImg = (CircleImageView) rootVIew.findViewById(R.id.owner_img);
-        mOwnerName = (TextView) rootVIew.findViewById(R.id.owner_name);
-        mLikeImgInitial = (ImageView) rootVIew.findViewById(R.id.ic_heart_initial);
-        mLikeImgFinal = (ImageView) rootVIew.findViewById(R.id.ic_heart_final);
-        mLikeCount = (TextView) rootVIew.findViewById(R.id.like_count);
-        mCommentCount = (TextView) rootVIew.findViewById(R.id.comment_count);
-        mTags = (TextView) rootVIew.findViewById(R.id.tags);
-        mDesc = (TextView) rootVIew.findViewById(R.id.description);
-        mReadMore = (TextView) rootVIew.findViewById(R.id.readmore);
-        ownerProfileView = (LinearLayout) rootVIew.findViewById(R.id.view_owner_info);
+        mDetailImage = rootVIew.findViewById(R.id.post_detail_img);
+        mProgresbar = rootVIew.findViewById(R.id.progress_bar);
+        CircleImageView mOwnerImg = rootVIew.findViewById(R.id.owner_img);
+        mOwnerName = rootVIew.findViewById(R.id.owner_name);
+        mLikeImgInitial = rootVIew.findViewById(R.id.ic_heart_initial);
+        mLikeImgFinal = rootVIew.findViewById(R.id.ic_heart_final);
+        mLikeCount = rootVIew.findViewById(R.id.like_count);
+        mCommentCount = rootVIew.findViewById(R.id.comment_count);
+        mTags = rootVIew.findViewById(R.id.tags);
+        mDesc = rootVIew.findViewById(R.id.description);
+        mReadMore = rootVIew.findViewById(R.id.readmore);
+        LinearLayout ownerProfileView = rootVIew.findViewById(R.id.view_owner_info);
 
-        relatedRecycler = (RecyclerView) rootVIew.findViewById(R.id.related_recycler);
+        relatedRecycler = rootVIew.findViewById(R.id.related_recycler);
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         relatedRecycler.setLayoutManager(sm);
+
+        mAdapter = new LikedAdapter(getActivity(), null, DetailFragment.this);
+        relatedRecycler.setAdapter(mAdapter);
 
         loadDummyRelatedData();
 
@@ -106,6 +125,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         mLikeImgFinal.setOnClickListener(this);
         mReadMore.setOnClickListener(this);
         ownerProfileView.setOnClickListener(this);
+        rootVIew.findViewById(R.id.btn_download).setOnClickListener(this);
 
     }
 
@@ -135,14 +155,14 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
 
         likeList.add(obj);
-        LikedAdapter mAdapter = new LikedAdapter(getActivity(), likeList, DetailFragment.this);
-        relatedRecycler.setAdapter(mAdapter);
+        mAdapter.updateData(likeList);
     }
 
     private void loadIntiialData() {
-        if (getArguments() != null && getArguments().getParcelable("post_detail") != null) {
-            PostDetailBean bean = getArguments().getParcelable("post_detail");
-            if (bean.photoUrl.contains("http:") || bean.photoUrl.contains("https:")) {
+        if (getArguments() != null && getArguments().getParcelable(Constants.OBJ_DETAIL) != null) {
+            bean = getArguments().getParcelable(Constants.OBJ_DETAIL);
+            assert bean != null;
+            if (bean.photoUrl.contains("http:") || bean.photoUrl.startsWith("http")) {
                 Picasso.with(getActivity()).load(bean.photoUrl).resize(600, 600).centerCrop().into(mDetailImage, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -232,7 +252,14 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 showMoreDescription();
                 break;
             case R.id.view_owner_info:
-                ((ProfileActivity) getActivity()).changeScreen(R.id.profile_container, CurrentScreen.USER_PROFILE_SCREEN, true, true, null);
+                if (getActivity() instanceof DetailActivityV2) {
+                    ((DetailActivityV2) getActivity()).changeScreen(R.id.container_holder, CurrentScreen.USER_PROFILE_SCREEN, true, true, null);
+                }
+                break;
+            case R.id.btn_download:
+                if (bean != null) {
+                    downloadFile(bean.photoUrl, bean.photoName);
+                }
                 break;
         }
     }
@@ -250,8 +277,92 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-
     /**
-     * Shared Element Transition
+     * Download File Concept implemented here
      */
+    private DownloadManager dm;
+    private long enqueue;
+
+    public void downloadFile(String url, String photoName) {
+        if (!PermissionsAndroid.getInstance().checkWriteExternalStoragePermission(getActivity())) {
+            PermissionsAndroid.getInstance().requestForWriteExternalStoragePermission(this);
+            return;
+        }
+        //download music functionality here
+//        songsProgressMap.put(musicBean.getUrl(),progressBar);
+//        progressBar.setVisibility(View.VISIBLE);
+
+        dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(url));
+        request.setTitle(photoName);
+        request.setDescription("Downloading");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        File file = Utils.getInstance().saveToDirectory(getActivity(), photoName, "jpg");
+        if (file == null)
+            return;
+
+        request.setDestinationUri(Uri.parse("file://" + "/" + file.getAbsolutePath()));
+//        if (file != null && file.exists()) file.delete();
+        enqueue = dm.enqueue(request);
+
+    }
+
+    public void subscribeDownloadReceiver() {
+        getActivity().registerReceiver(downloadCompleteReceiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    public void unSubscribeDownloadReceiver() {
+        try {
+            if (downloadCompleteReceiver != null)
+                getActivity().unregisterReceiver(downloadCompleteReceiver);
+        } catch (IllegalStateException illegal) {
+
+        }
+
+    }
+
+    BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long downloadId = intent.getLongExtra(
+                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(enqueue);
+                Cursor c = dm.query(query);
+                if (c.moveToFirst()) {
+                    int columnIndex = c
+                            .getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    if (DownloadManager.STATUS_SUCCESSFUL == c
+                            .getInt(columnIndex)) {
+//                        if(songsProgressMap!=null && songsProgressMap.size()>0){
+//                            ProgressBar progress = songsProgressMap.get(intent.getStringExtra("song_url"));
+//                            if(progress!=null)progress.setVisibility(View.GONE);
+//                        }
+                        Utils.getInstance().showToast("Download complete");
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionsAndroid.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (bean != null) {
+                    downloadFile(bean.photoUrl, bean.photoName);
+                }
+            } else {
+                // permission denied, boo! Disable the
+                Utils.getInstance().showToast("Permission denied");
+            }
+        }
+
+    }
 }

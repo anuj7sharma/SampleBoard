@@ -10,7 +10,7 @@ public interface Constants {
     /*
     API BASE URL
      */
-    String LIVE_APIURL ="http://starlord.hackerearth.com/";
+    String LIVE_APIURL = "http://starlord.hackerearth.com/";
     String DEF_PROFILE_URL = "https://organicthemes.com/demo/profile/files/2012/12/profile_img.png";
 
     String MUSIC_API = "edfora/cokestudio";
@@ -28,17 +28,26 @@ public interface Constants {
         String PLAY_UPDATE_ACTION = "com.foregroundservice.action.play.update";   //update from ui to notification
     }
 
-    public interface ACTION {
-        public static String MAIN_ACTION = "com.foregroundservice.action.main";
-        public static String INIT_ACTION = "com.foregroundservice.action.init";
-        public static String PREV_ACTION = "com.foregroundservice.action.prev";
-        public static String PLAY_ACTION = "com.foregroundservice.action.play";
+    interface ACTION {
+        String MAIN_ACTION = "com.foregroundservice.action.main";
+        String INIT_ACTION = "com.foregroundservice.action.init";
+        String PREV_ACTION = "com.foregroundservice.action.prev";
+        String PLAY_ACTION = "com.foregroundservice.action.play";
 
-        public static String NEXT_ACTION = "com.foregroundservice.action.next";
-        public static String STARTFOREGROUND_ACTION = "com.foregroundservice.action.startforeground";
-        public static String STOPFOREGROUND_ACTION = "com.foregroundservice.action.stopforeground";
+        String NEXT_ACTION = "com.foregroundservice.action.next";
+        String STARTFOREGROUND_ACTION = "com.foregroundservice.action.startforeground";
+        String STOPFOREGROUND_ACTION = "com.foregroundservice.action.stopforeground";
     }
-    public interface NOTIFICATION_ID {
-        public static int FOREGROUND_SERVICE = 101;
+
+    interface NOTIFICATION_ID {
+        int FOREGROUND_SERVICE = 101;
     }
+
+    String DESTINATION = "destination";
+
+    String SEARCH_SCREEN = "SEARCH_SCREEN";
+    String DETAIL_SCREEN = "DETAIL_SCREEN";
+
+    String OBJ_DETAIL = "obj_detail";
+
 }

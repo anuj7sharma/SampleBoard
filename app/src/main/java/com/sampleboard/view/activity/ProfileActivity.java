@@ -63,11 +63,6 @@ public class ProfileActivity extends BaseActivity {
             }else if(getIntent().getStringExtra("destination").equals("edit_profile")){
                 //destination extra came, need to move to edit profile page
                 changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false,false,null);
-            }else if(getIntent().getStringExtra("destination").equals("post_detail")){
-                // Move to Post Detail screen
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("post_detail",getIntent().getParcelableExtra("post_detail"));
-                changeScreen(R.id.profile_container, CurrentScreen.POST_DETAIL_SCREEN, false,false,bundle);
             }
         }else{
             changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false,false,null);
@@ -243,5 +238,9 @@ public class ProfileActivity extends BaseActivity {
                 | CertificateException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        oneStepBack();
     }
 }

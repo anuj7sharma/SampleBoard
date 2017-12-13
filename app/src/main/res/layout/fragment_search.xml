@@ -10,21 +10,30 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <EditText
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/searchbar_bg"
-            android:drawableLeft="@drawable/ic_search"
-            android:drawablePadding="@dimen/activity_margin_10"
-            android:drawableTint="@color/dark_gray"
-            android:hint="Search.."
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:padding="@dimen/activity_margin_10"
-            android:textColor="@color/app_textcolor"
-            android:textColorHint="@color/app_hintcolor" />
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/searchbar_bg"
+                android:drawableLeft="@drawable/ic_search"
+                android:drawablePadding="@dimen/activity_margin_10"
+                android:drawableTint="@color/dark_gray"
+                android:hint="Search.."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="@dimen/activity_margin_10"
+                android:textColor="@color/app_textcolor"
+                android:textColorHint="@color/app_hintcolor" />
+        </android.support.v7.widget.Toolbar>
+
         <!--<android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"

@@ -125,4 +125,8 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                 break;
         }
     }
+    @Override
+    public void onBackPressed() {
+        oneStepBack();
+    }
 }

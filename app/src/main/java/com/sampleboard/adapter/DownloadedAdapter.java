@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import com.sampleboard.R;
 import com.sampleboard.bean.LikedBean;
 import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
+import com.sampleboard.view.activity.DetailActivityV2;
 import com.sampleboard.view.fragment.profile.DownloadedFragment;
 import com.sampleboard.view.activity.ProfileActivity;
 import com.squareup.picasso.Picasso;
@@ -80,11 +82,11 @@ public class DownloadedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     detailBean.isLiked = true;
                     detailBean.ownerName = "Anuj Sharma";
 
-                    Intent profilePicIntent = new Intent(context,ProfileActivity.class);
-                    profilePicIntent.putExtra("post_detail",detailBean);
-                    profilePicIntent.putExtra("destination","post_detail");
+                    Intent profilePicIntent = new Intent(context,DetailActivityV2.class);
+                    profilePicIntent.putExtra(Constants.DESTINATION,Constants.DETAIL_SCREEN);
+                    profilePicIntent.putExtra(Constants.OBJ_DETAIL,detailBean);
                     if (Utils.getInstance().isEqualLollipop() && fragment!=null) {
-                        Pair<View, String> p1 = Pair.create((View) mDownloadedImg, "detail_image");
+                        Pair<View, String> p1 = Pair.create((View) mDownloadedImg, mDownloadedImg.getTransitionName());
                         ActivityOptions options =
                                 ActivityOptions.makeSceneTransitionAnimation(fragment.getActivity(), p1);
                         context.startActivity(profilePicIntent, options.toBundle());

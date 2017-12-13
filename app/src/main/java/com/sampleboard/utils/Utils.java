@@ -279,8 +279,9 @@ public class Utils {
     public File saveToDirectory(Context ctx, String name, String fileExtension) {
         File dir = new File(Environment.getExternalStorageDirectory() + File.separator +
                 ctx.getString(R.string.app_name));
-        if (!dir.isDirectory()) {
-            dir.mkdirs();
+        boolean isDirectoryCreated=dir.exists();
+        if (!isDirectoryCreated) {
+            isDirectoryCreated = dir.mkdirs();
         }
         File file = new File(dir, name + "." +  fileExtension);
         if (file.isFile()) file.delete();
@@ -290,6 +291,7 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 

@@ -5,7 +5,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Fade;
+import android.transition.TransitionInflater;
+import android.transition.TransitionSet;
+import android.view.View;
+import android.widget.ImageView;
 
+import com.sampleboard.R;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.digitalSignature.DigitalSignatureFragment;
@@ -138,7 +144,42 @@ public class BaseActivity extends AppCompatActivity {
             else
                 navigateToWithBundle(container, currentFragment, false, bundle);
         }
+    }
 
+    public void performTransition(int fragment_container, Fragment fragment, ImageView imageView, Bundle bundle)
+    {
+        int MOVE_DEFAULT_TIME= 300;
+        int FADE_DEFAULT_TIME= 300;
+        if (isDestroyed())
+        {
+            return;
+        }
+        Fragment previousFragment = getSupportFragmentManager().findFragmentById(fragment_container);
+        Fragment nextFragment = fragment;
+        nextFragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
+        // 1. Exit for Previous Fragment
+        Fade exitFade = new Fade();
+        exitFade.setDuration(300);
+        previousFragment.setExitTransition(exitFade);
+
+        // 2. Shared Elements Transition
+        TransitionSet enterTransitionSet = new TransitionSet();
+        enterTransitionSet.addTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.move));
+        enterTransitionSet.setDuration(MOVE_DEFAULT_TIME);
+        enterTransitionSet.setStartDelay(FADE_DEFAULT_TIME);
+        nextFragment.setSharedElementEnterTransition(enterTransitionSet);
+
+        // 3. Enter Transition for New Fragment
+        Fade enterFade = new Fade();
+        enterFade.setStartDelay(MOVE_DEFAULT_TIME + FADE_DEFAULT_TIME);
+        enterFade.setDuration(FADE_DEFAULT_TIME);
+        nextFragment.setEnterTransition(enterFade);
+
+//        View logo = ButterKnife.findById(this, R.id.fragment1_logo);
+        fragmentTransaction.addSharedElement(imageView, imageView.getTransitionName());
+        fragmentTransaction.replace(fragment_container, nextFragment);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 }

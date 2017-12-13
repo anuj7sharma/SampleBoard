@@ -48,7 +48,7 @@ public class LoginActivity extends BaseActivity {
     }
     public void printHashKey(Context pContext) {
         try {
-            PackageInfo info = getPackageManager().getPackageInfo("com.androidpay", PackageManager.GET_SIGNATURES);
+            PackageInfo info = getPackageManager().getPackageInfo("com.sampleboard", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
