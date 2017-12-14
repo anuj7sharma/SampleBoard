@@ -1,16 +1,17 @@
 package com.sampleboard.view.fragment.dashboard;
 
-import android.app.ActivityOptions;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,31 +21,35 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.gson.Gson;
 import com.sampleboard.R;
 import com.sampleboard.adapter.HomeListAdapter;
+import com.sampleboard.bean.MediaItem;
+import com.sampleboard.bean.MediaModel;
 import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.interfaces.MediaListInterface;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
+import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DashBoardActivity;
 import com.sampleboard.view.activity.DetailActivityV2;
 import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.viewmodel.HomeFragmentViewModel;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
  * @author Anuj Sharma on 2/28/2017.
  */
 
-public class HomeFragment extends Fragment implements MediaListInterface {
+public class HomeFragment extends BaseFragment implements MediaListInterface {
     private View rootView;
     private HomeFragmentViewModel viewModel;
+    public static SparseArray<Bitmap> photoCache = new SparseArray<>(1);
     private HomeListAdapter mAdapter;
     private List<PhotosBean> list;
-    //    private ImageView btnListType;
     private RelativeLayout categoryType;
 
     @Override
@@ -87,66 +92,19 @@ public class HomeFragment extends Fragment implements MediaListInterface {
         RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_items);
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(sm);
+        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         mAdapter = new HomeListAdapter(getActivity(), null, this);
         mRecyclerView.setAdapter(mAdapter);
-        addData();
-        mAdapter.updateList(list);
-//        btnListType = rootView.findViewById(R.id.btn_list_type);
+        //Static Data coming from Json stored in assets folder
+        try {
+            Gson gson = new Gson();
+            MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
 
-//        PhotosListPresenter presenter = new PhotosListPresenter(this, HomeFragment.this);
-
-//        categoryType.setOnClickListener(presenter);
-
+            mAdapter.updateList(mediaModel.getData());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return rootView;
-    }
-
-    private void addData() {
-        if (list == null) list = new ArrayList<>();
-        PhotosBean obj;
-        obj = new PhotosBean();
-        obj.title = "Beautiful Nature view";
-        obj.photoName = "Beautiful Nature view";
-        obj.availableCount = 3;
-        obj.photoUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
-        obj.price = "Rs 325";
-
-        list.add(obj);
-
-        obj = new PhotosBean();
-        obj.title = "Water fall";
-        obj.photoName = "Water fall Image";
-        obj.availableCount = 1;
-        obj.photoUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
-        obj.price = "Rs 325";
-
-        list.add(obj);
-
-        obj = new PhotosBean();
-        obj.title = "Automn Season";
-        obj.photoName = "Automn Season View";
-        obj.availableCount = 1;
-        obj.photoUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
-        obj.price = "Rs 325";
-
-        list.add(obj);
-
-        obj = new PhotosBean();
-        obj.title = "Little Strom coming";
-        obj.photoName = "Strom coming";
-        obj.availableCount = 2;
-        obj.photoUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
-        obj.price = "Rs 525";
-
-        list.add(obj);
-
-        obj = new PhotosBean();
-        obj.title = "Evening View";
-        obj.photoName = "Evening View";
-        obj.availableCount = 2;
-        obj.photoUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
-        obj.price = "Rs 1425";
-
-        list.add(obj);
     }
 
     @Override
@@ -156,10 +114,10 @@ public class HomeFragment extends Fragment implements MediaListInterface {
     }
 
     @Override
-    public void onItemClick(PhotosBean obj, ImageView imageView) {
+    public void onItemClick(MediaItem obj, ImageView imageView) {
         PostDetailBean detailBean = new PostDetailBean();
-        detailBean.photoName = obj.photoName;
-        detailBean.photoUrl = obj.photoUrl;
+        detailBean.photoName = obj.getTitle();
+        detailBean.photoUrl = obj.getMedia();
         detailBean.likeCount = 514;
         detailBean.commentCount = 356;
         detailBean.isLiked = true;
@@ -167,30 +125,26 @@ public class HomeFragment extends Fragment implements MediaListInterface {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.OBJ_DETAIL, detailBean);
 
-//        if(mFragment.getActivity() instanceof DashBoardActivity){
-//            ((DashBoardActivity)mFragment.getActivity()).performTransition(R.id.dashboard_container,new DetailFragment(),(ImageView)view,bundle);
-//        }
-
         //Move to Detail Activity
         Intent intent = new Intent(getActivity(), DetailActivityV2.class);
         intent.putExtra(Constants.DESTINATION, Constants.DETAIL_SCREEN);
         intent.putExtra(Constants.OBJ_DETAIL, detailBean);
+        if (imageView != null && imageView.getDrawable() != null) {
+            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            if (bitmap != null && !bitmap.isRecycled()) {
+                photoCache.put(0, bitmap);
+            }
+
+//            if (bitmap != null)
+//                intent.putExtra(Constants.OBJ_BITMAP, byteArray);
+        }
         if (Utils.getInstance().isEqualLollipop()) {
-            Pair<View, String> p1 = Pair.create(imageView, imageView.getTransitionName());
-//            Pair<View, String> p2 = Pair.create((View)priceView, "price");
-//            Pair<View, String> p3 = Pair.create(null, "content");
-            ActivityOptions options =
-                    ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
-            getActivity().startActivity(intent, options.toBundle());
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(getActivity(), imageView, imageView.getTransitionName());
+            startActivity(intent, options.toBundle());
         } else {
             getActivity().startActivity(intent);
         }
     }
-
-
-//    @Override
-//    public ImageView getListTypeBtn() {
-//        return btnListType;
-//    }
 
 }

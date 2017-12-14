@@ -46,26 +46,31 @@ public class LikedFragment extends BaseFragment {
         likeList = new ArrayList<>();
 
         LikedBean obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
 
         likeList.add(obj);

@@ -27,6 +27,7 @@ public abstract class CustomAnimationDrawableNew extends AnimationDrawable {
          * duration for the animation has passed
          */
         mAnimationHandler = new Handler();
+        onAnimtionStart();
         mAnimationHandler.postDelayed(new Runnable() {
 
             public void run() {
@@ -56,4 +57,6 @@ public abstract class CustomAnimationDrawableNew extends AnimationDrawable {
      * Called when the animation finishes.
      */
     public abstract void onAnimationFinish();
+
+    public abstract void onAnimtionStart();
 }

@@ -28,6 +28,7 @@ public class DetailActivityV2 extends BaseActivity {
                 // Move to Post Detail screen
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Constants.OBJ_DETAIL, getIntent().getParcelableExtra(Constants.OBJ_DETAIL));
+//                bundle.putByteArray(Constants.OBJ_BITMAP, getIntent().getByteArrayExtra(Constants.OBJ_BITMAP));
                 changeScreen(R.id.container_detail, CurrentScreen.POST_DETAIL_SCREEN, false, false, bundle);
             }
         }

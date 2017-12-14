@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -37,8 +41,8 @@ import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DetailActivityV2;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -118,6 +122,15 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         mAdapter = new LikedAdapter(getActivity(), null, DetailFragment.this);
         relatedRecycler.setAdapter(mAdapter);
 
+        /*try {
+            Gson gson = new Gson();
+            MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
+
+            mAdapter.updateList(mediaModel.getData());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
         loadDummyRelatedData();
 
         //set click listeners
@@ -137,21 +150,19 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
-        obj.imageUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
-
-        likeList.add(obj);
-
-        obj = new LikedBean();
+        obj.imageName = "Testing image";
         obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
 
         likeList.add(obj);
@@ -161,9 +172,17 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
     private void loadIntiialData() {
         if (getArguments() != null && getArguments().getParcelable(Constants.OBJ_DETAIL) != null) {
             bean = getArguments().getParcelable(Constants.OBJ_DETAIL);
+//            byte[] byteArray = getArguments().getByteArray(Constants.OBJ_BITMAP);
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//            if (bitmap != null) {
+//                mDetailImage.setImageBitmap(bitmap);
+//                bitmap.recycle();
+//            }
             assert bean != null;
-            if (bean.photoUrl.contains("http:") || bean.photoUrl.startsWith("http")) {
-                Picasso.with(getActivity()).load(bean.photoUrl).resize(600, 600).centerCrop().into(mDetailImage, new Callback() {
+            String imageUrl = "";
+            if (bean.photoUrl.startsWith("http")) {
+                imageUrl = bean.photoUrl;
+                /*Picasso.with(getActivity()).load(bean.photoUrl).resize(600, 600).centerCrop().into(mDetailImage, new Callback() {
                     @Override
                     public void onSuccess() {
                         mProgresbar.setVisibility(View.GONE);
@@ -173,9 +192,12 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                     public void onError() {
                         mProgresbar.setVisibility(View.GONE);
                     }
-                });
+                });*/
+
+
             } else {
-                Picasso.with(getActivity()).load("file://" + bean.photoUrl).resize(600, 600).centerCrop().into(mDetailImage, new Callback() {
+                imageUrl = "file://" + bean.photoUrl;
+               /* Picasso.with(getActivity()).load("file://" + bean.photoUrl).resize(600, 600).centerCrop().into(mDetailImage, new Callback() {
                     @Override
                     public void onSuccess() {
                         mProgresbar.setVisibility(View.GONE);
@@ -185,8 +207,49 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                     public void onError() {
                         mProgresbar.setVisibility(View.GONE);
                     }
-                });
+                });*/
             }
+
+            Picasso.with(getActivity())
+                    .load(imageUrl)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mProgresbar.setVisibility(View.GONE);
+                            assert mDetailImage != null;
+
+                            /* Save the bitmap or do something with it here */
+                            //Set it in the ImageView
+                            if (bitmap != null)
+                                mDetailImage.setImageBitmap(bitmap);
+
+                            Palette.from(bitmap)
+                                    .generate(new Palette.PaletteAsyncListener() {
+                                        @Override
+                                        public void onGenerated(Palette palette) {
+                                            Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                            if (textSwatch == null) {
+                                                return;
+                                            }
+                                            int mDefaultBackgroundColor = 0;
+                                            rootVIew.findViewById(R.id.frame_detail_image).setBackgroundColor(textSwatch.getRgb());
+                                            Utils.animateViewColor(rootVIew.findViewById(R.id.frame_detail_image),
+                                                    mDefaultBackgroundColor, textSwatch.getRgb());
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            mProgresbar.setVisibility(View.GONE);
+                            mDetailImage.setImageDrawable(ContextCompat.getDrawable(getActivity(),
+                                    R.drawable.ic_default_image));
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
 
 
             //set owner info
@@ -233,6 +296,11 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                         mLikeImgFinal.setClickable(true);
 //                            updateLikesCounter(1,true);
                     }
+
+                    @Override
+                    public void onAnimtionStart() {
+                        mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                    }
                 };
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     mLikeImgInitial.setBackground(cad);
@@ -245,6 +313,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 mLikeImgInitial.setVisibility(View.VISIBLE);
                 mLikeImgInitial.setClickable(true);
                 mLikeImgFinal.setVisibility(View.GONE);
+                mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
                 mLikeImgFinal.setClickable(false);
                 mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
                 break;
@@ -288,9 +357,6 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             PermissionsAndroid.getInstance().requestForWriteExternalStoragePermission(this);
             return;
         }
-        //download music functionality here
-//        songsProgressMap.put(musicBean.getUrl(),progressBar);
-//        progressBar.setVisibility(View.VISIBLE);
 
         dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(
@@ -326,6 +392,8 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
     BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (!isVisible()) return;
+
             String action = intent.getAction();
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
@@ -333,17 +401,15 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                         DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(enqueue);
+                if (dm == null) return;
+
                 Cursor c = dm.query(query);
                 if (c.moveToFirst()) {
                     int columnIndex = c
                             .getColumnIndex(DownloadManager.COLUMN_STATUS);
                     if (DownloadManager.STATUS_SUCCESSFUL == c
                             .getInt(columnIndex)) {
-//                        if(songsProgressMap!=null && songsProgressMap.size()>0){
-//                            ProgressBar progress = songsProgressMap.get(intent.getStringExtra("song_url"));
-//                            if(progress!=null)progress.setVisibility(View.GONE);
-//                        }
-                        Utils.getInstance().showToast("Download complete");
+                        Utils.getInstance().showToast(getString(R.string.message_download_complete));
                     }
                 }
             }

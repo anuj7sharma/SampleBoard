@@ -1,0 +1,188 @@
+{
+  "status": 200,
+  "message": "Successful",
+  "data": {
+    "media_list": [
+      {
+        "mediaId": 1,
+        "type": "image",
+        "title": "Natuaral view on railway track",
+        "desc": "Natuaral view on railway track",
+        "media": "https://static.pexels.com/photos/34950/pexels-photo.jpg",
+        "media_fullsize": "https://static.pexels.com/photos/34950/pexels-photo.jpg",
+        "thumbnail": "",
+        "isLiked": true,
+        "isShared": true,
+        "like_count":123
+      },
+      {
+        "mediaId": 2,
+        "type": "image",
+        "title": "Walking Pug",
+        "desc": "101",
+        "media": "http://cdn2-www.dogtime.com/assets/uploads/gallery/pug-dog-breed-pictures/7-running.jpg",
+        "media_fullsize": "http://cdn2-www.dogtime.com/assets/uploads/gallery/pug-dog-breed-pictures/7-running.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":123
+      },
+      {
+        "mediaId": 3,
+        "type": "image",
+        "title": "Marvelous White tiger",
+        "desc": "Marvelous White tiger",
+        "media": "https://c1.staticflickr.com/8/7573/27561606350_c3571d97d7_b.jpg",
+        "media_fullsize": "https://c1.staticflickr.com/8/7573/27561606350_c3571d97d7_b.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":1
+      },
+      {
+        "mediaId": 4,
+        "type": "image",
+        "title": "John Snow",
+        "desc": "101",
+        "media": "https://www.thesun.co.uk/wp-content/uploads/2017/08/nintchdbpict0003465565164.jpg",
+        "media_fullsize": "https://www.thesun.co.uk/wp-content/uploads/2017/08/nintchdbpict0003465565164.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":12
+      },
+      {
+        "mediaId": 5,
+        "type": "image",
+        "title": "Cute baby",
+        "desc": "101",
+        "media": "https://i.ytimg.com/vi/DSnbZUjIyAc/maxresdefault.jpg",
+        "media_fullsize": "https://i.ytimg.com/vi/DSnbZUjIyAc/maxresdefault.jpg",
+        "thumbnail": "",
+        "isLiked": true,
+        "isShared": false,
+        "like_count":256485
+      },
+      {
+        "mediaId": 6,
+        "type": "image",
+        "title": "Mother's love",
+        "desc": "101",
+        "media": "https://www.babycenter.com/ims/2016/09/iStock_83513033_4x3.jpg",
+        "media_fullsize": "https://www.babycenter.com/ims/2016/09/iStock_83513033_4x3.jpg",
+        "thumbnail": "",
+        "isLiked": true,
+        "isShared": false,
+        "like_count":568
+      },
+      {
+        "mediaId": 7,
+        "type": "Amazing waterfall",
+        "title": "",
+        "desc": "101",
+        "media": "http://ichef.bbci.co.uk/wwfeatures/wm/live/1280_640/images/live/p0/54/n6/p054n6rx.jpg",
+        "media_fullsize": "http://ichef.bbci.co.uk/wwfeatures/wm/live/1280_640/images/live/p0/54/n6/p054n6rx.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":89
+      },
+      {
+        "mediaId": 8,
+        "type": "image",
+        "title": "Dolphin",
+        "desc": "101",
+        "media": "https://d3jkudlc7u70kh.cloudfront.net/dolphin-fact.jpg",
+        "media_fullsize": "https://d3jkudlc7u70kh.cloudfront.net/dolphin-fact.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":0
+      },
+      {
+        "mediaId": 9,
+        "type": "image",
+        "title": "Birds",
+        "desc": "101",
+        "media": "http://howtodoright.com/wp-content/uploads/2017/05/blue-birds.jpg.824x0_q71.jpg",
+        "media_fullsize": "http://howtodoright.com/wp-content/uploads/2017/05/blue-birds.jpg.824x0_q71.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":1
+      },
+      {
+        "mediaId": 10,
+        "type": "image",
+        "title": "Apache Helicopter",
+        "desc": "101",
+        "media": "https://i.ytimg.com/vi/bGrNkl8HzPw/maxresdefault.jpg",
+        "media_fullsize": "https://i.ytimg.com/vi/bGrNkl8HzPw/maxresdefault.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":15
+      },
+      {
+        "mediaId": 11,
+        "type": "image",
+        "title": "Cute puppy",
+        "desc": "101",
+        "media": "http://frescolib.org/static/sample-images/animal_c_l.jpg",
+        "media_fullsize": "http://frescolib.org/static/sample-images/animal_c_l.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":12
+      },
+      {
+        "mediaId": 12,
+        "type": "image",
+        "title": "Creature",
+        "desc": "101",
+        "media": "http://pooyak.com/p/progjpeg/jpegload.cgi?o=1",
+        "media_fullsize": "http://pooyak.com/p/progjpeg/jpegload.cgi?o=1",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":189
+      },
+      {
+        "mediaId": 13,
+        "type": "image",
+        "title": "Beautiful Nature view",
+        "desc": "Beautiful Nature view",
+        "media": "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg",
+        "media_fullsize": "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":198
+      },
+      {
+        "mediaId": 14,
+        "type": "image",
+        "title": "Automn Season",
+        "desc": "Automn Season",
+        "media": "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg",
+        "media_fullsize": "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":265
+      },
+      {
+        "mediaId": 15,
+        "type": "image",
+        "title": "Evening View",
+        "desc": "Evening View",
+        "media": "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg",
+        "media_fullsize": "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg",
+        "thumbnail": "",
+        "isLiked": false,
+        "isShared": false,
+        "like_count":987
+      }
+    ]
+  }
+}

@@ -2,6 +2,7 @@ package com.sampleboard.interfaces;
 
 import android.widget.ImageView;
 
+import com.sampleboard.bean.MediaItem;
 import com.sampleboard.bean.PhotosBean;
 
 /**
@@ -9,5 +10,5 @@ import com.sampleboard.bean.PhotosBean;
  */
 
 public interface MediaListInterface {
-    void onItemClick(PhotosBean obj, ImageView imageView);
+    void onItemClick(MediaItem obj, ImageView imageView);
 }

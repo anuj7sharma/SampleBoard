@@ -4,34 +4,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.view.HapticFeedbackConstants;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.peekandpop.shalskar.peekandpop.PeekAndPop;
 import com.sampleboard.R;
-import com.sampleboard.bean.PhotosBean;
+import com.sampleboard.bean.MediaItem;
+import com.sampleboard.bean.MediaModel;
 import com.sampleboard.interfaces.MediaListInterface;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
-import com.sampleboard.view.fragment.dashboard.HomeFragment;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import java.util.List;
 
 /**
  * Created by Mobilyte India Pvt Ltd on 3/1/2017.
@@ -39,20 +35,20 @@ import java.util.List;
 
 public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
-    private List<PhotosBean> mResponse;
+    private MediaModel.DataBean mResponse;
     private AnimationDrawable frameAnimation;
     private int lastPosition = -1;
     public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
     private MediaListInterface listener;
 
-    public HomeListAdapter(Context ctx, List<PhotosBean> response, MediaListInterface listener) {
+    public HomeListAdapter(Context ctx, MediaModel.DataBean response, MediaListInterface listener) {
         this.mContext = ctx;
         this.mResponse = response;
         this.listener = listener;
     }
 
-    public void updateList(List<PhotosBean> response) {
+    public void updateList(MediaModel.DataBean response) {
         this.mResponse = response;
         notifyDataSetChanged();
     }
@@ -71,63 +67,75 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final LoadMoreViewHolder vh = (LoadMoreViewHolder) holder;
         try {
-            vh.mTitle.setText(mResponse.get(position).title);
-            vh.mPrice.setText(mResponse.get(position).price);
+            MediaItem obj = mResponse.getMediaList().get(position);
+            vh.mTitle.setText(obj.getTitle());
+            vh.mLikesCount.setText(obj.getLike_count());
+            if (obj.isLiked()) {
+                vh.mLikeImgInitial.setVisibility(View.GONE);
+                vh.mLikeImgFinal.setVisibility(View.VISIBLE);
+                vh.mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+                vh.mLikeImgFinal.setClickable(true);
+            } else {
+                vh.mLikeImgInitial.setVisibility(View.VISIBLE);
+                vh.mLikeImgInitial.setClickable(true);
+                vh.mLikeImgFinal.setVisibility(View.GONE);
+                vh.mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.app_textcolor_heading));
+                vh.mLikeImgFinal.setClickable(false);
+                vh.mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
+            }
+            if (obj.isShared()) {
+                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.green));
+            } else {
+                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.app_textcolor_heading));
+            }
+            vh.mImage.setImageBitmap(null);
 
-            Picasso.with(mContext).load(mResponse.get(position).photoUrl).resize(500, 500).centerCrop().into(vh.mImage);
+            //cancel any loading images on this view
+            Picasso.with(mContext).cancelRequest(vh.mImage);
 
             Picasso.with(mContext)
-                    .load(mResponse.get(position).photoUrl)
+                    .load(obj.getMedia())
                     .resize(500, 500).centerCrop()
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                            assert vh.mImage != null;
                             /* Save the bitmap or do something with it here */
                             //Set it in the ImageView
-                            vh.mImage.setImageBitmap(bitmap);
-                            /*
-                            Use Pallet For Getting Color
-                             */
-                            Palette palette = Palette.from(bitmap).generate();
-                            if (palette != null) {
-                                Palette.Swatch s = palette.getVibrantSwatch();
-                                if (s == null) {
-                                    s = palette.getDarkVibrantSwatch();
-                                }
-                                if (s == null) {
-                                    s = palette.getLightVibrantSwatch();
-                                }
-                                if (s == null) {
-                                    s = palette.getMutedSwatch();
-                                }
+                            if (bitmap != null)
+                                vh.mImage.setImageBitmap(bitmap);
 
-                                if (s != null) {
-                                    vh.mParentLayout.setBackgroundColor(s.getTitleTextColor());
-                                    vh.mInfoContainer.setBackgroundColor(s.getTitleTextColor());
-                                    vh.mTitle.setTextColor(s.getTitleTextColor());
-                                    vh.mPrice.setTextColor(s.getTitleTextColor());
-                                }
-                                Utils.getInstance().animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, s.getRgb());
-                            }
+                            Palette.from(bitmap)
+                                    .generate(new Palette.PaletteAsyncListener() {
+                                        @Override
+                                        public void onGenerated(Palette palette) {
+                                            Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                            if (textSwatch == null) {
+                                                return;
+                                            }
+                                            vh.mParentLayout.setBackgroundColor(textSwatch.getRgb());
+//                                            vh.mInfoContainer.setBackgroundColor(textSwatch.getRgb());
+                                            vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
+                                            Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
+                                        }
+                                    });
                         }
 
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
-
+                            vh.mImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_default_image));
                         }
 
                         @Override
                         public void onPrepareLoad(Drawable placeHolderDrawable) {
-
                         }
                     });
-
-//            frameAnimation = (AnimationDrawable) vh.mLikeImgInitial .getBackground();
-            //set true if you want to animate only once
-//            frameAnimation.setOneShot(true);
-
-            // Here you apply the animation when the view is bound
-//            setAnimation(holder.itemView, position);
+            //calculate height of the list-item so we don't have jumps in the view
+            /*DisplayMetrics displaymetrics = mContext.getResources().getDisplayMetrics();
+            //image.width .... image.height
+            //device.width ... device
+            int finalHeight = (int) (displaymetrics.widthPixels / vh.mImage.getRatio());
+            vh.mImage.setMinimumHeight(finalHeight);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,7 +155,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return mResponse.size();
+        return (mResponse == null) ? 0 : mResponse.getMediaList().size();
     }
 
     /*
@@ -157,32 +165,27 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         //        CardView mCardView;
         private LinearLayout mParentLayout;
         private RelativeLayout mInfoContainer;
-        private ImageView mImage, mLikeImgInitial, mLikeImgFinal;
-        ;
-        private TextView mTitle, mPrice, mLikesCount;
+        private ImageView reshareImg, mImage, mLikeImgInitial, mLikeImgFinal;
+        private TextView mTitle, mLikesCount;
 
         private LoadMoreViewHolder(View itemView) {
             super(itemView);
             mParentLayout = itemView.findViewById(R.id.parent);
             mInfoContainer = itemView.findViewById(R.id.info_container);
+            reshareImg = itemView.findViewById(R.id.img_re_share);
             mImage = itemView.findViewById(R.id.image);
             mTitle = itemView.findViewById(R.id.title);
-            mPrice = itemView.findViewById(R.id.price);
             mLikeImgInitial = itemView.findViewById(R.id.ic_heart_initial);
             mLikeImgFinal = itemView.findViewById(R.id.ic_heart_final);
             mLikesCount = itemView.findViewById(R.id.likes_count);
 
-//            mParentLayout.setOnLongClickListener(v -> {
-////                manageShortView(v, mResponse.get(getAdapterPosition()));
-//                return false;
-//            });
-            mParentLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null)
-                        listener.onItemClick(mResponse.get(getAdapterPosition()), mImage);
+            mParentLayout.setOnClickListener(v -> {
+                if (listener != null)
+                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), mImage);
 
-                }
+            });
+            reshareImg.setOnClickListener(view -> {
+
             });
 
             mLikeImgInitial.setOnClickListener(v -> {
@@ -194,8 +197,32 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         mLikeImgInitial.setVisibility(View.GONE);
                         mLikeImgFinal.setVisibility(View.VISIBLE);
                         mLikeImgFinal.setClickable(true);
-//                            updateLikesCounter(1,true);
                     }
+
+                    @Override
+                    public void onAnimtionStart() {
+                        final LinearInterpolator interpolator = new LinearInterpolator();
+                        int updatedCount = updateLikesCounter(Integer.parseInt(mResponse.getMediaList().get(getAdapterPosition()).getLike_count()),
+                                true);
+                        mResponse.getMediaList().get(getAdapterPosition()).setLike_count(String.valueOf(updatedCount));
+                        mLikesCount.animate()
+                                .alpha(0)
+                                .setDuration(100)
+                                .setStartDelay(200)
+                                .setInterpolator(interpolator)
+                                .withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mLikesCount.animate()
+                                                .alpha(1)
+                                                .setDuration(100)
+                                                .setInterpolator(interpolator);
+                                        mLikesCount.setText(String.valueOf(updatedCount));
+                                        mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+                                    }
+                                });
+                    }
+
                 };
                 mLikeImgInitial.setBackgroundDrawable(cad);
                 cad.start();
@@ -205,11 +232,22 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mLikeImgInitial.setVisibility(View.VISIBLE);
                 mLikeImgInitial.setClickable(true);
                 mLikeImgFinal.setVisibility(View.GONE);
+                mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.app_textcolor));
                 mLikeImgFinal.setClickable(false);
                 mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
-//                    updateLikesCounter(1,false);
+                int updatedCount = updateLikesCounter(Integer.parseInt(mResponse.getMediaList().get(getAdapterPosition()).getLike_count()),
+                        false);
+                mResponse.getMediaList().get(getAdapterPosition()).setLike_count(String.valueOf(updatedCount));
+                mLikesCount.setText(String.valueOf(updatedCount));
             });
         }
+    }
+
+    private int updateLikesCounter(int count, boolean isIncreased) {
+        if (isIncreased)
+            return count + 1;
+        else
+            return count - 1;
     }
 
     /*private void manageShortView(View v, PhotosBean bean) {

@@ -20,8 +20,8 @@
     <color name="black">#000000</color>
     <color name="light_gray">#a7aca0</color>
     <color name="dark_gray">#a1a8a0</color>
-    <color name="red">#d73f3f</color>
-    <color name="green">#94d60a</color>
+    <color name="red">#e2264d</color>
+    <color name="green">#64dd17</color>
     <color name="transparent">#00fafafa</color>
 
     <!-- Search Module -->

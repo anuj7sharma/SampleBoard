@@ -82,4 +82,8 @@
     <string name="groups">Groups</string>
     <string name="forking">Forking</string>
     <string name="forked_by">Forked By</string>
+    <string name="no_items_yet">No Items yet :(</string>
+    <string name="message_download_complete">Download complete</string>
+    <string name="related_posts">Related Posts</string>
+    <string name="transition_image">detail_image</string>
 </resources>

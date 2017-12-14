@@ -49,5 +49,6 @@ public interface Constants {
     String DETAIL_SCREEN = "DETAIL_SCREEN";
 
     String OBJ_DETAIL = "obj_detail";
+    String OBJ_BITMAP = "obj_bitmap";
 
 }

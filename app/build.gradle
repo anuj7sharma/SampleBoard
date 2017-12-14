@@ -93,5 +93,4 @@ dependencies {
     compile 'com.facebook.android:account-kit-sdk:4.+'
     compile 'com.facebook.rebound:rebound:0.3.8'
 
-    compile project(':peeknpop')
 }
