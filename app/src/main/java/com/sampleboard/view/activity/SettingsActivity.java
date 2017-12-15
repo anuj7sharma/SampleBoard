@@ -14,23 +14,24 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.facebook.accountkit.AccountKit;
-import com.sampleboard.view.BaseActivity;
 import com.sampleboard.R;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
+import com.sampleboard.view.BaseActivity;
+import com.sampleboard.view.musicModule.MusicPlayerActivity;
 import com.sampleboard.view.otpLogin.LoginActivity;
 
 
 public class SettingsActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar mToolbar;
-    private RelativeLayout btnEditProfile,containerFingerPrint, btnTerms, btnLogout;
+    private RelativeLayout btnEditProfile, containerFingerPrint, btnTerms, btnLogout;
     private Switch mTouchSwitch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
         mToolbar.setTitle("Settings");
@@ -42,20 +43,21 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
-        btnEditProfile = (RelativeLayout)findViewById(R.id.btn_editProfile);
-        containerFingerPrint = (RelativeLayout)findViewById(R.id.finger_print_container);
+        btnEditProfile = (RelativeLayout) findViewById(R.id.btn_editProfile);
+        containerFingerPrint = (RelativeLayout) findViewById(R.id.finger_print_container);
         mTouchSwitch = (Switch) findViewById(R.id.btn_switch);
-        btnTerms = (RelativeLayout)findViewById(R.id.btn_terms);
-        btnLogout = (RelativeLayout)findViewById(R.id.btn_logout);
+        btnTerms = (RelativeLayout) findViewById(R.id.btn_terms);
+        btnLogout = (RelativeLayout) findViewById(R.id.btn_logout);
 
         btnEditProfile.setOnClickListener(this);
+        findViewById(R.id.btn_music).setOnClickListener(this);
         btnTerms.setOnClickListener(this);
         btnLogout.setOnClickListener(this);
 
         //First check FInger touch hardware is present or not
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean isFingerPrintAvailable = false;
-            FingerprintManager fingerprintManager = (FingerprintManager)getSystemService(Context.FINGERPRINT_SERVICE);
+            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
             if (!fingerprintManager.isHardwareDetected()) {
                 // Device doesn't support fingerprint authentication
             } else if (!fingerprintManager.hasEnrolledFingerprints()) {
@@ -64,20 +66,20 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                 // Everything is ready for fingerprint authentication
                 isFingerPrintAvailable = true;
             }
-            if(isFingerPrintAvailable){
+            if (isFingerPrintAvailable) {
                 containerFingerPrint.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 containerFingerPrint.setVisibility(View.GONE);
             }
-        }else{
+        } else {
             containerFingerPrint.setVisibility(View.GONE);
         }
 
         boolean isFingerTouchEnable = SharedPreferencesHandler.getBooleanValues(SettingsActivity.this, getString(R.string.pref_isFingertouchEnable));
-        if(isFingerTouchEnable){
+        if (isFingerTouchEnable) {
             // Enable Touch Switch
             mTouchSwitch.setChecked(true);
-        }else{
+        } else {
             //Disable Touch Switch
             mTouchSwitch.setChecked(false);
         }
@@ -85,10 +87,10 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         mTouchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this,getString(R.string.pref_isFingertouchEnable),true);
-                }else{
-                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this,getString(R.string.pref_isFingertouchEnable),false);
+                if (isChecked) {
+                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this, getString(R.string.pref_isFingertouchEnable), true);
+                } else {
+                    SharedPreferencesHandler.setBooleanValues(SettingsActivity.this, getString(R.string.pref_isFingertouchEnable), false);
                 }
             }
         });
@@ -96,11 +98,15 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_editProfile:
                 Intent intent = new Intent(this, ProfileActivity.class);
-                intent.putExtra("destination","edit_profile");
+                intent.putExtra("destination", "edit_profile");
                 startActivity(intent);
+                break;
+            case R.id.btn_music:
+                Intent musicIntent = new Intent(this, MusicPlayerActivity.class);
+                startActivity(musicIntent);
                 break;
             case R.id.btn_terms:
                 break;
@@ -125,6 +131,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                 break;
         }
     }
+
     @Override
     public void onBackPressed() {
         oneStepBack();

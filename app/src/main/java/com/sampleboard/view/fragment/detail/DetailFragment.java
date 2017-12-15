@@ -2,6 +2,7 @@ package com.sampleboard.view.fragment.detail;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
@@ -36,25 +36,21 @@ import android.widget.TextView;
 import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 import com.sampleboard.adapter.LikedAdapter;
-import com.sampleboard.bean.LikedBean;
 import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.permission.PermissionsAndroid;
-import com.sampleboard.utils.AppBarStateChangeListener;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DetailActivityV2;
-import com.sampleboard.view.fragment.dashboard.HomeFragment;
+import com.sampleboard.viewmodel.DetailFragmentViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 /**
  * @author Anuj Sharma on 4/10/2017.
@@ -62,18 +58,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DetailFragment extends BaseFragment implements View.OnClickListener {
     private View rootVIew;
-    private Bitmap imageCoverBitmap;
+    private DetailFragmentViewModel viewModel;
     private ImageView mDetailImage, mLikeImgInitial, mLikeImgFinal;
     private FloatingActionButton fabDownload;
     private ProgressBar mProgresbar;
     private TextView mOwnerName, mLikeCount, mCommentCount, mTags, mDesc, mReadMore;
     private PostDetailBean bean;
 
-    private RecyclerView relatedRecycler;
-    private LikedAdapter mAdapter;
 
-
-    private String tagString = "#office #nature #wild #beauty";
     private String descString = "testing testing testing testing testing testing testing testing testing testing testing testing testing" +
             "testing testing testing";
 
@@ -83,6 +75,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootVIew = inflater.inflate(R.layout.fragment_post_detail, container, false);
+        viewModel = ViewModelProviders.of(this).get(DetailFragmentViewModel.class);
         subscribeDownloadReceiver();
         return rootVIew;
     }
@@ -106,14 +99,13 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             ((DetailActivityV2) getActivity()).setSupportActionBar(mToolbar);
             ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle("Detail");
             ((DetailActivityV2) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
             mToolbar.setNavigationOnClickListener(v -> ((DetailActivityV2) getActivity()).oneStepBack());
         }
 
         mDetailImage = rootVIew.findViewById(R.id.post_detail_img);
         fabDownload = rootVIew.findViewById(R.id.fab_download);
         mProgresbar = rootVIew.findViewById(R.id.progress_bar);
-        CircleImageView mOwnerImg = rootVIew.findViewById(R.id.owner_img);
+//        CircleImageView mOwnerImg = rootVIew.findViewById(R.id.owner_img);
         mOwnerName = rootVIew.findViewById(R.id.owner_name);
         mLikeImgInitial = rootVIew.findViewById(R.id.ic_heart_initial);
         mLikeImgFinal = rootVIew.findViewById(R.id.ic_heart_final);
@@ -124,11 +116,11 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         mReadMore = rootVIew.findViewById(R.id.readmore);
         LinearLayout ownerProfileView = rootVIew.findViewById(R.id.view_owner_info);
 
-        relatedRecycler = rootVIew.findViewById(R.id.related_recycler);
+        RecyclerView relatedRecycler = rootVIew.findViewById(R.id.related_recycler);
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         relatedRecycler.setLayoutManager(sm);
 
-        mAdapter = new LikedAdapter(getActivity(), null, DetailFragment.this);
+        LikedAdapter mAdapter = new LikedAdapter(getActivity(), null, DetailFragment.this);
         relatedRecycler.setAdapter(mAdapter);
 
         /*try {
@@ -140,7 +132,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             e.printStackTrace();
         }*/
 
-        loadDummyRelatedData();
+        mAdapter.updateData(viewModel.loadDummyRelatedData());
 
         //set click listeners
         mLikeImgInitial.setOnClickListener(this);
@@ -151,39 +143,12 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
 
     }
 
-    private void loadDummyRelatedData() {
-        List<LikedBean> likeList = new ArrayList<>();
-        LikedBean obj = new LikedBean();
-        obj.imageUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
-
-        likeList.add(obj);
-
-        obj = new LikedBean();
-        obj.imageName = "Testing image";
-        obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
-
-        likeList.add(obj);
-
-        obj = new LikedBean();
-        obj.imageName = "Testing image";
-        obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
-
-        likeList.add(obj);
-
-        obj = new LikedBean();
-        obj.imageName = "Testing image";
-        obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
-
-        likeList.add(obj);
-
-        mAdapter.updateData(likeList);
-    }
 
     private void loadIntiialData() {
         if (getArguments() != null && getArguments().getParcelable(Constants.OBJ_DETAIL) != null) {
             bean = getArguments().getParcelable(Constants.OBJ_DETAIL);
             final int position = getArguments().getInt(Constants.POSITION);
-            imageCoverBitmap = GlobalActivity.photoCache.get(position);
+            Bitmap imageCoverBitmap = GlobalActivity.photoCache.get(position);
             //safety check to prevent nullPointer in the palette if the detailActivity was in the background for too long
             /*if (imageCoverBitmap == null || imageCoverBitmap.isRecycled()) {
                 getActivity().finish();
@@ -195,7 +160,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 generatePallet(imageCoverBitmap);
             } else {
                 assert bean != null;
-                String imageUrl = "";
+                String imageUrl;
                 if (bean.photoUrl.startsWith("http")) {
                     imageUrl = bean.photoUrl;
                 } else {
@@ -250,6 +215,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             }
 
             //set tags
+            String tagString = "#office #nature #wild #beauty";
             mTags.setText(tagString);
 
             //set descString
@@ -268,21 +234,18 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
     private void generatePallet(Bitmap bitmap) {
         if (bitmap != null) {
             Palette.from(bitmap)
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            Palette.Swatch textSwatch = palette.getVibrantSwatch();
-                            if (textSwatch == null) {
-                                return;
-                            }
-                            int mDefaultBackgroundColor = 0;
-                            Utils.animateViewColor(rootVIew.findViewById(R.id.appBar),
-                                    mDefaultBackgroundColor, textSwatch.getRgb());
-                            Utils.animateViewColor(rootVIew.findViewById(R.id.toolbar),
-                                    mDefaultBackgroundColor, textSwatch.getRgb());
-                            Utils.animateBackgroundTintColor(fabDownload,
-                                    mDefaultBackgroundColor, textSwatch.getRgb());
+                    .generate(palette -> {
+                        Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                        if (textSwatch == null) {
+                            return;
                         }
+                        int mDefaultBackgroundColor = 0;
+                        Utils.animateViewColor(rootVIew.findViewById(R.id.appBar),
+                                mDefaultBackgroundColor, textSwatch.getRgb());
+                        Utils.animateViewColor(rootVIew.findViewById(R.id.toolbar),
+                                mDefaultBackgroundColor, textSwatch.getRgb());
+                        Utils.animateBackgroundTintColor(fabDownload,
+                                mDefaultBackgroundColor, textSwatch.getRgb());
                     });
         }
     }
@@ -330,24 +293,21 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onAnimtionStart() {
                 final LinearInterpolator interpolator = new LinearInterpolator();
-                int updatedCount = updateLikesCounter(bean.likeCount,
+                int updatedCount = viewModel.updateLikesCounter(bean.likeCount,
                         true);
-                bean.commentCount = updatedCount;
+                bean.likeCount = updatedCount;
                 mLikeCount.animate()
                         .alpha(0)
                         .setDuration(100)
                         .setStartDelay(200)
                         .setInterpolator(interpolator)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                mLikeCount.animate()
-                                        .alpha(1)
-                                        .setDuration(100)
-                                        .setInterpolator(interpolator);
-                                mLikeCount.setText(String.valueOf(updatedCount));
-                                mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
-                            }
+                        .withEndAction(() -> {
+                            mLikeCount.animate()
+                                    .alpha(1)
+                                    .setDuration(100)
+                                    .setInterpolator(interpolator);
+                            mLikeCount.setText(String.valueOf(updatedCount));
+                            mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
                         });
             }
         };
@@ -368,19 +328,13 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         mLikeImgFinal.setVisibility(View.GONE);
         mLikeImgFinal.setClickable(false);
         mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
-        int updatedCount = updateLikesCounter(bean.likeCount,
+        int updatedCount = viewModel.updateLikesCounter(bean.likeCount,
                 false);
-        bean.commentCount = updatedCount;
+        bean.likeCount = updatedCount;
         mLikeCount.setText(String.valueOf(updatedCount));
         mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
     }
 
-    private int updateLikesCounter(int count, boolean isIncreased) {
-        if (isIncreased)
-            return count + 1;
-        else
-            return count - 1;
-    }
 
     private void showMoreDescription() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -394,7 +348,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 mDesc.setText(descString.substring(0, 100));
                 mReadMore.setText(getString(R.string.show_more));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -411,7 +365,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             return;
         }
 
-        dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
+        dm = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(
                 Uri.parse(url));
         request.setTitle(photoName);
@@ -437,7 +391,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             if (downloadCompleteReceiver != null)
                 getActivity().unregisterReceiver(downloadCompleteReceiver);
         } catch (IllegalStateException illegal) {
-
+            illegal.printStackTrace();
         }
 
     }
@@ -450,8 +404,8 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             String action = intent.getAction();
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                long downloadId = intent.getLongExtra(
-                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+//                long downloadId = intent.getLongExtra(
+//                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(enqueue);
                 if (dm == null) return;

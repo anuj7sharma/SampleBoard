@@ -13,10 +13,13 @@ import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
 import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sampleboard.R;
 import com.sampleboard.adapter.MusicListAdapter;
 import com.sampleboard.api.APIHandler;
 import com.sampleboard.api.APIResponseInterface;
+import com.sampleboard.bean.MediaModel;
 import com.sampleboard.bean.MusicBean;
 import com.sampleboard.databinding.FragmentMusicListBinding;
 import com.sampleboard.enums.ApiName;
@@ -24,7 +27,11 @@ import com.sampleboard.utils.Utils;
 import com.sampleboard.view.musicModule.MusicPlayerActivity;
 import com.sampleboard.view.musicModule.MusicListFragment;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,14 +78,53 @@ public class MusicListPresenter implements APIResponseInterface{
         binder.musicListRecycler.setAdapter(mAdapter);
 
         //fetch Songs list from API
-        if(Utils.isNetworkAvailable(fragment.getActivity())){
+        /*if(Utils.isNetworkAvailable(fragment.getActivity())){
             MusicPlayerActivity.getInstance().getDashboardPresenter().showProgress(true);
             fetchMusicList();
         }else{
             Utils.getInstance().showToast(fragment.getString(R.string.error_internet));
-        }
-    }
+        }*/
 
+        //Static Data coming from Json stored in assets folder
+        try {
+            if(musicList==null)musicList = new ArrayList<>();
+            Gson gson = new Gson();
+            Type type=new TypeToken<MusicBean>(){}.getType();
+            MusicBean musicObj = gson.fromJson(getStringFromLocalJson("music_list.json", fragment.getActivity()),type);
+            MusicPlayerActivity.getInstance().getDashboardPresenter().showProgress(false);
+            if(mAdapter!=null){
+                //upadte UI
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    TransitionManager.beginDelayedTransition(binder.musicListRecycler, new ChangeBounds());
+                }
+                // fetch data and insert into list
+                mAdapter.updateAdapter(musicObj.getMusic_list());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    String getStringFromLocalJson(String assetsFileName, Context context) {
+        StringBuffer sb = new StringBuffer();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(context.getAssets().open(assetsFileName)));
+            String temp;
+            while ((temp = br.readLine()) != null)
+                sb.append(temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close(); // stop reading
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return sb.toString();
+    }
     private void fetchMusicList() {
         APIHandler.getInstance().getMusicList(this,GET_MUSIC_LIST);
     }

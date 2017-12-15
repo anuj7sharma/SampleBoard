@@ -1,5 +1,7 @@
 package com.sampleboard.bean;
 
+import java.util.List;
+
 /**
  * Created by Anuj Sharma on 3/20/2017.
  */
@@ -12,7 +14,7 @@ public class MusicBean {
      * artists : Rahat Fateh Ali Khan, Momina Mustehsan
      * cover_image : http://hck.re/kWWxUI
      */
-
+    private List<MusicBean> music_list;
     private String song;
     private String url;
     private String artists;
@@ -20,6 +22,14 @@ public class MusicBean {
 
     public String getSong() {
         return song;
+    }
+
+    public List<MusicBean> getMusic_list() {
+        return music_list;
+    }
+
+    public void setMusic_list(List<MusicBean> music_list) {
+        this.music_list = music_list;
     }
 
     public void setSong(String song) {

@@ -1,0 +1,16 @@
+{
+  "music_list": [
+    {
+      "song": "Aafreen Aafreen",
+      "url": "http://songs1.djmazadownload.com/music/Singles/Afreen%20Afreen%20-%20Rahat%20Fateh%20Ali%20Khan%20[DJMaza.Cool].mp3",
+      "artists": "Rahat Fateh ali khan",
+      "cover_image": "https://i.ytimg.com/vi/kw4tT7SCmaY/maxresdefault.jpg"
+    },
+    {
+      "song": "Testing song",
+      "url": "",
+      "artists": "Anuj",
+      "cover_image": ""
+    }
+  ]
+}
