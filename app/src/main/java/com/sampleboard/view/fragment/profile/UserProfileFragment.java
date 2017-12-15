@@ -18,6 +18,8 @@ import com.sampleboard.adapter.LikedAdapter;
 import com.sampleboard.bean.LikedBean;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
+import com.sampleboard.view.activity.DetailActivityV2;
+import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.view.activity.ProfileActivity;
 
 import java.util.ArrayList;
@@ -35,14 +37,14 @@ public class UserProfileFragment extends BaseFragment implements View.OnClickLis
     private Toolbar mToolbar;
     private RecyclerView mypostRecycler;
     private CircleImageView mProfileImg;
-    private TextView mName,mBio,mPostsCount, mGroupCount, mForkingCount, mForkedByCount;
+    private TextView mName, mBio, mPostsCount, mGroupCount, mForkingCount, mForkedByCount;
     private TextView btnFork, btnMessage;
     private ImageView btnMoreOption;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_user_profile,container,false);
+        rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
         return rootView;
     }
 
@@ -53,28 +55,44 @@ public class UserProfileFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initViews() {
-        mToolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
-        ((ProfileActivity)getActivity()).setSupportActionBar(mToolbar);
-        ((ProfileActivity)getActivity()).getSupportActionBar().setTitle("");
-        mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+        mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        if (getActivity() instanceof DetailActivityV2) {
+            ((DetailActivityV2) getActivity()).setSupportActionBar(mToolbar);
+            ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle("");
+            ((DetailActivityV2) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else if (getActivity() instanceof ProfileActivity) {
+            ((ProfileActivity) getActivity()).setSupportActionBar(mToolbar);
+            ((ProfileActivity) getActivity()).getSupportActionBar().setTitle("");
+            ((ProfileActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else if (getActivity() instanceof HolderActivity) {
+            ((HolderActivity) getActivity()).setSupportActionBar(mToolbar);
+            ((HolderActivity) getActivity()).getSupportActionBar().setTitle("");
+            ((HolderActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ProfileActivity)getActivity()).oneStepBack();
+                if (getActivity() instanceof DetailActivityV2) {
+                    ((DetailActivityV2) getActivity()).oneStepBack();
+                } else if (getActivity() instanceof ProfileActivity) {
+                    ((ProfileActivity) getActivity()).oneStepBack();
+                } else if (getActivity() instanceof HolderActivity) {
+                    ((HolderActivity) getActivity()).oneStepBack();
+                }
             }
         });
 
-        mypostRecycler = (RecyclerView)rootView.findViewById(R.id.myposts_recycler);
-        mProfileImg = (CircleImageView)rootView.findViewById(R.id.profile_image);
-        mName = (TextView)rootView.findViewById(R.id.name);
-        mBio = (TextView)rootView.findViewById(R.id.bio);
-        mPostsCount = (TextView)rootView.findViewById(R.id.count_post);
-        mGroupCount = (TextView)rootView.findViewById(R.id.count_group);
-        mForkingCount = (TextView)rootView.findViewById(R.id.count_forking);
-        mForkedByCount = (TextView)rootView.findViewById(R.id.count_forkedBy);
+        mypostRecycler = (RecyclerView) rootView.findViewById(R.id.myposts_recycler);
+        mProfileImg = (CircleImageView) rootView.findViewById(R.id.profile_image);
+        mName = (TextView) rootView.findViewById(R.id.name);
+        mBio = (TextView) rootView.findViewById(R.id.bio);
+        mPostsCount = (TextView) rootView.findViewById(R.id.count_post);
+        mGroupCount = (TextView) rootView.findViewById(R.id.count_group);
+        mForkingCount = (TextView) rootView.findViewById(R.id.count_forking);
+        mForkedByCount = (TextView) rootView.findViewById(R.id.count_forkedBy);
 
-        btnFork = (TextView)rootView.findViewById(R.id.btn_fork);
-        btnMessage = (TextView)rootView.findViewById(R.id.btn_message);
+        btnFork = (TextView) rootView.findViewById(R.id.btn_fork);
+        btnMessage = (TextView) rootView.findViewById(R.id.btn_message);
         btnMoreOption = (ImageView) rootView.findViewById(R.id.btn_moreoption);
 
         btnFork.setOnClickListener(this);
@@ -90,26 +108,31 @@ public class UserProfileFragment extends BaseFragment implements View.OnClickLis
     private void loadDummyRelatedData() {
         List<LikedBean> likeList = new ArrayList<>();
         LikedBean obj = new LikedBean();
+        obj.imageName = "testing image";
         obj.imageUrl = "https://i.ytimg.com/vi/x30YOmfeVTE/maxresdefault.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "testing image";
         obj.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "testing image";
         obj.imageUrl = "https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "testing image";
         obj.imageUrl = "https://cdn.pixabay.com/photo/2014/10/15/15/14/man-489744_960_720.jpg";
 
         likeList.add(obj);
 
         obj = new LikedBean();
+        obj.imageName = "testing image";
         obj.imageUrl = "https://static.pexels.com/photos/39811/pexels-photo-39811.jpeg";
 
         likeList.add(obj);
@@ -119,7 +142,7 @@ public class UserProfileFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_moreoption:
                 showMoreOptions();
                 break;

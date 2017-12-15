@@ -1,8 +1,10 @@
 package com.sampleboard;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.util.SparseArray;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -12,6 +14,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 public class GlobalActivity extends MultiDexApplication {
     private static Context context;
+    public static SparseArray<Bitmap> photoCache = new SparseArray<>(1);
     @Override
     public void onCreate() {
         super.onCreate();

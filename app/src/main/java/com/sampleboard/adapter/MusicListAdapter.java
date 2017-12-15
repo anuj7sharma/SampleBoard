@@ -83,7 +83,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof MusicListViewHolder){
             MusicListViewHolder vh = (MusicListViewHolder)holder;
-//            Picasso.with(context).load(mResponse.get(position).getCover_image()).resize(100,100).into(vh.musicIcon);
+//            Picasso.with(context).load(mResponse.get(POSITION).getCover_image()).resize(100,100).into(vh.musicIcon);
             vh.musicTitle.setText(mResponse.get(position).getSong());
             vh.musicArtist.setText(mResponse.get(position).getArtists());
 
@@ -100,7 +100,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                }
 //            });
 //            builder.downloader(new OkHttpDownloader(context));
-//            builder.build().load(mResponse.get(position).getCover_image()).into(vh.musicIcon);
+//            builder.build().load(mResponse.get(POSITION).getCover_image()).into(vh.musicIcon);
         }else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
         }

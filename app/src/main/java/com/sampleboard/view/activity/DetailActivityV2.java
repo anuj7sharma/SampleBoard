@@ -19,16 +19,18 @@ public class DetailActivityV2 extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_new);
         if (Utils.getInstance().isEqualLollipop()) {
-            getWindow().setAllowEnterTransitionOverlap(false);
-            getWindow().setAllowReturnTransitionOverlap(false);
+            getWindow().setAllowEnterTransitionOverlap(true);
+            getWindow().setAllowReturnTransitionOverlap(true);
+//            getWindow().setExitTransition(null);
+//            getWindow().setEnterTransition(null);
         }
 
         if (getIntent() != null && getIntent().getStringExtra(Constants.DESTINATION) != null) {
             if (getIntent().getStringExtra(Constants.DESTINATION).equals(Constants.DETAIL_SCREEN)) {
                 // Move to Post Detail screen
                 Bundle bundle = new Bundle();
+                bundle.putInt(Constants.POSITION,getIntent().getIntExtra(Constants.POSITION,0));
                 bundle.putParcelable(Constants.OBJ_DETAIL, getIntent().getParcelableExtra(Constants.OBJ_DETAIL));
-//                bundle.putByteArray(Constants.OBJ_BITMAP, getIntent().getByteArrayExtra(Constants.OBJ_BITMAP));
                 changeScreen(R.id.container_detail, CurrentScreen.POST_DETAIL_SCREEN, false, false, bundle);
             }
         }

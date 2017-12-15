@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,54 +86,49 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } else {
                 vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.app_textcolor_heading));
             }
-            vh.mImage.setImageBitmap(null);
-
             //cancel any loading images on this view
             Picasso.with(mContext).cancelRequest(vh.mImage);
-
-            Picasso.with(mContext)
-                    .load(obj.getMedia())
-                    .resize(500, 500).centerCrop()
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                            assert vh.mImage != null;
+            vh.mImage.setImageBitmap(null);
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    assert vh.mImage != null;
                             /* Save the bitmap or do something with it here */
-                            //Set it in the ImageView
-                            if (bitmap != null)
-                                vh.mImage.setImageBitmap(bitmap);
-
-                            Palette.from(bitmap)
-                                    .generate(new Palette.PaletteAsyncListener() {
-                                        @Override
-                                        public void onGenerated(Palette palette) {
-                                            Palette.Swatch textSwatch = palette.getVibrantSwatch();
-                                            if (textSwatch == null) {
-                                                return;
-                                            }
-                                            vh.mParentLayout.setBackgroundColor(textSwatch.getRgb());
+                    Palette.from(bitmap)
+                            .generate(new Palette.PaletteAsyncListener() {
+                                @Override
+                                public void onGenerated(Palette palette) {
+                                    Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                    if (textSwatch == null) {
+                                        return;
+                                    }
+                                    vh.mParentLayout.setBackgroundColor(textSwatch.getRgb());
 //                                            vh.mInfoContainer.setBackgroundColor(textSwatch.getRgb());
-                                            vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
-                                            Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
-                                        }
-                                    });
-                        }
+                                    vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
+                                    Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
+                                }
+                            });
+                    if (bitmap != null)
+                        vh.mImage.setImageBitmap(bitmap);
+                }
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            vh.mImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_default_image));
-                        }
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    vh.mImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_default_image));
+                }
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-            //calculate height of the list-item so we don't have jumps in the view
-            /*DisplayMetrics displaymetrics = mContext.getResources().getDisplayMetrics();
-            //image.width .... image.height
-            //device.width ... device
-            int finalHeight = (int) (displaymetrics.widthPixels / vh.mImage.getRatio());
-            vh.mImage.setMinimumHeight(finalHeight);*/
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            // set the tag to the view
+            vh.mImage.setTag(target);
+            Picasso.with(mContext).load(obj.getMedia())
+                    .resize(500, 500).centerCrop()
+                    .into(target);
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -181,7 +174,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             mParentLayout.setOnClickListener(v -> {
                 if (listener != null)
-                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), mImage);
+                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), mImage, getAdapterPosition());
 
             });
             reshareImg.setOnClickListener(view -> {
@@ -273,7 +266,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         peekAndPop.addHoldAndReleaseView(R.id.btn_share);
         peekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
             @Override
-            public void onHold(View view, int position) {
+            public void onHold(View view, int POSITION) {
                 switch (view.getId()) {
                     case R.id.btn_like:
                         Toast.makeText(mContext, "Like", Toast.LENGTH_SHORT).show();
@@ -288,12 +281,12 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             @Override
-            public void onLeave(View view, int position) {
+            public void onLeave(View view, int POSITION) {
 
             }
 
             @Override
-            public void onRelease(View view, int position) {
+            public void onRelease(View view, int POSITION) {
 
             }
         });

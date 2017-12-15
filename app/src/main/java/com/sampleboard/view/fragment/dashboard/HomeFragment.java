@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
+import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 import com.sampleboard.adapter.HomeListAdapter;
 import com.sampleboard.bean.MediaItem;
@@ -37,7 +37,6 @@ import com.sampleboard.view.activity.DetailActivityV2;
 import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.viewmodel.HomeFragmentViewModel;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -47,7 +46,6 @@ import java.util.List;
 public class HomeFragment extends BaseFragment implements MediaListInterface {
     private View rootView;
     private HomeFragmentViewModel viewModel;
-    public static SparseArray<Bitmap> photoCache = new SparseArray<>(1);
     private HomeListAdapter mAdapter;
     private List<PhotosBean> list;
     private RelativeLayout categoryType;
@@ -92,7 +90,7 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
         RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_items);
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(sm);
-        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
+//        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         mAdapter = new HomeListAdapter(getActivity(), null, this);
         mRecyclerView.setAdapter(mAdapter);
         //Static Data coming from Json stored in assets folder
@@ -114,7 +112,7 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
     }
 
     @Override
-    public void onItemClick(MediaItem obj, ImageView imageView) {
+    public void onItemClick(MediaItem obj, ImageView imageView, int position) {
         PostDetailBean detailBean = new PostDetailBean();
         detailBean.photoName = obj.getTitle();
         detailBean.photoUrl = obj.getMedia();
@@ -129,14 +127,12 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
         Intent intent = new Intent(getActivity(), DetailActivityV2.class);
         intent.putExtra(Constants.DESTINATION, Constants.DETAIL_SCREEN);
         intent.putExtra(Constants.OBJ_DETAIL, detailBean);
+        intent.putExtra(Constants.POSITION, position);
         if (imageView != null && imageView.getDrawable() != null) {
-            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
             if (bitmap != null && !bitmap.isRecycled()) {
-                photoCache.put(0, bitmap);
+                GlobalActivity.photoCache.put(position, bitmap);
             }
-
-//            if (bitmap != null)
-//                intent.putExtra(Constants.OBJ_BITMAP, byteArray);
         }
         if (Utils.getInstance().isEqualLollipop()) {
             ActivityOptionsCompat options = ActivityOptionsCompat.

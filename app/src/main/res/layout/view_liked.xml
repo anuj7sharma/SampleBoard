@@ -12,9 +12,9 @@
     android:focusable="true">
 
     <ImageView
-        android:id="@+id/img_like"
+        android:id="@+id/img_item"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/liked_pic_size"
+        android:layout_height="@dimen/default_pic_size"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
         android:transitionName="@string/transition_image" />

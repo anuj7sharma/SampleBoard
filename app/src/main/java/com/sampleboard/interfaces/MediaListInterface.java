@@ -10,5 +10,5 @@ import com.sampleboard.bean.PhotosBean;
  */
 
 public interface MediaListInterface {
-    void onItemClick(MediaItem obj, ImageView imageView);
+    void onItemClick(MediaItem obj, ImageView imageView, int position);
 }

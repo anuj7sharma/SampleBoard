@@ -7,6 +7,7 @@
     <dimen name="nav_drawer_width">260dp</dimen>
 
     <dimen name="activity_margin_16">16dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_12">12dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_4">4dp</dimen>
@@ -25,7 +26,7 @@
     <!-- default image sizes -->
     <dimen name="profile_pic_size_small">48dp</dimen>
     <dimen name="profile_pic_size">96dp</dimen>
-    <dimen name="liked_pic_size">200dp</dimen>
+    <dimen name="default_pic_size">200dp</dimen>
 
     <!-- Bottomsheet player -->
     <dimen name="peek_height">80dp</dimen>

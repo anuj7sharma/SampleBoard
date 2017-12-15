@@ -1,16 +1,15 @@
 package com.sampleboard.utils;
 
-import com.sampleboard.GlobalActivity;
-import com.sampleboard.R;
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -23,16 +22,20 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.PathInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.sampleboard.GlobalActivity;
+import com.sampleboard.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -231,16 +234,15 @@ public class Utils {
     }
 
 
-
     /*
      * Alert Box
      */
-    public interface okDialogInterface{
+    public interface okDialogInterface {
         public void onOkayClicked();
     }
 
     public static final void showOkDialog(String dlgText, final Context context, final okDialogInterface listener) {
-        if(context == null){
+        if (context == null) {
             return;
         }
 
@@ -267,7 +269,7 @@ public class Utils {
     }
 
     public boolean isMyServiceRunning(Context ctx, String serviceName) {
-        ActivityManager manager = (ActivityManager)ctx. getSystemService(ctx.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) ctx.getSystemService(ctx.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceName.equals(service.service.getClassName())) {
                 return true;
@@ -279,11 +281,11 @@ public class Utils {
     public File saveToDirectory(Context ctx, String name, String fileExtension) {
         File dir = new File(Environment.getExternalStorageDirectory() + File.separator +
                 ctx.getString(R.string.app_name));
-        boolean isDirectoryCreated=dir.exists();
+        boolean isDirectoryCreated = dir.exists();
         if (!isDirectoryCreated) {
             isDirectoryCreated = dir.mkdirs();
         }
-        File file = new File(dir, name + "." +  fileExtension);
+        File file = new File(dir, name + "." + fileExtension);
         if (file.isFile()) file.delete();
         try {
             file.createNewFile();
@@ -314,13 +316,32 @@ public class Utils {
         animator.start();
     }
 
+    @SuppressLint("NewApi")
+    public static void animateBackgroundTintColor(FloatingActionButton v, int startColor, int endColor) {
+
+        @SuppressLint("ObjectAnimatorBinding") final ObjectAnimator animator = ObjectAnimator.ofInt(v, "backgroundTint",
+                startColor, endColor);
+        animator.setDuration(COLOR_ANIMATION_DURATION);
+        animator.setEvaluator(new ArgbEvaluator());
+        animator.setInterpolator(new PathInterpolator(0.4f, 0f, 1f, 1f));
+        animator.addUpdateListener(new ObjectAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int animatedValue = (int) animation.getAnimatedValue();
+                v.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
+            }
+        });
+        animator.start();
+    }
+
     /*
   Play Notification Sound Vibrate
    */
     private Vibrator vibrator;
-    public void generateNotificationSound(Context ctx){
+
+    public void generateNotificationSound(Context ctx) {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        vibrator = (Vibrator)ctx.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         vibrator.vibrate(500);
         //play sound
