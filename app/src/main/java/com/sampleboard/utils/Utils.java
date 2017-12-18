@@ -224,7 +224,7 @@ public class Utils {
     public String getDeviceId(Context context) {
         try {
             // GET DEVICE ID
-            String DEVICEID = Settings.Secure.getString(context.getContentResolver(),
+            @SuppressLint("HardwareIds") String DEVICEID = Settings.Secure.getString(context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
             return DEVICEID;
         } catch (Exception e) {
