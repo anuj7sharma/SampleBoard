@@ -13,20 +13,22 @@ This app contains Phone verification using Facebook AccountKit. Dashboard screen
 
 Some app screenshots:
 
-![Dashboard Screen]({{site.baseurl}}/https://drive.google.com/open?id=1c93XFhqpIGPY4GuEOcN7oEyaVD-2csmd)
+Dashboard Screen
+![Dashboard Screen]({{site.baseurl}}//dashboard.png)
 
 Detail Screen
-![Detail Screen]({{site.baseurl}}/https://drive.google.com/open?id=1zD63IXoaD9TkotsoNlEyFLSyasVcMwpi)
+![detail screen]({{site.baseurl}}//detail.png)
+
 
 User can set finger print password if device supports finger print scan.
 
-![]({{site.baseurl}}/https://drive.google.com/open?id=1bF7jA3YvSKmpzmnDBQH32MgK1rzmdoZ8)
-
-![]({{site.baseurl}}/https://drive.google.com/open?id=1EyRG3s6Ufp-abiKl90V5-l3sYGgn4fq6)
+![]({{site.baseurl}}//ask_fingerprint.png)
+![]({{site.baseurl}}//verify_fingerprint.png)
 
 Setting Screen
 
-![Setting Screen]({{site.baseurl}}/https://drive.google.com/open?id=1GsedIg5c9Uy_kl0hwb8RjOB_yaOgUEHN)
+![setting screen]({{site.baseurl}}//setting.png)
+
 
 
 
