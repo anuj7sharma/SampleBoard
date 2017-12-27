@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/parent_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_32"
+        android:layout_marginRight="@dimen/margin_32"
+        android:layout_marginTop="@dimen/margin_4">
+
+        <RelativeLayout
+            android:id="@+id/left_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_image"
+                android:layout_width="@dimen/profile_pic_size_small"
+                android:layout_height="@dimen/profile_pic_size_small"
+                android:scaleType="centerCrop"
+                android:src="@drawable/def_profile_img" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="android:attr/android:progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/right_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/left_view"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/margin_4"
+            android:layout_marginStart="@dimen/margin_4"
+            android:layout_marginTop="@dimen/margin_32"
+            android:layout_toEndOf="@+id/left_view"
+            android:layout_toRightOf="@+id/left_view"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/margin_4"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/left_view"
+                android:layout_toRightOf="@+id/left_view"
+                android:paddingEnd="@dimen/margin_8"
+                android:paddingLeft="@dimen/margin_12"
+                android:paddingRight="@dimen/margin_8"
+                android:paddingStart="@dimen/margin_12">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    style="@style/txtview_standard_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/tv_date"
+                    android:layout_toStartOf="@+id/tv_date"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    style="@style/txtview_small_widget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:text=""
+                    android:textColor="@color/light_gray" />
+
+                <TextView
+                    android:id="@+id/tv_message"
+                    style="@style/txtview_standard_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/user_name"
+                    android:layout_marginBottom="@dimen/margin_4"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:text=""
+                    android:textColor="@color/light_gray"
+                    android:visibility="visible" />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+</layout>

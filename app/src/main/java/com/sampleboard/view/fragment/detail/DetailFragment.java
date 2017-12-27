@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -137,6 +138,7 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         //set click listeners
         mLikeImgInitial.setOnClickListener(this);
         mLikeImgFinal.setOnClickListener(this);
+        rootVIew.findViewById(R.id.comment_container).setOnClickListener(this);
         mReadMore.setOnClickListener(this);
         ownerProfileView.setOnClickListener(this);
         fabDownload.setOnClickListener(this);
@@ -259,6 +261,18 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.ic_heart_final:
                 doUnLike();
+                break;
+            case R.id.comment_container:
+                //Move to comment screen
+                if (getActivity() instanceof DetailActivityV2) {
+                    CommentFragment commentFragment = new CommentFragment();
+                    FragmentTransaction fts = getActivity().getSupportFragmentManager().beginTransaction();
+//                    commentFragment.setArguments(bundle);
+                    fts.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
+                    fts.add(R.id.container_detail, commentFragment, commentFragment.getClass().getSimpleName());
+                    fts.addToBackStack(commentFragment.getClass().getSimpleName());
+                    fts.commit();
+                }
                 break;
             case R.id.readmore:
                 showMoreDescription();

@@ -17,6 +17,7 @@ import com.sampleboard.utils.Utils;
 import com.sampleboard.view.digitalSignature.DigitalSignatureFragment;
 import com.sampleboard.view.digitalSignature.PrintBitmapFragment;
 import com.sampleboard.view.fragment.dashboard.HomeFragment;
+import com.sampleboard.view.fragment.detail.CommentFragment;
 import com.sampleboard.view.fragment.profile.EditProfileFragment;
 import com.sampleboard.view.fragment.detail.DetailFragment;
 import com.sampleboard.view.fragment.dashboard.ProfileFragment;
@@ -39,16 +40,16 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void navigateToWithBundle(int container,Fragment fragment, boolean isBackStack, Bundle bundle) {
+    public void navigateToWithBundle(int container, Fragment fragment, boolean isBackStack, Bundle bundle) {
         fragment.setArguments(bundle);
         FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
         fts.replace(container, fragment, fragment.getClass().getSimpleName());
-        if(isBackStack)
+        if (isBackStack)
             fts.addToBackStack(fragment.getClass().getSimpleName());
         fts.commit();
     }
 
-    public void navigateReplacingCurrentWithBundle(int container,Fragment currentFragment, Fragment fragmentToNavigate, Bundle bundle) {
+    public void navigateReplacingCurrentWithBundle(int container, Fragment currentFragment, Fragment fragmentToNavigate, Bundle bundle) {
         fragmentToNavigate.setArguments(bundle);
         FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
         getSupportFragmentManager().popBackStack();
@@ -57,19 +58,19 @@ public class BaseActivity extends AppCompatActivity {
         fts.remove(currentFragment).commit();
     }
 
-    public void addFragment(int container,Fragment fragment, boolean isBackStack) {
+    public void addFragment(int container, Fragment fragment, boolean isBackStack) {
         FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
         fts.add(container, fragment, fragment.getClass().getSimpleName());
-        if(isBackStack)
+        if (isBackStack)
             fts.addToBackStack(fragment.getClass().getSimpleName());
         fts.commit();
     }
 
-    public void addFragmentWithBundle(int container,Fragment fragment, boolean isBackStack, Bundle bundle) {
+    public void addFragmentWithBundle(int container, Fragment fragment, boolean isBackStack, Bundle bundle) {
         FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
         fragment.setArguments(bundle);
         fts.add(container, fragment, fragment.getClass().getSimpleName());
-        if(isBackStack)
+        if (isBackStack)
             fts.addToBackStack(fragment.getClass().getSimpleName());
         fts.commit();
     }
@@ -146,12 +147,46 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void performTransition(int fragment_container, Fragment fragment, ImageView imageView, Bundle bundle)
-    {
-        int MOVE_DEFAULT_TIME= 300;
-        int FADE_DEFAULT_TIME= 300;
-        if (isDestroyed())
-        {
+    public void slideInUpAnimation(int container, Fragment fragment, Bundle bundle) {
+        FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
+        fragment.setArguments(bundle);
+        fts.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
+        fts.add(container, fragment, fragment.getClass().getSimpleName());
+        fts.commit();
+    }
+
+    /*public void changeScreenWithAnimation(int container, CurrentScreen currentScreen, boolean isAddFragment,
+                                          boolean isBackStack, Bundle bundle, int inAnimation, int outAnimation) {
+        Fragment currentFragment = null;
+        switch (currentScreen) {
+            case COMMENT_SCREEN:
+                currentFragment = new CommentFragment();
+                break;
+
+
+        }
+        if (currentFragment == null) {
+            return;
+        }
+        if (isAddFragment) {
+            //Add Fragment
+            if (isBackStack)
+                addFragmentWithBundle(container, currentFragment, true, bundle, inAnimation, outAnimation);
+            else
+                addFragmentWithBundle(container, currentFragment, false, bundle, inAnimation, outAnimation);
+        } else {
+            //Replace Fragment
+            if (isBackStack)
+                navigateToWithBundle(container, currentFragment, true, bundle, inAnimation, outAnimation);
+            else
+                navigateToWithBundle(container, currentFragment, false, bundle, inAnimation, outAnimation);
+        }
+    }*/
+
+    public void performTransition(int fragment_container, Fragment fragment, ImageView imageView, Bundle bundle) {
+        int MOVE_DEFAULT_TIME = 300;
+        int FADE_DEFAULT_TIME = 300;
+        if (isDestroyed()) {
             return;
         }
         Fragment previousFragment = getSupportFragmentManager().findFragmentById(fragment_container);

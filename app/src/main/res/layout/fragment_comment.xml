@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/windowBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_view"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/include_toolbar"
+                layout="@layout/layout_toolbar" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_comment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            <RelativeLayout
+                android:id="@+id/empty_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent">
+                <ImageView
+                    android:id="@+id/icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_no_media"
+                    android:layout_centerInParent="true"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/txtview_info_title"
+                    android:layout_marginTop="@dimen/activity_margin_16"
+                    android:text="@string/no_comments_yet"
+                    android:textColor="@color/dark_gray"
+                    android:layout_below="@+id/icon"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+        </android.support.design.widget.CoordinatorLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_view"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:animateLayoutChanges="true">
+
+            <LinearLayout
+                android:id="@+id/view_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/btn_attachment"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/app_name"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/margin_4"
+                    android:src="@drawable/ic_attachment" />
+
+                <ImageView
+                    android:id="@+id/btn_doc"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin_4"
+                    android:contentDescription="@string/app_name"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/margin_4"
+                    android:src="@drawable/ic_document" />
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/et_message"
+                style="@style/txtview_standard_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_4"
+                android:layout_marginRight="@dimen/margin_4"
+                android:layout_toEndOf="@+id/view_options"
+                android:layout_toLeftOf="@+id/btn_send"
+                android:layout_toRightOf="@+id/view_options"
+                android:layout_toStartOf="@+id/btn_send"
+                android:background="@drawable/background_search"
+                android:hint="@string/enter_comment"
+                android:inputType="text|textMultiLine"
+                android:maxLines="3"
+                android:minLines="2"
+                android:padding="@dimen/margin_4" />
+
+            <ImageView
+                android:id="@+id/btn_send"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:contentDescription="@string/app_name"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/margin_4"
+                android:src="@drawable/ic_send" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

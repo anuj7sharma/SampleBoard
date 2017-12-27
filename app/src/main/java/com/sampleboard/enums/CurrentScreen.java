@@ -7,6 +7,7 @@ package com.sampleboard.enums;
 public enum CurrentScreen {
     ITEM_LIST_SCREEN,
     DETAIL_SCREEN,
+    COMMENT_SCREEN,
 
     MUSIC_LIST_SCREEN,
     MUSIC_DETAIL_BOTTOMSHEET,

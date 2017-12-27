@@ -87,4 +87,6 @@
     <string name="related_posts">Related Posts</string>
     <string name="transition_image">detail_image</string>
     <string name="open_music">Open Music</string>
+    <string name="enter_comment">Enter Comment</string>
+    <string name="no_comments_yet">No Comments yet!!</string>
 </resources>

@@ -172,9 +172,9 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mLikeImgFinal = itemView.findViewById(R.id.ic_heart_final);
             mLikesCount = itemView.findViewById(R.id.likes_count);
 
-            mParentLayout.setOnClickListener(v -> {
+            mImage.setOnClickListener(v -> {
                 if (listener != null)
-                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), mImage, getAdapterPosition());
+                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), (ImageView) v, getAdapterPosition());
 
             });
             reshareImg.setOnClickListener(view -> {

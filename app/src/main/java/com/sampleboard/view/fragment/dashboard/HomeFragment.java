@@ -1,5 +1,6 @@
 package com.sampleboard.view.fragment.dashboard;
 
+import android.app.ActivityOptions;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -135,11 +137,16 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
             }
         }
         if (Utils.getInstance().isEqualLollipop()) {
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(getActivity(), imageView, imageView.getTransitionName());
-            startActivity(intent, options.toBundle());
+            Pair<View, String> p1 = Pair.create(imageView, getString(R.string.transition_image));
+            ActivityOptions options =
+                    ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
+            getActivity().startActivity(intent, options.toBundle());
+
+//            ActivityOptionsCompat options = ActivityOptionsCompat.
+//                    makeSceneTransitionAnimation(getActivity(), imageView, getString(R.string.transition_image));
+//            getActivity().startActivity(intent, options.toBundle());
         } else {
-            getActivity().startActivity(intent);
+            startActivity(intent);
         }
     }
 

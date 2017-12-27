@@ -19,8 +19,8 @@ public class DetailActivityV2 extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_new);
         if (Utils.getInstance().isEqualLollipop()) {
-            getWindow().setAllowEnterTransitionOverlap(true);
-            getWindow().setAllowReturnTransitionOverlap(true);
+            getWindow().setAllowEnterTransitionOverlap(false);
+            getWindow().setAllowReturnTransitionOverlap(false);
 //            getWindow().setExitTransition(null);
 //            getWindow().setEnterTransition(null);
         }
