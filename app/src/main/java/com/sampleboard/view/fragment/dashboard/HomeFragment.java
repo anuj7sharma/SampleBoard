@@ -3,6 +3,7 @@ package com.sampleboard.view.fragment.dashboard;
 import android.app.ActivityOptions;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.sampleboard.bean.MediaItem;
 import com.sampleboard.bean.MediaModel;
 import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.databinding.FragmentHomeBinding;
 import com.sampleboard.interfaces.MediaListInterface;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
@@ -39,18 +41,31 @@ import com.sampleboard.view.activity.DetailActivityV2;
 import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.viewmodel.HomeFragmentViewModel;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
+
+import io.reactivex.Flowable;
+import io.reactivex.MaybeSource;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author Anuj Sharma on 2/28/2017.
  */
 
 public class HomeFragment extends BaseFragment implements MediaListInterface {
-    private View rootView;
+    private FragmentHomeBinding binding;
     private HomeFragmentViewModel viewModel;
     private HomeListAdapter mAdapter;
     private List<PhotosBean> list;
-    private RelativeLayout categoryType;
 
     @Override
     public void onStart() {
@@ -81,36 +96,71 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         viewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
-        Toolbar mToolbar = rootView.findViewById(R.id.toolbar);
-        ((DashBoardActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((DashBoardActivity) getActivity()).getSupportActionBar().setTitle("");
-        mToolbar.setNavigationIcon(ContextCompat.getDrawable(getActivity(), R.mipmap.ic_launcher));
 
-        categoryType = rootView.findViewById(R.id.category_type);
-        RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_items);
-        StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sm);
-//        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
-        mAdapter = new HomeListAdapter(getActivity(), null, this);
-        mRecyclerView.setAdapter(mAdapter);
-        //Static Data coming from Json stored in assets folder
-        try {
-            Gson gson = new Gson();
-            MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
+        List<String> list = new ArrayList<>();
+        list.add("xang");
+        list.add("rital");
+        list.add("pital");
+        list.add("gital");
+        list.add("anuj");
+        list.forEach(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                if (s.equals("anuj"))
+                    System.out.println("anuj exist in this code");
+            }
+        });
 
-            mAdapter.updateList(mediaModel.getData());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rootView;
+
+        Observable.fromIterable(list)
+                .sorted(new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return o1.compareTo(o2);
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<String>() {
+                    @Override
+                    public void onNext(String s) {
+                        System.out.println("List Item-> "+ s);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((DashBoardActivity) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
+        ((DashBoardActivity) getActivity()).getSupportActionBar().setTitle("");
+        binding.includeToolbar.toolbar.setNavigationIcon(ContextCompat.getDrawable(getActivity(), R.mipmap.ic_launcher));
 
+        StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        binding.recyclerItems.setLayoutManager(sm);
+        mAdapter = new HomeListAdapter(getActivity(), null, this);
+        binding.recyclerItems.setAdapter(mAdapter);
+        //Static Data coming from Json stored in assets folder
+        try {
+            Gson gson = new Gson();
+            MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
+            mAdapter.updateList(mediaModel.getData());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -141,10 +191,6 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
             ActivityOptions options =
                     ActivityOptions.makeSceneTransitionAnimation(getActivity(), p1);
             getActivity().startActivity(intent, options.toBundle());
-
-//            ActivityOptionsCompat options = ActivityOptionsCompat.
-//                    makeSceneTransitionAnimation(getActivity(), imageView, getString(R.string.transition_image));
-//            getActivity().startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);
         }

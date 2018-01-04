@@ -18,6 +18,7 @@ import com.sampleboard.bean.CommentItemBean;
 import com.sampleboard.databinding.ViewCommentBinding;
 import com.sampleboard.databinding.ViewCommentMediaBinding;
 import com.sampleboard.utils.Utils;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -107,9 +108,21 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if (!TextUtils.isEmpty(obj.getUser_profile_pic())) {
                 Picasso.with(mContext).load(obj.getUser_profile_pic()).resize(100, 100)
-                        .centerCrop().into(commentBinding.userImage);
+                        .centerCrop().into(commentBinding.userImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        commentBinding.progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        commentBinding.userImage.setImageResource(R.drawable.def_profile_img);
+                        commentBinding.progressBar.setVisibility(View.GONE);
+                    }
+                });
             } else {
                 commentBinding.userImage.setImageResource(R.drawable.def_profile_img);
+                commentBinding.progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -126,12 +139,28 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if (!TextUtils.isEmpty(obj.getUser_profile_pic())) {
                 Picasso.with(mContext).load(obj.getUser_profile_pic()).resize(100, 100)
-                        .centerCrop().into(commentMediaBinding.userImage);
-            } else {
+                        .centerCrop().into(commentMediaBinding.userImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        commentMediaBinding.progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        commentMediaBinding.userImage.setImageResource(R.drawable.def_profile_img);
+                        commentMediaBinding.progressBar.setVisibility(View.GONE);
+                    }
+                });
+            } else
+
+            {
                 commentMediaBinding.userImage.setImageResource(R.drawable.def_profile_img);
+                commentMediaBinding.progressBar.setVisibility(View.GONE);
             }
 
-            if (!TextUtils.isEmpty(obj.getMedia())) {
+            if (!TextUtils.isEmpty(obj.getMedia()))
+
+            {
                 //cancel any loading images on this view
                 Picasso.with(mContext).cancelRequest(commentMediaBinding.imgAttachment);
                 commentMediaBinding.imgAttachment.setImageBitmap(null);
@@ -147,20 +176,21 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                         if (textSwatch == null) {
                                             return;
                                         }
-                                        commentMediaBinding.parentView.setBackgroundColor(textSwatch.getRgb());
+                                        commentMediaBinding.rightView.setCardBackgroundColor(textSwatch.getRgb());
 //                                            vh.mInfoContainer.setBackgroundColor(textSwatch.getRgb());
                                         commentMediaBinding.userName.setTextColor(textSwatch.getTitleTextColor());
                                         commentMediaBinding.tvDate.setTextColor(textSwatch.getTitleTextColor());
-                                        Utils.animateViewColor(commentMediaBinding.parentView, mDefaultBackgroundColor, textSwatch.getRgb());
                                     }
                                 });
                         if (bitmap != null)
                             commentMediaBinding.imgAttachment.setImageBitmap(bitmap);
+                        commentMediaBinding.attachmentProgress.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onBitmapFailed(Drawable errorDrawable) {
                         commentMediaBinding.imgAttachment.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_default_image));
+                        commentMediaBinding.attachmentProgress.setVisibility(View.GONE);
                     }
 
                     @Override

@@ -1,23 +1,22 @@
 package com.sampleboard.view.fragment.dashboard;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.sampleboard.R;
+import com.sampleboard.databinding.FragmentProfileBinding;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DashBoardActivity;
 import com.sampleboard.view.activity.SettingsActivity;
@@ -27,23 +26,13 @@ import com.sampleboard.view.fragment.profile.LikedFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 /**
- * Created by Anuj Sharma on 4/5/2017.
+ * @author Anuj Sharma on 4/5/2017.
  */
 
 public class ProfileFragment extends BaseFragment {
-    private View rootView;
-    private Toolbar mToolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private FragmentProfileBinding binding;
 
-    private CircleImageView mProfileImg;
-    private TextView mName,mBio,mPostsCount, mGroupCount, mForkingCount, mForkedByCount;
-
-
-    //    MenuItem settingIcon;
     @Override
     public void onStart() {
         super.onStart();
@@ -71,8 +60,8 @@ public class ProfileFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        return rootView;
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile,container,false);
+        return binding.getRoot();
     }
 
     @Override
@@ -82,25 +71,11 @@ public class ProfileFragment extends BaseFragment {
     }
 
     private void initViews() {
-        mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ((DashBoardActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((DashBoardActivity) getActivity()).setTitle("");
-
-        mProfileImg = (CircleImageView)rootView.findViewById(R.id.profile_image);
-        mName = (TextView)rootView.findViewById(R.id.name);
-        mBio = (TextView)rootView.findViewById(R.id.bio);
-        mPostsCount = (TextView)rootView.findViewById(R.id.count_post);
-        mGroupCount = (TextView)rootView.findViewById(R.id.count_group);
-        mForkingCount = (TextView)rootView.findViewById(R.id.count_forking);
-        mForkedByCount = (TextView)rootView.findViewById(R.id.count_forkedBy);
-
-        viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        viewPager.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        ((DashBoardActivity) getActivity()).setSupportActionBar(binding.toolbar);
+        getActivity().setTitle("");
+        binding.viewpager.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        setupViewPager( binding.viewpager);
+        binding.tabs.setupWithViewPager(binding.viewpager);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -115,7 +90,7 @@ public class ProfileFragment extends BaseFragment {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
+        ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -129,7 +104,7 @@ public class ProfileFragment extends BaseFragment {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

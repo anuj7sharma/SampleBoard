@@ -15,17 +15,7 @@ public class CommentBean extends BaseModel {
      * data : {"total_count":200,"comment_list":[{"commentId":1,"type":"text","isOwner":true,"text":"text message","time":"2 days before","media":"https://static.pexels.com/photos/34950/pexels-photo.jpg","thumbnail":"","isLiked":true,"like_count":123,"user_name":"Anuj Sharma","user_profile_pic":""},{"commentId":2,"type":"image","isOwner":false,"text":"text message","time":"2 days before","media":"https://static.pexels.com/photos/34950/pexels-photo.jpg","thumbnail":"","isLiked":false,"like_count":1,"user_name":"Pal Hardy","user_profile_pic":""}]}
      */
 
-    @SerializedName("status")
-    private int statusX;
     private DataBean data;
-
-    public int getStatusX() {
-        return statusX;
-    }
-
-    public void setStatusX(int statusX) {
-        this.statusX = statusX;
-    }
 
     public DataBean getData() {
         return data;

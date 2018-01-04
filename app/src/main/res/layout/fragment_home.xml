@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.CoordinatorLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/windowBackground"
-        android:clickable="true">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/layout_toolbar" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_items"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:background="@color/windowBackground"
+            android:clickable="true">
 
-    </android.support.design.widget.CoordinatorLayout>
+            <include
+                android:id="@+id/include_toolbar"
+                layout="@layout/layout_toolbar" />
 
-    <RelativeLayout
-        android:id="@+id/category_type"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/circle_bg_gray"
-        android:visibility="invisible">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_items"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        </android.support.design.widget.CoordinatorLayout>
+
+        <RelativeLayout
+            android:id="@+id/category_type"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerInParent="true"
-            android:padding="@dimen/activity_margin_5"
-            android:src="@drawable/profile_img"
-            />
+            android:background="@drawable/circle_bg_gray"
+            android:visibility="invisible">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:padding="@dimen/activity_margin_5"
+                android:src="@drawable/profile_img" />
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</layout>
