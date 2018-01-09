@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,11 +23,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.kbeanie.multipicker.api.CameraImagePicker;
+import com.kbeanie.multipicker.api.ImagePicker;
+import com.kbeanie.multipicker.api.Picker;
+import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
+import com.kbeanie.multipicker.api.entity.ChosenImage;
 import com.sampleboard.R;
+import com.sampleboard.databinding.FragmentProfilePicBinding;
 import com.sampleboard.permission.PermissionsAndroid;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.TouchImageView;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
+import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.view.activity.ProfileActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -35,22 +44,25 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static android.databinding.adapters.ImageViewBindingAdapter.setImageUri;
 
 /**
- * Created by anuj on 4/8/2017.
+ * @author anuj on 4/8/2017.
  */
 
-public class ProfilePicFragment extends BaseFragment {
-    private View rootView;
-    private Toolbar mToolbar;
-    private TouchImageView mProfileImage;
-    private ProgressBar mProgressBar;
+public class ProfilePicFragment extends BaseFragment implements ImagePickerCallback {
+    private FragmentProfilePicBinding binding;
     private String profilePicUrl;
 
+    private CameraImagePicker cameraPicker;
+    private ImagePicker imagePicker;
+    private boolean isImageSelected = false, cameraSelected = false, gallerySelected = false;
+    private String pickerPath = "", profileImagePath = "";
+
     //request code
-    private int IMAGE_CAPTURE_REQUEST_CODE = 0;
-    private int IMAGE_CHOOSER_REQUEST_CODE = 1;
+    private final int IMAGE_CAPTURE_REQUEST_CODE = 0;
+    private final int IMAGE_CHOOSER_REQUEST_CODE = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,18 +74,17 @@ public class ProfilePicFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_profile_pic,menu);
+        inflater.inflate(R.menu.menu_profile_pic, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_edit:
                 //show Edit options
-                if(PermissionsAndroid.getInstance().checkCameraPermission(getActivity())){
+                if (PermissionsAndroid.getInstance().checkCameraPermission(getActivity())) {
                     showOptins();
-                }
-                else{
+                } else {
                     PermissionsAndroid.getInstance().requestForCameraPermission(ProfilePicFragment.this);
                 }
                 break;
@@ -84,9 +95,78 @@ public class ProfilePicFragment extends BaseFragment {
         return true;
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_pic, container, false);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("picker_path")) {
+                pickerPath = savedInstanceState.getString("picker_path");
+            }
+        }
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews();
+    }
+
+    private void initViews() {
+        if (getActivity() instanceof ProfileActivity) {
+            ((ProfileActivity) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
+            ((ProfileActivity) getActivity()).getSupportActionBar().setTitle("Profile Pic");
+        } else if (getActivity() instanceof HolderActivity) {
+            ((HolderActivity) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
+            ((HolderActivity) getActivity()).getSupportActionBar().setTitle("Image");
+        }
+
+        binding.includeToolbar.toolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+        binding.includeToolbar.toolbar.setNavigationOnClickListener(v -> {
+            if (getActivity() instanceof ProfileActivity) {
+                ((ProfileActivity) getActivity()).oneStepBack();
+            } else if (getActivity() instanceof HolderActivity) {
+                ((HolderActivity) getActivity()).oneStepBack();
+            }
+
+        });
+
+        if (getArguments() != null && getArguments().getString(Constants.PATH_IMAGE) != null) {
+            profilePicUrl = getArguments().getString(Constants.PATH_IMAGE);
+        }
+        if (!TextUtils.isEmpty(profilePicUrl)) {
+            Picasso.with(getActivity()).load(profilePicUrl).into(binding.profilePic, new Callback() {
+                @Override
+                public void onSuccess() {
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError() {
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionsAndroid.CAMERA_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showOptins();
+                } else {
+                    //permission denied
+                    Utils.getInstance().showToast("Camera/Storage permission required");
+                }
+                break;
+        }
+    }
+
     private void showOptins() {
         PackageManager packageManager = getActivity().getPackageManager();
-        List<Intent> cameraIntents = new ArrayList<Intent>();
+        List<Intent> cameraIntents = new ArrayList<>();
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, IMAGE_CAPTURE_REQUEST_CODE);
@@ -113,9 +193,9 @@ public class ProfilePicFragment extends BaseFragment {
         checkFolder(context);
         File file = new File(Environment.getExternalStorageDirectory()
                 + "/" + context.getResources().getString(R.string.app_name) + "/originalImage.png");
-        Uri imgUri = Uri.fromFile(file);
-        return imgUri;
+        return Uri.fromFile(file);
     }
+
     private void checkFolder(Context context) {
         try {
             File folder = new File(Environment.getExternalStorageDirectory() + "/" + context.getResources().getString(R.string.app_name));
@@ -127,68 +207,76 @@ public class ProfilePicFragment extends BaseFragment {
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_profile_pic,container,false);
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initViews();
-    }
-
-    private void initViews() {
-        mToolbar = (Toolbar)rootView.findViewById(R.id.toolbar);
-        ((ProfileActivity)getActivity()).setSupportActionBar(mToolbar);
-        ((ProfileActivity)getActivity()).getSupportActionBar().setTitle("Profile Pic");
-        mToolbar.setNavigationIcon(R.drawable.ic_navigation_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ProfileActivity)getActivity()).oneStepBack();
-            }
-        });
-        mProfileImage = (TouchImageView)rootView.findViewById(R.id.profile_pic);
-        mProgressBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
-
-        try {
-            if(getArguments()!=null && getArguments().getString("profile_pic")!=null){
-                profilePicUrl = getArguments().getString("profile_pic");
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        if(!TextUtils.isEmpty(profilePicUrl)){
-            mProgressBar.setVisibility(View.VISIBLE);
-            Picasso.with(getActivity()).load(profilePicUrl).into(mProfileImage, new Callback() {
-                @Override
-                public void onSuccess() {
-                    mProgressBar.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onError() {
-                    mProgressBar.setVisibility(View.GONE);
-                }
-            });
+    //  @TargetApi(Build.VERSION_CODES.M)
+    private void checkCameraPermission() {
+        boolean isExternalStorage = PermissionsAndroid.getInstance().checkCameraPermission(getActivity());
+        if (!isExternalStorage) {
+            PermissionsAndroid.getInstance().requestForCameraPermission(ProfilePicFragment.this);
+        } else if (cameraSelected) {
+            takePicture();
+        } else if (gallerySelected) {
+            pickImageSingle();
         }
     }
 
+    private void takePicture() {
+        cameraPicker = new CameraImagePicker(getActivity());
+//        cameraPicker.setCacheLocation(CacheLocation.INTERNAL_APP_DIR);
+        cameraPicker.setImagePickerCallback(this);
+        cameraPicker.shouldGenerateMetadata(true);
+        cameraPicker.shouldGenerateThumbnails(true);
+        pickerPath = cameraPicker.pickImage();
+    }
+
+    private void pickImageSingle() {
+        imagePicker = new ImagePicker(getActivity());
+        imagePicker.shouldGenerateMetadata(true);
+        imagePicker.shouldGenerateThumbnails(true);
+        imagePicker.setImagePickerCallback(this);
+        imagePicker.pickImage();
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case PermissionsAndroid.CAMERA_PERMISSION_REQUEST_CODE:
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    showOptins();
-                }else{
-                    //permission denied
-                    Utils.getInstance().showToast("Camera permission required");
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (isVisible()) {
+            if (resultCode == RESULT_OK) {
+                if (requestCode == Picker.PICK_IMAGE_DEVICE) {
+                    if (imagePicker == null) {
+                        imagePicker = new ImagePicker(getActivity());
+                    }
+                    imagePicker.submit(data);
+                } else if (requestCode == Picker.PICK_IMAGE_CAMERA) {
+                    if (cameraPicker == null) {
+                        cameraPicker = new CameraImagePicker(getActivity());
+                        cameraPicker.setImagePickerCallback(this);
+                        cameraPicker.reinitialize(pickerPath);
+                    }
+                    cameraPicker.submit(data);
                 }
-                break;
+            } /*else if (resultCode == 999) {
+                if (data.getData() != null) {
+                    profileImagePath = data.getData().toString();
+                    isImageSelected = true;
+
+                    //check image size should be less than 5MB
+//                    File img = new File();
+                    Picasso.with(getActivity()).load(new File(data.getData().toString())).into(profileImg);
+                }*/
+        } else {
+            Utils.getInstance().showToast("Request cancelled");
         }
+
+    }
+
+
+    @Override
+    public void onImagesChosen(List<ChosenImage> list) {
+        ChosenImage image = list.get(0);
+        profileImagePath = image.getOriginalPath();
+    }
+
+    @Override
+    public void onError(String s) {
+
     }
 }

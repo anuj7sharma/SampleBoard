@@ -89,4 +89,12 @@
     <string name="open_music">Open Music</string>
     <string name="enter_comment">Enter Comment</string>
     <string name="no_comments_yet">No Comments yet!!</string>
+    <string name="cover_image">cover_image</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="enter_required_fields">Please enter required fields.</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 </resources>

@@ -19,21 +19,45 @@ package com.sampleboard.api;
 
 
 import com.sampleboard.bean.MusicBean;
+import com.sampleboard.bean.api_response.BaseResponse;
+import com.sampleboard.bean.api_response.GetProfileResponse;
+import com.sampleboard.bean.api_response.LoginRegisterResponse;
 import com.sampleboard.utils.Constants;
 
 import java.util.List;
+import java.util.Map;
 
+import io.reactivex.Single;
 import retrofit2.Call;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Mobilyte on 2/17/2016.
  */
 public interface APICallMethods {
 
-
     @GET(Constants.MUSIC_API)
     Call<List<MusicBean>> getMusicList();
+
+    @FormUrlEncoded
+    @POST(Constants.LOGIN_API)
+    Single<LoginRegisterResponse> login(@FieldMap Map<String, String> param);
+
+    @FormUrlEncoded
+    @POST(Constants.REGISTER_API)
+    Single<LoginRegisterResponse> register(@FieldMap Map<String, String> param);
+
+    @GET(Constants.GET_PROFILE)
+    Single<GetProfileResponse> getProfile(@Query("user_id") int userId);
+
+    @FormUrlEncoded
+    @POST(Constants.UPDATE_PROFILE)
+    Single<BaseResponse> updateProfile(@FieldMap Map<String, String> param);
 
     /*
     @FormUrlEncoded

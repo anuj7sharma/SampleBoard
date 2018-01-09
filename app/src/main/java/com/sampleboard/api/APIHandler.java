@@ -19,12 +19,14 @@ package com.sampleboard.api;
 
 import com.sampleboard.enums.ApiName;
 import com.sampleboard.utils.Constants;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -52,32 +54,43 @@ public class APIHandler {
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         handler = retrofit.create(APICallMethods.class);
     }
 
-    public static APIHandler getInstance(String baseURL) {
+    /*public static APIHandler getInstance(String baseURL) {
         instance = new APIHandler(baseURL);
         return instance;
-    }
+    }*/
 
     public static APIHandler getInstance() {
-        instance = new APIHandler(Constants.LIVE_APIURL);
+        if (instance == null) {
+            synchronized (APIHandler.class) {
+                if (instance == null) {
+                    instance = new APIHandler(Constants.API_BASE_URL);
+                }
+            }
+        }
         return instance;
     }
 
-    public void getMusicList(final APIResponseInterface listener,final ApiName api_name) {
+    public APICallMethods getHandler() {
+        return handler;
+    }
+
+    public void getMusicList(final APIResponseInterface listener, final ApiName api_name) {
         call = handler.getMusicList();
         call.enqueue(new retrofit2.Callback() {
             @Override
             public void onResponse(Call call, retrofit2.Response response) {
-                listener.onSuccess(response,retrofit,api_name);
+                listener.onSuccess(response, retrofit, api_name);
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                listener.onFailure(t,api_name);
+                listener.onFailure(t, api_name);
             }
         });
     }
