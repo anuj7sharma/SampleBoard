@@ -99,44 +99,44 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         viewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
 
-        List<String> list = new ArrayList<>();
-        list.add("xang");
-        list.add("rital");
-        list.add("pital");
-        list.add("gital");
-        list.add("anuj");
-        list.forEach(new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                if (s.equals("anuj"))
-                    System.out.println("anuj exist in this code");
-            }
-        });
+//        List<String> list = new ArrayList<>();
+//        list.add("xang");
+//        list.add("rital");
+//        list.add("pital");
+//        list.add("gital");
+//        list.add("anuj");
+//        list.forEach(new Consumer<String>() {
+//            @Override
+//            public void accept(String s) {
+//                if (s.equals("anuj"))
+//                    System.out.println("anuj exist in this code");
+//            }
+//        });
 
 
-        Observable.fromIterable(list)
-                .sorted(new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        return o1.compareTo(o2);
-                    }
-                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<String>() {
-                    @Override
-                    public void onNext(String s) {
-                        System.out.println("List Item-> "+ s);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+//        Observable.fromIterable(list)
+//                .sorted(new Comparator<String>() {
+//                    @Override
+//                    public int compare(String o1, String o2) {
+//                        return o1.compareTo(o2);
+//                    }
+//                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DisposableObserver<String>() {
+//                    @Override
+//                    public void onNext(String s) {
+//                        System.out.println("List Item-> "+ s);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
 
 
         return binding.getRoot();

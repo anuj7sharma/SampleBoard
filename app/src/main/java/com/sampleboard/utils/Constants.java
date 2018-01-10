@@ -19,13 +19,19 @@ public interface Constants {
 
     String MUSIC_API = "edfora/cokestudio";
 
+    /**
+     * Candy App API Section
+     */
     String LOGIN_API = "api/login";
     String REGISTER_API = "api/register";
     String GET_TIMELINE_API = "api/get_timeline";
-    String GET_PROFILE = "api/get_profile";
-    String UPDATE_PROFILE = "api/update_profile";
-    String UPDATE_PROFILE_PIC = "api/upload_profile_pic";
+    String GET_PROFILE_API = "api/get_profile";
+    String UPDATE_PROFILE_API = "api/update_profile";
+    String UPLOAD_PROFILE_PIC_API = "api/upload_profile_pic";
 
+    /**
+     * API Section Ends here
+     */
 
 
 
@@ -44,10 +50,17 @@ public interface Constants {
         String PLAY_UPDATE_ACTION = "com.foregroundservice.action.play.update";   //update from ui to notification
     }
 
+    /**
+     * Strign used to pass data within application.
+     */
     String DESTINATION = "destination";
 
+    //Screen name
     String SEARCH_SCREEN = "SEARCH_SCREEN";
     String DETAIL_SCREEN = "DETAIL_SCREEN";
+    String EDIT_PROFILE_SCREEN = "EDIT_PROFILE_SCREEN";
+    String PROFILE_PIC_SCREEN = "PROFILE_PIC_SCREEN";
+
 
     String OBJ_DETAIL = "obj_detail";
     String POSITION = "POSITION";
@@ -64,6 +77,9 @@ public interface Constants {
         String NEXT_ACTION = "com.foregroundservice.action.next";
         String STARTFOREGROUND_ACTION = "com.foregroundservice.action.startforeground";
         String STOPFOREGROUND_ACTION = "com.foregroundservice.action.stopforeground";
+    }
+    interface BROADCAST_ACTIONS{
+        String PROFILE_UPDATE_BROADCAST = "candy.profilepic.update";
     }
 
     interface NOTIFICATION_ID {

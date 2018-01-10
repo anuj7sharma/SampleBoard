@@ -1,19 +1,13 @@
 package com.sampleboard.view.fragment.profile;
 
-import android.content.ComponentName;
-import android.content.Context;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.kbeanie.multipicker.api.CameraImagePicker;
 import com.kbeanie.multipicker.api.ImagePicker;
@@ -32,11 +25,11 @@ import com.sampleboard.R;
 import com.sampleboard.databinding.FragmentProfilePicBinding;
 import com.sampleboard.permission.PermissionsAndroid;
 import com.sampleboard.utils.Constants;
-import com.sampleboard.utils.TouchImageView;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.view.activity.ProfileActivity;
+import com.sampleboard.viewmodel.ProfilePicViewModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -53,6 +46,7 @@ import static android.databinding.adapters.ImageViewBindingAdapter.setImageUri;
 
 public class ProfilePicFragment extends BaseFragment implements ImagePickerCallback {
     private FragmentProfilePicBinding binding;
+    private ProfilePicViewModel viewModel;
     private String profilePicUrl;
 
     private CameraImagePicker cameraPicker;
@@ -61,8 +55,8 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     private String pickerPath = "", profileImagePath = "";
 
     //request code
-    private final int IMAGE_CAPTURE_REQUEST_CODE = 0;
-    private final int IMAGE_CHOOSER_REQUEST_CODE = 1;
+//    private final int IMAGE_CAPTURE_REQUEST_CODE = 0;
+//    private final int IMAGE_CHOOSER_REQUEST_CODE = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,11 +76,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
         switch (item.getItemId()) {
             case R.id.action_edit:
                 //show Edit options
-                if (PermissionsAndroid.getInstance().checkCameraPermission(getActivity())) {
-                    showOptins();
-                } else {
-                    PermissionsAndroid.getInstance().requestForCameraPermission(ProfilePicFragment.this);
-                }
+                checkCameraPermission();
                 break;
             case R.id.action_share:
                 //show share dialog
@@ -99,6 +89,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_pic, container, false);
+        viewModel = ViewModelProviders.of(this).get(ProfilePicViewModel.class);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("picker_path")) {
                 pickerPath = savedInstanceState.getString("picker_path");
@@ -111,12 +102,48 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews();
+        subscriveObservers();
+    }
+
+    private void subscriveObservers() {
+        if (viewModel != null) {
+            viewModel.getMessageObserver().observe(this, s -> {
+                if (!TextUtils.isEmpty(s))
+                    Utils.getInstance().showSnakBar(binding.getRoot(), s);
+            });
+
+            viewModel.getIsProfileUpdated().observe(this, aBoolean -> {
+                if (aBoolean) {
+                    //File upload successfully
+                    if (!TextUtils.isEmpty(profileImagePath)) {
+                        Picasso.with(getActivity()).load(new File(profileImagePath)).resize(200,200).centerCrop().into(binding.profilePic, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                binding.progressBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError() {
+                                binding.progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                        //send broadcast
+                        Intent profilePicBrodcastIntent = new Intent(Constants.BROADCAST_ACTIONS.PROFILE_UPDATE_BROADCAST);
+                        profilePicBrodcastIntent.putExtra(Constants.PATH_IMAGE, profileImagePath);
+                        getActivity().sendBroadcast(profilePicBrodcastIntent);
+                    }
+                } else {
+                    //File did not uploaded
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void initViews() {
         if (getActivity() instanceof ProfileActivity) {
             ((ProfileActivity) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
-            ((ProfileActivity) getActivity()).getSupportActionBar().setTitle("Profile Pic");
+            ((ProfileActivity) getActivity()).getSupportActionBar().setTitle(R.string.profile_pic);
         } else if (getActivity() instanceof HolderActivity) {
             ((HolderActivity) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
             ((HolderActivity) getActivity()).getSupportActionBar().setTitle("Image");
@@ -144,9 +171,12 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
 
                 @Override
                 public void onError() {
+                    binding.profilePic.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.def_profile_img));
                     binding.progressBar.setVisibility(View.GONE);
                 }
             });
+        } else {
+            binding.profilePic.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.def_profile_img));
         }
     }
 
@@ -155,7 +185,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
         switch (requestCode) {
             case PermissionsAndroid.CAMERA_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showOptins();
+                    checkCameraPermission();
                 } else {
                     //permission denied
                     Utils.getInstance().showToast("Camera/Storage permission required");
@@ -164,7 +194,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
         }
     }
 
-    private void showOptins() {
+    /*private void showOptins() {
         PackageManager packageManager = getActivity().getPackageManager();
         List<Intent> cameraIntents = new ArrayList<>();
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -180,7 +210,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
         }
 
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryIntent.setType("image/*");
+        galleryIntent.setType("image*//*");
 
         Intent chooserIntent = Intent.createChooser(galleryIntent, "Choose Option");
 
@@ -207,6 +237,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
         }
     }
 
+   */
     //  @TargetApi(Build.VERSION_CODES.M)
     private void checkCameraPermission() {
         boolean isExternalStorage = PermissionsAndroid.getInstance().checkCameraPermission(getActivity());
@@ -216,11 +247,13 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
             takePicture();
         } else if (gallerySelected) {
             pickImageSingle();
+        } else {
+            pickImageSingle();
         }
     }
 
     private void takePicture() {
-        cameraPicker = new CameraImagePicker(getActivity());
+        cameraPicker = new CameraImagePicker(this);
 //        cameraPicker.setCacheLocation(CacheLocation.INTERNAL_APP_DIR);
         cameraPicker.setImagePickerCallback(this);
         cameraPicker.shouldGenerateMetadata(true);
@@ -229,7 +262,7 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     }
 
     private void pickImageSingle() {
-        imagePicker = new ImagePicker(getActivity());
+        imagePicker = new ImagePicker(this);
         imagePicker.shouldGenerateMetadata(true);
         imagePicker.shouldGenerateThumbnails(true);
         imagePicker.setImagePickerCallback(this);
@@ -272,7 +305,12 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     @Override
     public void onImagesChosen(List<ChosenImage> list) {
         ChosenImage image = list.get(0);
-        profileImagePath = image.getOriginalPath();
+        if (Utils.isNetworkAvailable(getActivity())) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            profileImagePath = image.getOriginalPath();
+            //Upload Image
+            viewModel.uploadProfilePic(profileImagePath, 11);
+        }
     }
 
     @Override

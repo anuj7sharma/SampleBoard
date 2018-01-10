@@ -54,22 +54,22 @@ public class ProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        if(getIntent()!=null && getIntent().getStringExtra("destination")!=null){
-            if(getIntent().getStringExtra("destination").equals("profile_pic")){
+        if (getIntent() != null && getIntent().getStringExtra(Constants.DESTINATION) != null) {
+            if (getIntent().getStringExtra(Constants.DESTINATION).equals(Constants.PROFILE_PIC_SCREEN)) {
                 //move to profile pic screen
                 Bundle bundle = new Bundle();
-                bundle.putString("profile_pic", Constants.DEF_PROFILE_URL);
-                changeScreen(R.id.profile_container, CurrentScreen.PROFILE_PIC_SCREEN,false,false,bundle);
-            }else if(getIntent().getStringExtra("destination").equals("edit_profile")){
+                bundle.putString(Constants.PATH_IMAGE, getIntent().getStringExtra(Constants.PATH_IMAGE));
+                changeScreen(R.id.profile_container, CurrentScreen.PROFILE_PIC_SCREEN, false, false, bundle);
+            } else if (getIntent().getStringExtra(Constants.DESTINATION).equals(Constants.EDIT_PROFILE_SCREEN)) {
                 //destination extra came, need to move to edit profile page
-                changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false,false,null);
+                changeScreen(R.id.profile_container, CurrentScreen.EDIT_PROFILE_SCREEN, false, false, null);
             }
-        }else{
-            changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false,false,null);
+        } else {
+            changeScreen(R.id.profile_container, CurrentScreen.PROFILE_SCREEN, false, false, null);
         }
     }
 
-    private void manageFingerPrint(){
+    private void manageFingerPrint() {
         try {
             mKeyStore = KeyStore.getInstance("AndroidKeyStore");
         } catch (KeyStoreException e) {
@@ -120,7 +120,7 @@ public class ProfileActivity extends BaseActivity {
         createKey(KEY_NAME_NOT_INVALIDATED, false);
 
         //initiate touch id container
-        if (initCipher(defaultCipher, DEFAULT_KEY_NAME)){
+        if (initCipher(defaultCipher, DEFAULT_KEY_NAME)) {
             // Show the fingerprint dialog. The user has the option to use the fingerprint with
             // crypto, or you can fall back to using a server-side verified password.
             FingerprintAuthenticationDialogFragment fragment
@@ -132,7 +132,7 @@ public class ProfileActivity extends BaseActivity {
             fragment.setStage(
                     FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
             fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
-        }else{
+        } else {
             Utils.getInstance().showToast("Not intitialized yet");
         }
 
@@ -168,7 +168,7 @@ public class ProfileActivity extends BaseActivity {
      * Proceed the purchase operation
      *
      * @param withFingerprint {@code true} if the purchase was made by using a fingerprint
-     * @param cryptoObject the Crypto object
+     * @param cryptoObject    the Crypto object
      */
     public void onPurchased(boolean withFingerprint,
                             @Nullable FingerprintManager.CryptoObject cryptoObject) {
@@ -191,12 +191,11 @@ public class ProfileActivity extends BaseActivity {
     }
 
 
-
     /**
      * Creates a symmetric key in the Android Key Store which can only be used after the user has
      * authenticated with fingerprint.
      *
-     * @param keyName the name of the key to be created
+     * @param keyName                          the name of the key to be created
      * @param invalidatedByBiometricEnrollment if {@code false} is passed, the created key will not
      *                                         be invalidated even if a new fingerprint is enrolled.
      *                                         The default value is {@code true}, so passing
@@ -204,7 +203,6 @@ public class ProfileActivity extends BaseActivity {
      *                                         (the key will be invalidated if a new fingerprint is
      *                                         enrolled.). Note that this parameter is only valid if
      *                                         the app works on Android N developer preview.
-     *
      */
     public void createKey(String keyName, boolean invalidatedByBiometricEnrollment) {
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
@@ -239,6 +237,7 @@ public class ProfileActivity extends BaseActivity {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void onBackPressed() {
         oneStepBack();

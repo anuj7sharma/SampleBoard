@@ -15,6 +15,7 @@ import android.widget.Switch;
 
 import com.facebook.accountkit.AccountKit;
 import com.sampleboard.R;
+import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.SharedPreferencesHandler;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseActivity;
@@ -101,7 +102,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.btn_editProfile:
                 Intent intent = new Intent(this, ProfileActivity.class);
-                intent.putExtra("destination", "edit_profile");
+                intent.putExtra(Constants.DESTINATION, Constants.EDIT_PROFILE_SCREEN);
                 startActivity(intent);
                 break;
             case R.id.btn_music:
