@@ -167,7 +167,7 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
         detailBean.photoName = obj.getTitle();
         detailBean.photoUrl = obj.getMedia();
         detailBean.likeCount = obj.getLikeCount();
-        detailBean.commentCount = 356;
+        detailBean.commentCount = obj.getComment_count();
         detailBean.isLiked = !TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1");
         detailBean.ownerName = "Anuj Sharma";
         Bundle bundle = new Bundle();

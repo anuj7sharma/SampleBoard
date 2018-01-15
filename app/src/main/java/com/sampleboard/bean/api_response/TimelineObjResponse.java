@@ -9,7 +9,8 @@ import com.google.gson.annotations.SerializedName;
 public class TimelineObjResponse {
     /**
      * like_count : 2
-     * is_liked :
+     * is_liked : null
+     * comment_count: 2
      * id : 1
      * user_id : 11
      * title : Evening Beauty
@@ -26,6 +27,8 @@ public class TimelineObjResponse {
     private int likeCount;
     @SerializedName("is_liked")
     private String isLiked;
+    @SerializedName("comment_count")
+    private int comment_count;
     @SerializedName("id")
     private int id;
     @SerializedName("user_id")
@@ -61,6 +64,14 @@ public class TimelineObjResponse {
 
     public void setIsLiked(String isLiked) {
         this.isLiked = isLiked;
+    }
+
+    public int getComment_count() {
+        return comment_count;
+    }
+
+    public void setComment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 
     public int getId() {
