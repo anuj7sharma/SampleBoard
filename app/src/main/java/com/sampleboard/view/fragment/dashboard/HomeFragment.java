@@ -8,11 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,18 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
 import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 import com.sampleboard.adapter.HomeListAdapter;
-import com.sampleboard.bean.MediaItem;
-import com.sampleboard.bean.MediaModel;
-import com.sampleboard.bean.PhotosBean;
 import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.bean.api_response.TimelineObjResponse;
 import com.sampleboard.databinding.FragmentHomeBinding;
-import com.sampleboard.interfaces.MediaListInterface;
+import com.sampleboard.interfaces.TimelineInterface;
 import com.sampleboard.utils.Constants;
 import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
@@ -42,30 +36,20 @@ import com.sampleboard.view.activity.HolderActivity;
 import com.sampleboard.viewmodel.HomeFragmentViewModel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
-
-import io.reactivex.Flowable;
-import io.reactivex.MaybeSource;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
+import java.util.Map;
 
 /**
  * @author Anuj Sharma on 2/28/2017.
  */
 
-public class HomeFragment extends BaseFragment implements MediaListInterface {
+public class HomeFragment extends BaseFragment implements TimelineInterface {
     private FragmentHomeBinding binding;
     private HomeFragmentViewModel viewModel;
     private HomeListAdapter mAdapter;
-    private List<PhotosBean> list;
+    private List<TimelineObjResponse> timelineList;
+    private int page = 1;
 
     @Override
     public void onStart() {
@@ -98,47 +82,6 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         viewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
-
-//        List<String> list = new ArrayList<>();
-//        list.add("xang");
-//        list.add("rital");
-//        list.add("pital");
-//        list.add("gital");
-//        list.add("anuj");
-//        list.forEach(new Consumer<String>() {
-//            @Override
-//            public void accept(String s) {
-//                if (s.equals("anuj"))
-//                    System.out.println("anuj exist in this code");
-//            }
-//        });
-
-
-//        Observable.fromIterable(list)
-//                .sorted(new Comparator<String>() {
-//                    @Override
-//                    public int compare(String o1, String o2) {
-//                        return o1.compareTo(o2);
-//                    }
-//                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new DisposableObserver<String>() {
-//                    @Override
-//                    public void onNext(String s) {
-//                        System.out.println("List Item-> "+ s);
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
-
-
         return binding.getRoot();
     }
 
@@ -153,24 +96,79 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
         binding.recyclerItems.setLayoutManager(sm);
         mAdapter = new HomeListAdapter(getActivity(), null, this);
         binding.recyclerItems.setAdapter(mAdapter);
+
+        subscribeObservers();
+        if (Utils.isNetworkAvailable(getActivity()))
+            viewModel.getTimeLine("11", page);
+        else
+            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
         //Static Data coming from Json stored in assets folder
-        try {
+        /*try {
             Gson gson = new Gson();
             MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
             mAdapter.updateList(mediaModel.getData());
         } catch (Exception e) {
             e.printStackTrace();
+        }*/
+    }
+
+    private void subscribeObservers() {
+        if (viewModel != null) {
+            viewModel.getMessage().observe(this, s -> {
+                if (!TextUtils.isEmpty(s))
+                    Utils.getInstance().showSnakBar(binding.getRoot(), s);
+            });
+
+            viewModel.getTimelineResponse().observe(this, timelineResponse -> {
+                if (timelineResponse != null && timelineResponse.getCode() == 1) {
+                    //update Tineline List
+                    if (page == 1 && timelineResponse.getData().size() == 0) {
+                        //show Empty View
+                        return;
+                    }
+                    if (timelineList == null) timelineList = new ArrayList<>();
+
+                    if (page == 1 && timelineResponse.getData().size() > 0) {
+                        timelineList = timelineResponse.getData();
+                        mAdapter.updateList(timelineList);
+                        mAdapter.notifyDataSetChanged();
+                    } else if (page > 1 && timelineResponse.getData().size() > 0) {
+                        int previousPos = timelineList.size() - 1;
+                        timelineList.addAll(timelineResponse.getData());
+                        mAdapter.updateList(timelineList);
+                        mAdapter.notifyItemRangeInserted(previousPos, ((timelineList.size() - 1) - previousPos));
+                    } else {
+                        //No more data
+                        Utils.getInstance().showSnakBar(binding.getRoot(), "No more data");
+                    }
+                }
+            });
+
+            viewModel.getUpdateLikeResponse().observe(this, updateLikeResponse -> {
+                if (updateLikeResponse != null && updateLikeResponse.getCode() != 1) {
+                    if (timelineList != null && timelineList.size() > position + 1) {
+                        if (isLiked) {
+                            // make it like previous not liked
+                            timelineList.get(position).setIsLiked("0");
+                        } else {
+                            //make is like previous liked
+                            timelineList.get(position).setIsLiked("1");
+                        }
+                        mAdapter.notifyItemChanged(position);
+                    }
+                }
+            });
         }
     }
 
     @Override
-    public void onItemClick(MediaItem obj, ImageView imageView, int position) {
+    public void onItemClick(TimelineObjResponse obj, ImageView imageView, int position) {
         PostDetailBean detailBean = new PostDetailBean();
         detailBean.photoName = obj.getTitle();
         detailBean.photoUrl = obj.getMedia();
-        detailBean.likeCount = 514;
+        detailBean.likeCount = obj.getLikeCount();
         detailBean.commentCount = 356;
-        detailBean.isLiked = true;
+        detailBean.isLiked = !TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1");
         detailBean.ownerName = "Anuj Sharma";
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.OBJ_DETAIL, detailBean);
@@ -193,6 +191,25 @@ public class HomeFragment extends BaseFragment implements MediaListInterface {
             getActivity().startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);
+        }
+    }
+
+    private boolean isLiked;
+    private int position;
+
+    @Override
+    public void onLikeBtnClicked(TimelineObjResponse obj, ImageView imageView, int position, boolean isLiked) {
+        if (obj == null) return;
+        Map<String, String> param = new HashMap<>();
+        param.put("user_id", "11");
+        param.put("post_id", String.valueOf(obj.getId()));
+        this.isLiked = isLiked;
+        this.position = position;
+        if (viewModel != null) {
+            if (Utils.isNetworkAvailable(getActivity()))
+                viewModel.updateLike(param);
+            else
+                Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
         }
     }
 

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import com.sampleboard.R;
 import com.sampleboard.utils.SharedPreferencesHandler;
 
+import java.util.Arrays;
+
 /**
  * Created by Anuj Sharma on 4/5/2017.
  */
@@ -17,6 +19,8 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        manageNumber2();
+
         String userID = SharedPreferencesHandler.getStringValues(this, getString(R.string.pref_user_id));
         Intent intent = null;
         /*if(TextUtils.isEmpty(userID)){
@@ -50,6 +54,21 @@ public class SplashActivity extends Activity {
         }
         for (int i = 0; i < number.length; i++) {
             System.out.println("Output-> " + number[i]);
+        }
+    }
+
+    private void manageNumber2() {
+        int[] initialArray = {0, 4, 0, 0, 8, 6};
+        Arrays.sort(initialArray);
+
+        int[] zeroPositionArray = new int[initialArray.length];
+        int posCount = 0;
+        for (int i = 0; i < initialArray.length; i++) {
+            if (initialArray[i] == 0) {
+                zeroPositionArray[posCount] = initialArray[i];
+                posCount++;
+            }
+            System.out.println("Array Element-> " + initialArray[i]);
         }
     }
 

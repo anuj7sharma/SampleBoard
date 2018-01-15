@@ -21,7 +21,9 @@ package com.sampleboard.api;
 import com.sampleboard.bean.MusicBean;
 import com.sampleboard.bean.api_response.BaseResponse;
 import com.sampleboard.bean.api_response.GetProfileResponse;
+import com.sampleboard.bean.api_response.UpdateLikeResponse;
 import com.sampleboard.bean.api_response.LoginRegisterResponse;
+import com.sampleboard.bean.api_response.TimelineResponse;
 import com.sampleboard.utils.Constants;
 
 import java.util.List;
@@ -47,6 +49,11 @@ public interface APICallMethods {
     @GET(Constants.MUSIC_API)
     Call<List<MusicBean>> getMusicList();
 
+    /**
+     * Application API starts
+     */
+
+
     @FormUrlEncoded
     @POST(Constants.LOGIN_API)
     Single<LoginRegisterResponse> login(@FieldMap Map<String, String> param);
@@ -65,6 +72,13 @@ public interface APICallMethods {
     @Multipart
     @POST(Constants.UPLOAD_PROFILE_PIC_API)
     Single<BaseResponse> uploadProfilePic(@Part("user_id") RequestBody userId, @Part MultipartBody.Part profile_pic);
+
+    @GET(Constants.GET_TIMELINE_API)
+    Single<TimelineResponse> getTimeline(@Query("user_id") String userId, @Query("page") int page);
+
+    @FormUrlEncoded
+    @POST(Constants.UPDATE_LIKE_API)
+    Single<UpdateLikeResponse> updateLike(@FieldMap Map<String, String> param);
 
     /*
     @FormUrlEncoded

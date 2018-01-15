@@ -76,9 +76,15 @@ public class Utils {
         if (context == null && GlobalActivity.getGlobalContext() != null) {
             context = GlobalActivity.getGlobalContext();
         }
-        ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        ConnectivityManager connMgr = null;
+        if (context != null) {
+            connMgr = (ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
         return (networkInfo != null && networkInfo.isConnected());
     }
 
@@ -130,15 +136,11 @@ public class Utils {
 
     //    ------------ Show common snackbar -----
     public void showSnakBar(View view, String message) {
-
         if (view != null && message != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
             View snackBarView = snackbar.getView();
             TextView tv = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
             tv.setTextColor(Color.WHITE);
-//            tv.setTypeface(getfontStyle(Fontstyle.FONT_REGULAR));
-//            getInstance().setTextviewTypeface(tv);
-            //  getInstance().setTextviewTypeface(tv);
             snackBarView.setBackgroundColor(Color.parseColor("#444444"));
             snackbar.show();
         }
@@ -158,10 +160,8 @@ public class Utils {
             snackbar.setActionTextColor(ContextCompat.getColor(GlobalActivity.getGlobalContext(), R.color.colorAccent));
             View snackBarView = snackbar.getView();
             snackBarView.setBackgroundColor(Color.parseColor("#444444"));
-            TextView tv = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+            TextView tv = snackBarView.findViewById(android.support.design.R.id.snackbar_text);
             tv.setTextColor(Color.WHITE);
-//            tv.setTypeface(getfontStyle(Fontstyle.FONT_REGULAR));
-//            getInstance().setTextviewTypeface(tv);
             snackbar.show();
         }
 
@@ -176,7 +176,9 @@ public class Utils {
     public void hideSoftKeyboard(Context context, View view) {
         try {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,19 +200,11 @@ public class Utils {
             android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(context);
             alertDialogBuilder.setMessage(alert_msg);
 
-            alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    listener.onYesClick(tag);
-                }
-            });
+            alertDialogBuilder.setPositiveButton("yes", (arg0, arg1) -> listener.onYesClick(tag));
 
-            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    listener.onNoClick(tag);
-                    dialog.dismiss();
-                }
+            alertDialogBuilder.setNegativeButton("No", (dialog, which) -> {
+                listener.onNoClick(tag);
+                dialog.dismiss();
             });
 
             android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
@@ -350,5 +344,14 @@ public class Utils {
         r.play();
     }
 
+    /**
+     * Get LoggedIn userId
+     *
+     * @param context
+     * @return
+     */
+    public String getUserId(Context context) {
+        return SharedPreferencesHandler.getStringValues(context, context.getString(R.string.pref_user_id));
+    }
 
 }

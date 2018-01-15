@@ -34,7 +34,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -102,10 +101,10 @@ public class ProfilePicFragment extends BaseFragment implements ImagePickerCallb
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews();
-        subscriveObservers();
+        subscribeObservers();
     }
 
-    private void subscriveObservers() {
+    private void subscribeObservers() {
         if (viewModel != null) {
             viewModel.getMessageObserver().observe(this, s -> {
                 if (!TextUtils.isEmpty(s))

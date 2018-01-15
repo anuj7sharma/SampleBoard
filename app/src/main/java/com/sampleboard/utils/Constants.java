@@ -24,10 +24,13 @@ public interface Constants {
      */
     String LOGIN_API = "api/login";
     String REGISTER_API = "api/register";
-    String GET_TIMELINE_API = "api/get_timeline";
     String GET_PROFILE_API = "api/get_profile";
     String UPDATE_PROFILE_API = "api/update_profile";
     String UPLOAD_PROFILE_PIC_API = "api/upload_profile_pic";
+    String GET_TIMELINE_API = "api/get_timeline";
+    String UPDATE_LIKE_API = "api/update_like";
+    String POST_COMMENTS_API = "api/post_comments";
+//    String GET_COMMENTS_API = "api/post_comments";
 
     /**
      * API Section Ends here

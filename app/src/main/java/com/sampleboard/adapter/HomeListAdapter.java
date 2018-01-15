@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,36 +20,35 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sampleboard.R;
-import com.sampleboard.bean.MediaItem;
-import com.sampleboard.bean.MediaModel;
-import com.sampleboard.interfaces.MediaListInterface;
+import com.sampleboard.bean.api_response.TimelineObjResponse;
+import com.sampleboard.interfaces.TimelineInterface;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.List;
+
 /**
- * Created by Mobilyte India Pvt Ltd on 3/1/2017.
+ * @author AnujSharma
  */
 
 public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
-    private MediaModel.DataBean mResponse;
-    private AnimationDrawable frameAnimation;
+    private List<TimelineObjResponse> mResponse;
     private int lastPosition = -1;
-    public final static int COLOR_ANIMATION_DURATION = 1000;
+    //    public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
-    private MediaListInterface listener;
+    private TimelineInterface listener;
 
-    public HomeListAdapter(Context ctx, MediaModel.DataBean response, MediaListInterface listener) {
+    public HomeListAdapter(Context ctx, List<TimelineObjResponse> response, TimelineInterface listener) {
         this.mContext = ctx;
         this.mResponse = response;
         this.listener = listener;
     }
 
-    public void updateList(MediaModel.DataBean response) {
+    public void updateList(List<TimelineObjResponse> response) {
         this.mResponse = response;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -65,10 +65,11 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final LoadMoreViewHolder vh = (LoadMoreViewHolder) holder;
         try {
-            MediaItem obj = mResponse.getMediaList().get(position);
+            TimelineObjResponse obj = mResponse.get(position);
             vh.mTitle.setText(obj.getTitle());
-            vh.mLikesCount.setText(obj.getLike_count());
-            if (obj.isLiked()) {
+            vh.mLikesCount.setText(String.valueOf(obj.getLikeCount()));
+            // update like heart symbol
+            if (!TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1")) {
                 vh.mLikeImgInitial.setVisibility(View.GONE);
                 vh.mLikeImgFinal.setVisibility(View.VISIBLE);
                 vh.mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.red));
@@ -81,11 +82,12 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 vh.mLikeImgFinal.setClickable(false);
                 vh.mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
             }
-            if (obj.isShared()) {
-                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.green));
-            } else {
-                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.app_textcolor_heading));
-            }
+
+//            if (obj.isShared()) {
+//                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.green));
+//            } else {
+//                vh.reshareImg.setColorFilter(ContextCompat.getColor(mContext, R.color.app_textcolor_heading));
+//            }
             //cancel any loading images on this view
             Picasso.with(mContext).cancelRequest(vh.mImage);
             vh.mImage.setImageBitmap(null);
@@ -95,18 +97,15 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     assert vh.mImage != null;
                             /* Save the bitmap or do something with it here */
                     Palette.from(bitmap)
-                            .generate(new Palette.PaletteAsyncListener() {
-                                @Override
-                                public void onGenerated(Palette palette) {
-                                    Palette.Swatch textSwatch = palette.getVibrantSwatch();
-                                    if (textSwatch == null) {
-                                        return;
-                                    }
-                                    vh.mParentLayout.setBackgroundColor(textSwatch.getRgb());
-//                                            vh.mInfoContainer.setBackgroundColor(textSwatch.getRgb());
-                                    vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
-                                    Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
+                            .generate(palette -> {
+                                Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                if (textSwatch == null) {
+                                    return;
                                 }
+                                vh.mParentLayout.setBackgroundColor(textSwatch.getRgb());
+//                                            vh.mInfoContainer.setBackgroundColor(textSwatch.getRgb());
+                                vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
+                                Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
                             });
                     if (bitmap != null)
                         vh.mImage.setImageBitmap(bitmap);
@@ -124,10 +123,13 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             };
             // set the tag to the view
             vh.mImage.setTag(target);
-            Picasso.with(mContext).load(obj.getMedia())
-                    .resize(500, 500).centerCrop()
-                    .into(target);
-
+            if (!TextUtils.isEmpty(obj.getMedia())) {
+                Picasso.with(mContext).load("http://10.20.3.169" + obj.getMedia())
+                        .resize(500, 500).centerCrop()
+                        .into(target);
+            } else {
+                vh.mImage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_default_image));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,7 +150,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return (mResponse == null) ? 0 : mResponse.getMediaList().size();
+        return (mResponse == null) ? 0 : mResponse.size();
     }
 
     /*
@@ -174,7 +176,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             mImage.setOnClickListener(v -> {
                 if (listener != null)
-                    listener.onItemClick(mResponse.getMediaList().get(getAdapterPosition()), (ImageView) v, getAdapterPosition());
+                    listener.onItemClick(mResponse.get(getAdapterPosition()), (ImageView) v, getAdapterPosition());
 
             });
             reshareImg.setOnClickListener(view -> {
@@ -195,9 +197,13 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     @Override
                     public void onAnimtionStart() {
                         final LinearInterpolator interpolator = new LinearInterpolator();
-                        int updatedCount = updateLikesCounter(Integer.parseInt(mResponse.getMediaList().get(getAdapterPosition()).getLike_count()),
+                        int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
                                 true);
-                        mResponse.getMediaList().get(getAdapterPosition()).setLike_count(String.valueOf(updatedCount));
+                        mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
+                        //Hit API to set is_liked 1
+                        if (listener != null) {
+                            listener.onLikeBtnClicked(mResponse.get(getAdapterPosition()), null, getAdapterPosition(), true);
+                        }
                         mLikesCount.animate()
                                 .alpha(0)
                                 .setDuration(100)
@@ -228,9 +234,14 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.app_textcolor));
                 mLikeImgFinal.setClickable(false);
                 mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
-                int updatedCount = updateLikesCounter(Integer.parseInt(mResponse.getMediaList().get(getAdapterPosition()).getLike_count()),
+                int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
                         false);
-                mResponse.getMediaList().get(getAdapterPosition()).setLike_count(String.valueOf(updatedCount));
+                //Hit API to set is_liked 0
+                if (listener != null) {
+                    listener.onLikeBtnClicked(mResponse.get(getAdapterPosition()), null, getAdapterPosition(), false);
+                }
+
+                mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
                 mLikesCount.setText(String.valueOf(updatedCount));
             });
         }

@@ -98,4 +98,5 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="profile_pic">Profile Pic</string>
+    <string name="timeline_post">Timeline Post</string>
 </resources>
