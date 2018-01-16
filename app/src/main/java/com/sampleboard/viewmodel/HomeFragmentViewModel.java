@@ -20,18 +20,20 @@ import io.reactivex.schedulers.Schedulers;
 
 public class HomeFragmentViewModel extends ViewModel {
     private MutableLiveData<TimelineResponse> timelineResponse;
-    private MutableLiveData<UpdateLikeResponse> updateLikeResponse;
     private MutableLiveData<String> message;
+    private MutableLiveData<UpdateLikeResponse> updateLikeResponse;
+
+    public MutableLiveData<UpdateLikeResponse> getUpdateLikeResponse() {
+        if (updateLikeResponse == null) updateLikeResponse = new MutableLiveData<>();
+        return updateLikeResponse;
+    }
 
     public MutableLiveData<TimelineResponse> getTimelineResponse() {
         if (timelineResponse == null) timelineResponse = new MutableLiveData<>();
         return timelineResponse;
     }
 
-    public MutableLiveData<UpdateLikeResponse> getUpdateLikeResponse() {
-        if (updateLikeResponse == null) updateLikeResponse = new MutableLiveData<>();
-        return updateLikeResponse;
-    }
+
 
     public MutableLiveData<String> getMessage() {
         if (message == null) message = new MutableLiveData<>();

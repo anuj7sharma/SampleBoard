@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,27 +18,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 import com.sampleboard.adapter.LikedAdapter;
-import com.sampleboard.bean.PostDetailBean;
+import com.sampleboard.bean.api_response.TimelineObjResponse;
+import com.sampleboard.databinding.FragmentPostDetailBinding;
 import com.sampleboard.enums.CurrentScreen;
 import com.sampleboard.permission.PermissionsAndroid;
 import com.sampleboard.utils.Constants;
@@ -46,10 +42,13 @@ import com.sampleboard.utils.Utils;
 import com.sampleboard.view.BaseFragment;
 import com.sampleboard.view.activity.DetailActivityV2;
 import com.sampleboard.viewmodel.DetailFragmentViewModel;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -58,34 +57,168 @@ import static android.content.Context.DOWNLOAD_SERVICE;
  */
 
 public class DetailFragment extends BaseFragment implements View.OnClickListener {
-    private View rootVIew;
+    private FragmentPostDetailBinding binding;
     private DetailFragmentViewModel viewModel;
-    private ImageView mDetailImage, mLikeImgInitial, mLikeImgFinal;
-    private FloatingActionButton fabDownload;
-    private ProgressBar mProgresbar;
-    private TextView mOwnerName, mLikeCount, mCommentCount, mTags, mDesc, mReadMore;
-    private PostDetailBean bean;
+    private TimelineObjResponse bean;
+    private boolean isLikeClicked;
+    /**
+     * Download File Concept implemented here
+     */
+    private DownloadManager dm;
+    private long enqueue;
+    BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!isVisible()) return;
 
+            String action = intent.getAction();
 
-    private String descString = "testing testing testing testing testing testing testing testing testing testing testing testing testing" +
-            "testing testing testing";
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+//                long downloadId = intent.getLongExtra(
+//                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(enqueue);
+                if (dm == null) return;
 
-//    private AnimationDrawable frameAnimation;
+                Cursor c = dm.query(query);
+                if (c.moveToFirst()) {
+                    int columnIndex = c
+                            .getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    if (DownloadManager.STATUS_SUCCESSFUL == c
+                            .getInt(columnIndex)) {
+                        Utils.getInstance().showToast(getString(R.string.message_download_complete));
+                    }
+                }
+            }
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootVIew = inflater.inflate(R.layout.fragment_post_detail, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_post_detail, container, false);
         viewModel = ViewModelProviders.of(this).get(DetailFragmentViewModel.class);
         subscribeDownloadReceiver();
-        return rootVIew;
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews();
-        loadIntiialData();
+        if (getArguments() != null && getArguments().getParcelable(Constants.OBJ_DETAIL) != null &&
+                getArguments().getParcelable(Constants.OBJ_DETAIL) instanceof TimelineObjResponse) {
+            bean = getArguments().getParcelable(Constants.OBJ_DETAIL);
+            final int position = getArguments().getInt(Constants.POSITION);
+            Bitmap imageCoverBitmap = GlobalActivity.photoCache.get(position);
+
+            inflateImage(imageCoverBitmap);
+            updateDetailUI();
+        }
+        getPostDetail();
+        subscribeObservers();
+    }
+
+    /**
+     * Get Post Detail
+     */
+    private void getPostDetail() {
+        if (Utils.isNetworkAvailable(getActivity())) {
+            if (bean != null && viewModel != null) {
+                if (TextUtils.isEmpty(Utils.getInstance().getUserId(getActivity()))) {
+                    // user is not logged in
+                    viewModel.getPostDetail("", bean.getId());
+                } else {
+                    // user is logged in
+                    viewModel.getPostDetail(Utils.getInstance().getUserId(getActivity()), bean.getId());
+                }
+            } else {
+                Utils.getInstance().showSnakBar(binding.getRoot(), "Post Id not found");
+            }
+        } else {
+            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+        }
+    }
+
+    private void subscribeObservers() {
+        if (viewModel != null) {
+            viewModel.getMessage().observe(this, message -> {
+                if (!TextUtils.isEmpty(message)) {
+                    Utils.getInstance().showSnakBar(binding.getRoot(), message);
+                }
+            });
+
+            viewModel.getGetPostResponse().observe(this, postResponse -> {
+                if (postResponse != null) {
+                    bean = postResponse;
+                    updateDetailUI();
+                }
+            });
+
+            viewModel.getUpdateLikeResponse().observe(this, updateLikeResponse -> {
+                if (updateLikeResponse != null && updateLikeResponse.getCode() == 1) {
+                    // API Hit Successfully
+                } else {
+                    //Something went wrong
+                    if (isLikeClicked) {
+                        //Need to set to gray icon again
+                        binding.icHeartInitial.setVisibility(View.VISIBLE);
+                        binding.icHeartFinal.setVisibility(View.GONE);
+                    } else {
+                        //Need to set to red icon again
+                        binding.icHeartFinal.setVisibility(View.VISIBLE);
+                        binding.icHeartInitial.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
+    }
+
+    private void inflateImage(Bitmap imageCoverBitmap) {
+        //safety check to prevent nullPointer in the palette if the detailActivity was in the background for too long
+            /*if (imageCoverBitmap == null || imageCoverBitmap.isRecycled()) {
+                getActivity().finish();
+                return;
+            }*/
+        if (imageCoverBitmap != null && !imageCoverBitmap.isRecycled()) {
+            binding.postDetailImg.setImageBitmap(imageCoverBitmap);
+            binding.progressBar.setVisibility(View.GONE);
+            generatePallet(imageCoverBitmap);
+        } else if (bean != null && !TextUtils.isEmpty(bean.getMedia())) {
+            assert bean != null;
+            String imageUrl;
+            if (bean.getMedia().startsWith("http")) {
+                imageUrl = bean.getMedia();
+            } else {
+                imageUrl = "file://" + bean.getMedia();
+            }
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    assert binding.postDetailImg != null;
+                    generatePallet(bitmap);
+                    if (bitmap != null)
+                        binding.postDetailImg.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.postDetailImg.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_default_image));
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            // set the tag to the view
+            binding.postDetailImg.setTag(target);
+            Picasso.with(getActivity()).load(imageUrl)
+                    .into(target);
+        }
+
     }
 
     @Override
@@ -95,35 +228,16 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void initViews() {
-        Toolbar mToolbar = rootVIew.findViewById(R.id.toolbar);
         if (getActivity() instanceof DetailActivityV2) {
-            ((DetailActivityV2) getActivity()).setSupportActionBar(mToolbar);
+            ((DetailActivityV2) getActivity()).setSupportActionBar(binding.includeToolbar.toolbar);
             ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle("Detail");
             ((DetailActivityV2) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            mToolbar.setNavigationOnClickListener(v -> ((DetailActivityV2) getActivity()).oneStepBack());
+            binding.includeToolbar.toolbar.setNavigationOnClickListener(v -> ((DetailActivityV2) getActivity()).oneStepBack());
         }
-
-        mDetailImage = rootVIew.findViewById(R.id.post_detail_img);
-        fabDownload = rootVIew.findViewById(R.id.fab_download);
-        mProgresbar = rootVIew.findViewById(R.id.progress_bar);
-//        CircleImageView mOwnerImg = rootVIew.findViewById(R.id.owner_img);
-        mOwnerName = rootVIew.findViewById(R.id.owner_name);
-        mLikeImgInitial = rootVIew.findViewById(R.id.ic_heart_initial);
-        mLikeImgFinal = rootVIew.findViewById(R.id.ic_heart_final);
-        mLikeCount = rootVIew.findViewById(R.id.like_count);
-        mCommentCount = rootVIew.findViewById(R.id.comment_count);
-        mTags = rootVIew.findViewById(R.id.tags);
-        mDesc = rootVIew.findViewById(R.id.description);
-        mReadMore = rootVIew.findViewById(R.id.readmore);
-        LinearLayout ownerProfileView = rootVIew.findViewById(R.id.view_owner_info);
-
-        RecyclerView relatedRecycler = rootVIew.findViewById(R.id.related_recycler);
         StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        relatedRecycler.setLayoutManager(sm);
-
+        binding.relatedRecycler.setLayoutManager(sm);
         LikedAdapter mAdapter = new LikedAdapter(getActivity(), null, DetailFragment.this);
-        relatedRecycler.setAdapter(mAdapter);
-
+        binding.relatedRecycler.setAdapter(mAdapter);
         /*try {
             Gson gson = new Gson();
             MediaModel mediaModel = gson.fromJson(getStringFromLocalJson("media_list.json", getActivity()), MediaModel.class);
@@ -133,104 +247,76 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             e.printStackTrace();
         }*/
 
-        mAdapter.updateData(viewModel.loadDummyRelatedData());
+//        mAdapter.updateData(viewModel.loadDummyRelatedData());
 
         //set click listeners
-        mLikeImgInitial.setOnClickListener(this);
-        mLikeImgFinal.setOnClickListener(this);
-        rootVIew.findViewById(R.id.comment_container).setOnClickListener(this);
-        mReadMore.setOnClickListener(this);
-        ownerProfileView.setOnClickListener(this);
-        fabDownload.setOnClickListener(this);
+        binding.icHeartInitial.setOnClickListener(this);
+        binding.icHeartFinal.setOnClickListener(this);
+        binding.commentContainer.setOnClickListener(this);
+        binding.readmore.setOnClickListener(this);
+        binding.viewOwnerInfo.setOnClickListener(this);
+        binding.fabDownload.setOnClickListener(this);
 
     }
 
-
-    private void loadIntiialData() {
-        if (getArguments() != null && getArguments().getParcelable(Constants.OBJ_DETAIL) != null) {
-            bean = getArguments().getParcelable(Constants.OBJ_DETAIL);
-            final int position = getArguments().getInt(Constants.POSITION);
-            Bitmap imageCoverBitmap = GlobalActivity.photoCache.get(position);
-            //safety check to prevent nullPointer in the palette if the detailActivity was in the background for too long
-            /*if (imageCoverBitmap == null || imageCoverBitmap.isRecycled()) {
-                getActivity().finish();
-                return;
-            }*/
-            if (imageCoverBitmap != null && !imageCoverBitmap.isRecycled()) {
-                mDetailImage.setImageBitmap(imageCoverBitmap);
-                mProgresbar.setVisibility(View.GONE);
-                generatePallet(imageCoverBitmap);
-            } else {
-                assert bean != null;
-                String imageUrl;
-                if (bean.photoUrl.startsWith("http")) {
-                    imageUrl = bean.photoUrl;
-                } else {
-                    imageUrl = "file://" + bean.photoUrl;
-                }
-
-                Target target = new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        mProgresbar.setVisibility(View.GONE);
-                        assert mDetailImage != null;
-                        generatePallet(bitmap);
-                        if (bitmap != null)
-                            mDetailImage.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                        mProgresbar.setVisibility(View.GONE);
-                        mDetailImage.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_default_image));
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                };
-                // set the tag to the view
-                mDetailImage.setTag(target);
-                Picasso.with(getActivity()).load(imageUrl)
-                        .into(target);
-            }
-
+    private void updateDetailUI() {
+        if (bean != null) {
             if (getActivity() instanceof DetailActivityV2) {
-                ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle(String.valueOf(bean.photoName));
+                ((DetailActivityV2) getActivity()).getSupportActionBar().setTitle(String.valueOf(bean.getTitle()));
             }
-            //set owner info
-            mOwnerName.setText(bean.ownerName);
-            mLikeCount.setText(String.valueOf(bean.likeCount));
-            mCommentCount.setText(String.valueOf(bean.commentCount));
+            binding.likeCount.setText(String.valueOf(bean.getLikeCount()));
+            binding.commentCount.setText(String.valueOf(bean.getComment_count()));
             // check post is liked or not
-            if (bean.isLiked) {
+            if (!TextUtils.isEmpty(bean.getIsLiked()) && bean.getIsLiked().equals("1")) {
+                // post is liked by user
                 //show final image
-                mLikeImgFinal.setVisibility(View.VISIBLE);
-                mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
-                mLikeImgInitial.setVisibility(View.GONE);
+                binding.icHeartFinal.setVisibility(View.VISIBLE);
+                binding.likeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                binding.icHeartInitial.setVisibility(View.GONE);
             } else {
+                // Post is not liked by user
                 //show initial image
-                mLikeImgInitial.setVisibility(View.VISIBLE);
-                mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
-                mLikeImgFinal.setVisibility(View.GONE);
+                binding.icHeartInitial.setVisibility(View.VISIBLE);
+                binding.likeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
+                binding.icHeartFinal.setVisibility(View.GONE);
             }
 
             //set tags
-            String tagString = "#office #nature #wild #beauty";
-            mTags.setText(tagString);
+            binding.tags.setText(bean.getTitle());
 
             //set descString
-            if (descString.length() > 100) {
-                mDesc.setText(descString.substring(0, 100));
-                mReadMore.setVisibility(View.VISIBLE);
-            } else {
-                mDesc.setText(descString);
-                mReadMore.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(bean.getDescription())) {
+                if (bean.getDescription().length() > 100) {
+                    binding.description.setText(bean.getDescription().substring(0, 100));
+                    binding.readmore.setVisibility(View.VISIBLE);
+                } else {
+                    binding.description.setText(bean.getDescription());
+                    binding.readmore.setVisibility(View.GONE);
+                }
+            }
+
+            //set owner info
+            if (!TextUtils.isEmpty(bean.getUser_name()))
+                binding.ownerName.setText(bean.getUser_name());
+            else
+                binding.ownerName.setText("N/A");
+            if (!TextUtils.isEmpty(bean.getUser_profile())) {
+                Picasso.with(getActivity()).load(Constants.BaseURL + bean.getUser_profile())
+                        .resize(100, 100).centerCrop().into(binding.ownerImg, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        binding.ownerImg.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.def_profile_img));
+                    }
+                });
             }
         }
-    }
 
+    }
 
     @SuppressLint("NewApi")
     private void generatePallet(Bitmap bitmap) {
@@ -242,25 +328,27 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                             return;
                         }
                         int mDefaultBackgroundColor = 0;
-                        Utils.animateViewColor(rootVIew.findViewById(R.id.appBar),
+                        Utils.animateViewColor(binding.appBar,
                                 mDefaultBackgroundColor, textSwatch.getRgb());
-                        Utils.animateViewColor(rootVIew.findViewById(R.id.toolbar),
+                        Utils.animateViewColor(binding.includeToolbar.toolbar,
                                 mDefaultBackgroundColor, textSwatch.getRgb());
-                        Utils.animateBackgroundTintColor(fabDownload,
+                        Utils.animateBackgroundTintColor(binding.fabDownload,
                                 mDefaultBackgroundColor, textSwatch.getRgb());
                     });
         }
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ic_heart_initial:
-                doLike();
+                if (checkLike())
+                    doLike();
+
                 break;
             case R.id.ic_heart_final:
-                doUnLike();
+                if (checkLike())
+                    doUnLike();
                 break;
             case R.id.comment_container:
                 //Move to comment screen
@@ -284,7 +372,11 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.fab_download:
                 if (bean != null) {
-                    downloadFile(bean.photoUrl, bean.photoName);
+                    if (!TextUtils.isEmpty(bean.getMedia()) && bean.getMedia().trim().startsWith("http"))
+                        downloadFile(bean.getMedia(), bean.getTitle());
+                    else
+                        Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.warning_media_valid_url)
+                        );
                 }
                 break;
         }
@@ -294,41 +386,42 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
      * DO Like functionality and update UI
      */
     private void doLike() {
-        mLikeImgInitial.setClickable(false);
+        isLikeClicked = true;
+        binding.icHeartInitial.setClickable(false);
         CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) ContextCompat.getDrawable(getActivity(),
                 R.drawable.animation_list_layout)) {
             @Override
             public void onAnimationFinish() {
-                mLikeImgInitial.setVisibility(View.GONE);
-                mLikeImgFinal.setVisibility(View.VISIBLE);
-                mLikeImgFinal.setClickable(true);
+                binding.icHeartInitial.setVisibility(View.GONE);
+                binding.icHeartFinal.setVisibility(View.VISIBLE);
+                binding.icHeartFinal.setClickable(true);
             }
 
             @Override
             public void onAnimtionStart() {
                 final LinearInterpolator interpolator = new LinearInterpolator();
-                int updatedCount = viewModel.updateLikesCounter(bean.likeCount,
+                int updatedCount = viewModel.updateLikesCounter(bean.getLikeCount(),
                         true);
-                bean.likeCount = updatedCount;
-                mLikeCount.animate()
+                bean.setLikeCount(updatedCount);
+                binding.likeCount.animate()
                         .alpha(0)
                         .setDuration(100)
                         .setStartDelay(200)
                         .setInterpolator(interpolator)
                         .withEndAction(() -> {
-                            mLikeCount.animate()
+                            binding.likeCount.animate()
                                     .alpha(1)
                                     .setDuration(100)
                                     .setInterpolator(interpolator);
-                            mLikeCount.setText(String.valueOf(updatedCount));
-                            mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                            binding.likeCount.setText(String.valueOf(updatedCount));
+                            binding.likeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
                         });
             }
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mLikeImgInitial.setBackground(cad);
+            binding.icHeartInitial.setBackground(cad);
         } else {
-            mLikeImgInitial.setBackgroundDrawable(cad);
+            binding.icHeartInitial.setBackgroundDrawable(cad);
         }
         cad.start();
     }
@@ -337,41 +430,63 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
      * DO UnLike functionality and update UI
      */
     private void doUnLike() {
-        mLikeImgInitial.setVisibility(View.VISIBLE);
-        mLikeImgInitial.setClickable(true);
-        mLikeImgFinal.setVisibility(View.GONE);
-        mLikeImgFinal.setClickable(false);
-        mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
-        int updatedCount = viewModel.updateLikesCounter(bean.likeCount,
+        isLikeClicked = false;
+        binding.icHeartInitial.setVisibility(View.VISIBLE);
+        binding.icHeartInitial.setClickable(true);
+        binding.icHeartFinal.setVisibility(View.GONE);
+        binding.icHeartFinal.setClickable(false);
+        binding.icHeartInitial.setBackgroundResource(R.drawable.animation_list_layout);
+        int updatedCount = viewModel.updateLikesCounter(bean.getLikeCount(),
                 false);
-        bean.likeCount = updatedCount;
-        mLikeCount.setText(String.valueOf(updatedCount));
-        mLikeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
+        bean.setLikeCount(updatedCount);
+        binding.likeCount.setText(String.valueOf(updatedCount));
+        binding.likeCount.setTextColor(ContextCompat.getColor(getActivity(), R.color.app_textcolor));
     }
 
+    /**
+     * Check conditions before hitting like or unlike button
+     *
+     * @return true if all conditions are valid
+     */
+    private boolean checkLike() {
+        if (TextUtils.isEmpty(Utils.getInstance().getUserId(getActivity()))) {
+            Utils.getInstance().showSnakBar(binding.getRoot(), "You need to do login first.");
+            return false;
+        }
+        if (!Utils.isNetworkAvailable(getActivity())) {
+            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+            return false;
+        }
+        if (bean != null && viewModel != null) {
+            Map<String, String> param = new HashMap<>();
+            param.put("user_id", Utils.getInstance().getUserId(getActivity()));
+            param.put("post_id", String.valueOf(bean.getId()));
+            viewModel.updateLike(param);
+
+            return true;
+        }
+        return false;
+    }
 
     private void showMoreDescription() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.beginDelayedTransition((ViewGroup) rootVIew);
+            TransitionManager.beginDelayedTransition((ViewGroup) binding.getRoot());
         }
         try {
-            if (mReadMore.getText().equals(getString(R.string.show_more))) {
-                mDesc.setText(descString.substring(0, descString.length()));
-                mReadMore.setText(getString(R.string.show_less));
-            } else if (mReadMore.getText().equals(getString(R.string.show_less))) {
-                mDesc.setText(descString.substring(0, 100));
-                mReadMore.setText(getString(R.string.show_more));
+            if (bean != null && !TextUtils.isEmpty(bean.getDescription())) {
+                if (binding.readmore.getText().equals(getString(R.string.show_more))) {
+                    binding.description.setText(bean.getDescription().substring(0, bean.getDescription().length()));
+                    binding.readmore.setText(getString(R.string.show_less));
+                } else if (binding.readmore.getText().equals(getString(R.string.show_less))) {
+                    binding.description.setText(bean.getDescription().substring(0, 100));
+                    binding.readmore.setText(getString(R.string.show_more));
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Download File Concept implemented here
-     */
-    private DownloadManager dm;
-    private long enqueue;
 
     public void downloadFile(String url, String photoName) {
         if (!PermissionsAndroid.getInstance().checkWriteExternalStoragePermission(getActivity())) {
@@ -410,40 +525,13 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
 
     }
 
-    BroadcastReceiver downloadCompleteReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!isVisible()) return;
-
-            String action = intent.getAction();
-
-            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-//                long downloadId = intent.getLongExtra(
-//                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(enqueue);
-                if (dm == null) return;
-
-                Cursor c = dm.query(query);
-                if (c.moveToFirst()) {
-                    int columnIndex = c
-                            .getColumnIndex(DownloadManager.COLUMN_STATUS);
-                    if (DownloadManager.STATUS_SUCCESSFUL == c
-                            .getInt(columnIndex)) {
-                        Utils.getInstance().showToast(getString(R.string.message_download_complete));
-                    }
-                }
-            }
-        }
-    };
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionsAndroid.WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (bean != null) {
-                    downloadFile(bean.photoUrl, bean.photoName);
+                    downloadFile(bean.getMedia(), bean.getTitle());
                 }
             } else {
                 // permission denied, boo! Disable the

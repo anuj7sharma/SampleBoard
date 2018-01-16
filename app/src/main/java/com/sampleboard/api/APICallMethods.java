@@ -21,6 +21,7 @@ package com.sampleboard.api;
 import com.sampleboard.bean.MusicBean;
 import com.sampleboard.bean.api_response.BaseResponse;
 import com.sampleboard.bean.api_response.GetProfileResponse;
+import com.sampleboard.bean.api_response.PostDetailResponse;
 import com.sampleboard.bean.api_response.UpdateLikeResponse;
 import com.sampleboard.bean.api_response.LoginRegisterResponse;
 import com.sampleboard.bean.api_response.TimelineResponse;
@@ -79,6 +80,9 @@ public interface APICallMethods {
     @FormUrlEncoded
     @POST(Constants.UPDATE_LIKE_API)
     Single<UpdateLikeResponse> updateLike(@FieldMap Map<String, String> param);
+
+    @GET(Constants.GET_POST_DETAIL_API)
+    Single<PostDetailResponse> getPostDetail(@Query("user_id") String userId, @Query("post_id") int postId);
 
     /*
     @FormUrlEncoded

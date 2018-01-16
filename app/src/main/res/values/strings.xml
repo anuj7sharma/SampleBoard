@@ -34,6 +34,8 @@
     <string name="error_api">Server Not Responding</string>
     <string name="error_something">Something Went Wrong</string>
 
+    <string name="transition_image">detail_image</string>
+
     <string name="dummy_text">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters
     It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters</string>
     <string name="title_activity_settings">Settings</string>
@@ -85,7 +87,6 @@
     <string name="no_items_yet">No Items yet :(</string>
     <string name="message_download_complete">Download complete</string>
     <string name="related_posts">Related Posts</string>
-    <string name="transition_image">detail_image</string>
     <string name="open_music">Open Music</string>
     <string name="enter_comment">Enter Comment</string>
     <string name="no_comments_yet">No Comments yet!!</string>
@@ -99,4 +100,5 @@
     <string name="female">Female</string>
     <string name="profile_pic">Profile Pic</string>
     <string name="timeline_post">Timeline Post</string>
+    <string name="warning_media_valid_url">Media doesn\'t have a valid URL.</string>
 </resources>

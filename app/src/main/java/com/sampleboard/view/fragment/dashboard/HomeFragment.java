@@ -163,20 +163,20 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
 
     @Override
     public void onItemClick(TimelineObjResponse obj, ImageView imageView, int position) {
-        PostDetailBean detailBean = new PostDetailBean();
-        detailBean.photoName = obj.getTitle();
-        detailBean.photoUrl = obj.getMedia();
-        detailBean.likeCount = obj.getLikeCount();
-        detailBean.commentCount = obj.getComment_count();
-        detailBean.isLiked = !TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1");
-        detailBean.ownerName = "Anuj Sharma";
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.OBJ_DETAIL, detailBean);
+//        PostDetailBean detailBean = new PostDetailBean();
+//        detailBean.photoName = obj.getTitle();
+//        detailBean.photoUrl = obj.getMedia();
+//        detailBean.likeCount = obj.getLikeCount();
+//        detailBean.commentCount = obj.getComment_count();
+//        detailBean.isLiked = !TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1");
+//        detailBean.ownerName = "";
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable(Constants.OBJ_DETAIL, obj);
 
         //Move to Detail Activity
         Intent intent = new Intent(getActivity(), DetailActivityV2.class);
         intent.putExtra(Constants.DESTINATION, Constants.DETAIL_SCREEN);
-        intent.putExtra(Constants.OBJ_DETAIL, detailBean);
+        intent.putExtra(Constants.OBJ_DETAIL, obj);
         intent.putExtra(Constants.POSITION, position);
         if (imageView != null && imageView.getDrawable() != null) {
             Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();

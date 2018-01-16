@@ -1,12 +1,15 @@
 package com.sampleboard.bean.api_response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * @author AnujSharma on 1/15/2018.
  */
 
-public class TimelineObjResponse {
+public class TimelineObjResponse implements Parcelable {
     /**
      * like_count : 2
      * is_liked : null
@@ -29,6 +32,10 @@ public class TimelineObjResponse {
     private String isLiked;
     @SerializedName("comment_count")
     private int comment_count;
+    @SerializedName("user_profile")
+    private String user_profile;
+    @SerializedName("user_name")
+    private String user_name;
     @SerializedName("id")
     private int id;
     @SerializedName("user_id")
@@ -49,6 +56,22 @@ public class TimelineObjResponse {
     private String updationDate;
     @SerializedName("is_active")
     private int isActive;
+
+    public String getUser_profile() {
+        return user_profile;
+    }
+
+    public void setUser_profile(String user_profile) {
+        this.user_profile = user_profile;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
 
     public int getLikeCount() {
         return likeCount;
@@ -153,4 +176,61 @@ public class TimelineObjResponse {
     public void setIsActive(int isActive) {
         this.isActive = isActive;
     }
+
+    public TimelineObjResponse() {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.likeCount);
+        dest.writeString(this.isLiked);
+        dest.writeInt(this.comment_count);
+        dest.writeString(this.user_profile);
+        dest.writeString(this.user_name);
+        dest.writeInt(this.id);
+        dest.writeInt(this.userId);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.media);
+        dest.writeString(this.mediaThumbnail);
+        dest.writeString(this.mediaFullsize);
+        dest.writeString(this.creationDate);
+        dest.writeString(this.updationDate);
+        dest.writeInt(this.isActive);
+    }
+
+    protected TimelineObjResponse(Parcel in) {
+        this.likeCount = in.readInt();
+        this.isLiked = in.readString();
+        this.comment_count = in.readInt();
+        this.user_profile = in.readString();
+        this.user_name = in.readString();
+        this.id = in.readInt();
+        this.userId = in.readInt();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.media = in.readString();
+        this.mediaThumbnail = in.readString();
+        this.mediaFullsize = in.readString();
+        this.creationDate = in.readString();
+        this.updationDate = in.readString();
+        this.isActive = in.readInt();
+    }
+
+    public static final Creator<TimelineObjResponse> CREATOR = new Creator<TimelineObjResponse>() {
+        @Override
+        public TimelineObjResponse createFromParcel(Parcel source) {
+            return new TimelineObjResponse(source);
+        }
+
+        @Override
+        public TimelineObjResponse[] newArray(int size) {
+            return new TimelineObjResponse[size];
+        }
+    };
 }

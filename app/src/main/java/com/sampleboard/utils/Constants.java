@@ -6,7 +6,7 @@ package com.sampleboard.utils;
 
 public interface Constants {
     // Environment to use when creating an instance of Wallet.WalletOptions
-
+    String BaseURL = "http://10.20.3.169";
     /*
     API BASE URL
      */
@@ -29,8 +29,9 @@ public interface Constants {
     String UPLOAD_PROFILE_PIC_API = "api/upload_profile_pic";
     String GET_TIMELINE_API = "api/get_timeline";
     String UPDATE_LIKE_API = "api/update_like";
+    String GET_POST_DETAIL_API = "api/get_post_detail";
     String POST_COMMENTS_API = "api/post_comments";
-//    String GET_COMMENTS_API = "api/post_comments";
+    String GET_COMMENTS_API = "api/post_comments";
 
     /**
      * API Section Ends here
