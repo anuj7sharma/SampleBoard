@@ -27,7 +27,9 @@ import com.sampleboard.utils.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author AnujSharma
@@ -184,6 +186,9 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             mLikeImgInitial.setOnClickListener(v -> {
+
+
+
                 mLikeImgInitial.setClickable(false);
                 CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) mContext.getResources().getDrawable(
                         R.drawable.animation_list_layout)) {
@@ -228,6 +233,8 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             mLikeImgFinal.setOnClickListener(v -> {
+
+
                 mLikeImgInitial.setVisibility(View.VISIBLE);
                 mLikeImgInitial.setClickable(true);
                 mLikeImgFinal.setVisibility(View.GONE);
@@ -254,67 +261,4 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return count - 1;
     }
 
-    /*private void manageShortView(View v, PhotosBean bean) {
-        v.setHapticFeedbackEnabled(true);
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        PeekAndPop peekAndPop = new PeekAndPop.Builder(fragment.getActivity())
-                .peekLayout(R.layout.fragment_shortview)
-                .longClickViews(v)
-                .blurBackground(true)
-                .parentViewGroupToDisallowTouchEvents((ViewGroup) fragment.getView())
-                .build();
-        View peekView = peekAndPop.getPeekView();
-        CardView cardView = (CardView) peekView.findViewById(R.id.parent_shortView);
-        ImageView imageView = (ImageView) peekView.findViewById(R.id.img_shortview);
-        ImageView likeImg = (ImageView) peekView.findViewById(R.id.btn_like);
-        ImageView commentImg = (ImageView) peekView.findViewById(R.id.btn_message);
-        ImageView shareImg = (ImageView) peekView.findViewById(R.id.btn_share);
-        final ProgressBar progressBar = (ProgressBar) peekView.findViewById(R.id.progress_bar);
-
-        peekAndPop.addLongHoldView(R.id.parent_shortView, false);
-        peekAndPop.addHoldAndReleaseView(R.id.btn_like);
-        peekAndPop.addHoldAndReleaseView(R.id.btn_message);
-        peekAndPop.addHoldAndReleaseView(R.id.btn_share);
-        peekAndPop.setOnHoldAndReleaseListener(new PeekAndPop.OnHoldAndReleaseListener() {
-            @Override
-            public void onHold(View view, int POSITION) {
-                switch (view.getId()) {
-                    case R.id.btn_like:
-                        Toast.makeText(mContext, "Like", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.btn_message:
-                        Toast.makeText(mContext, "Message", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.btn_share:
-                        Toast.makeText(mContext, "Share", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-
-            @Override
-            public void onLeave(View view, int POSITION) {
-
-            }
-
-            @Override
-            public void onRelease(View view, int POSITION) {
-
-            }
-        });
-
-//                    peekAndPop.addHoldAndReleaseView(R.id.img_shortview);
-
-        Picasso.with(mContext).load(bean.photoUrl).resize(500, 500).
-                centerCrop().into(imageView, new Callback() {
-            @Override
-            public void onSuccess() {
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError() {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-    }*/
 }

@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import com.sampleboard.GlobalActivity;
 import com.sampleboard.R;
 import com.sampleboard.adapter.HomeListAdapter;
-import com.sampleboard.bean.PostDetailBean;
 import com.sampleboard.bean.api_response.TimelineObjResponse;
 import com.sampleboard.databinding.FragmentHomeBinding;
 import com.sampleboard.interfaces.TimelineInterface;
@@ -163,16 +162,6 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
 
     @Override
     public void onItemClick(TimelineObjResponse obj, ImageView imageView, int position) {
-//        PostDetailBean detailBean = new PostDetailBean();
-//        detailBean.photoName = obj.getTitle();
-//        detailBean.photoUrl = obj.getMedia();
-//        detailBean.likeCount = obj.getLikeCount();
-//        detailBean.commentCount = obj.getComment_count();
-//        detailBean.isLiked = !TextUtils.isEmpty(obj.getIsLiked()) && obj.getIsLiked().equals("1");
-//        detailBean.ownerName = "";
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable(Constants.OBJ_DETAIL, obj);
-
         //Move to Detail Activity
         Intent intent = new Intent(getActivity(), DetailActivityV2.class);
         intent.putExtra(Constants.DESTINATION, Constants.DETAIL_SCREEN);
@@ -200,16 +189,22 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
     @Override
     public void onLikeBtnClicked(TimelineObjResponse obj, ImageView imageView, int position, boolean isLiked) {
         if (obj == null) return;
+        if (TextUtils.isEmpty(Utils.getInstance().getUserId(getActivity()))) {
+            Utils.getInstance().showSnakBar(binding.getRoot(), "You need to do login first.");
+            return;
+        }
+        if (!Utils.isNetworkAvailable(getActivity())) {
+            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+            return;
+        }
+
         Map<String, String> param = new HashMap<>();
-        param.put("user_id", "11");
+        param.put("user_id", Utils.getInstance().getUserId(getActivity()));
         param.put("post_id", String.valueOf(obj.getId()));
         this.isLiked = isLiked;
         this.position = position;
         if (viewModel != null) {
-            if (Utils.isNetworkAvailable(getActivity()))
-                viewModel.updateLike(param);
-            else
-                Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+            viewModel.updateLike(param);
         }
     }
 

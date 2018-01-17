@@ -65,7 +65,7 @@
                     android:layout_toLeftOf="@+id/tv_date"
                     android:layout_toStartOf="@+id/tv_date"
                     android:text=""
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_textcolor_heading"
                     android:textStyle="bold" />
 
                 <TextView

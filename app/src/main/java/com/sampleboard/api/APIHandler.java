@@ -31,7 +31,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by Anuj Sharma on 2/17/2016.
+ * @author Anuj Sharma on 2/17/2016.
  */
 public class APIHandler {
     private static APIHandler instance;

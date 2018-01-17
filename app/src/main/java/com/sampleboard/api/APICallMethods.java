@@ -20,6 +20,7 @@ package com.sampleboard.api;
 
 import com.sampleboard.bean.MusicBean;
 import com.sampleboard.bean.api_response.BaseResponse;
+import com.sampleboard.bean.api_response.GetCommentsResponse;
 import com.sampleboard.bean.api_response.GetProfileResponse;
 import com.sampleboard.bean.api_response.PostDetailResponse;
 import com.sampleboard.bean.api_response.UpdateLikeResponse;
@@ -84,6 +85,8 @@ public interface APICallMethods {
     @GET(Constants.GET_POST_DETAIL_API)
     Single<PostDetailResponse> getPostDetail(@Query("user_id") String userId, @Query("post_id") int postId);
 
+    @GET(Constants.GET_COMMENTS_API)
+    Single<GetCommentsResponse> getComments(@Query("post_id") String postId, @Query("page") int page);
     /*
     @FormUrlEncoded
     @POST(ConstantFile.CHECK_IS_DRIVER)

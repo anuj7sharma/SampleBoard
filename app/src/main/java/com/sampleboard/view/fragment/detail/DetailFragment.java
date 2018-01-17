@@ -70,7 +70,6 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
         @Override
         public void onReceive(Context context, Intent intent) {
             if (!isVisible()) return;
-
             String action = intent.getAction();
 
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
@@ -344,7 +343,6 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             case R.id.ic_heart_initial:
                 if (checkLike())
                     doLike();
-
                 break;
             case R.id.ic_heart_final:
                 if (checkLike())
@@ -353,13 +351,17 @@ public class DetailFragment extends BaseFragment implements View.OnClickListener
             case R.id.comment_container:
                 //Move to comment screen
                 if (getActivity() instanceof DetailActivityV2) {
-                    CommentFragment commentFragment = new CommentFragment();
-                    FragmentTransaction fts = getActivity().getSupportFragmentManager().beginTransaction();
-//                    commentFragment.setArguments(bundle);
-                    fts.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
-                    fts.add(R.id.container_detail, commentFragment, commentFragment.getClass().getSimpleName());
-                    fts.addToBackStack(commentFragment.getClass().getSimpleName());
-                    fts.commit();
+                    if (bean != null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(Constants.EXTRA_POST_ID, bean.getId());
+                        CommentFragment commentFragment = new CommentFragment();
+                        FragmentTransaction fts = getActivity().getSupportFragmentManager().beginTransaction();
+                        commentFragment.setArguments(bundle);
+                        fts.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
+                        fts.add(R.id.container_detail, commentFragment, commentFragment.getClass().getSimpleName());
+                        fts.addToBackStack(commentFragment.getClass().getSimpleName());
+                        fts.commit();
+                    }
                 }
                 break;
             case R.id.readmore:

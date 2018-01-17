@@ -30,8 +30,8 @@ public interface Constants {
     String GET_TIMELINE_API = "api/get_timeline";
     String UPDATE_LIKE_API = "api/update_like";
     String GET_POST_DETAIL_API = "api/get_post_detail";
+    String GET_COMMENTS_API = "api/get_comments";
     String POST_COMMENTS_API = "api/post_comments";
-    String GET_COMMENTS_API = "api/post_comments";
 
     /**
      * API Section Ends here
@@ -70,6 +70,7 @@ public interface Constants {
     String POSITION = "POSITION";
     String OBJ_BITMAP = "obj_bitmap";
     String PATH_IMAGE = "path_image";
+    String EXTRA_POST_ID="extra_post_id";
 
 
     interface ACTION {

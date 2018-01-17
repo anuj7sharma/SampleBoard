@@ -2,10 +2,6 @@ package com.sampleboard.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,16 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sampleboard.R;
-import com.sampleboard.bean.CommentBean;
-import com.sampleboard.bean.CommentItemBean;
+import com.sampleboard.bean.api_response.GetCommentsResponse;
 import com.sampleboard.databinding.ViewCommentBinding;
 import com.sampleboard.databinding.ViewCommentMediaBinding;
-import com.sampleboard.utils.Utils;
+import com.sampleboard.utils.Constants;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * @author AnujSharma on 12/27/2017.
@@ -42,17 +36,17 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    public void updateList(List<CommentItemBean> comment_list) {
+    public void updateList(LinkedList<GetCommentsResponse.DataBean> comment_list) {
         this.response = comment_list;
         notifyDataSetChanged();
     }
 
     private Context mContext;
-    private List<CommentItemBean> response;
+    private LinkedList<GetCommentsResponse.DataBean> response;
     private CommentInterface listener;
     private int mDefaultBackgroundColor;
 
-    public CommentAdapter(Context context, List<CommentItemBean> response, CommentInterface listerner) {
+    public CommentAdapter(Context context, LinkedList<GetCommentsResponse.DataBean> response, CommentInterface listerner) {
         this.mContext = context;
         this.response = response;
         this.listener = listerner;
@@ -66,8 +60,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder;
-        CommentItemBean obj = response.get(viewType);
-        if (obj.getType().equalsIgnoreCase(CommentType.TEXT.toString())) {
+        GetCommentsResponse.DataBean obj = response.get(viewType);
+        if (obj.getCommentType().equalsIgnoreCase(CommentType.TEXT.toString())) {
             ViewCommentBinding commentBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
                     R.layout.view_comment, parent, false);
             holder = new CommentHolder(commentBinding);
@@ -103,11 +97,15 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.commentBinding = commentBinding;
         }
 
-        void bindData(CommentItemBean obj) {
-            commentBinding.tvMessage.setText(obj.getText());
+        void bindData(GetCommentsResponse.DataBean obj) {
+            commentBinding.tvMessage.setText(obj.getComment());
+            commentBinding.userName.setText(obj.getUserName());
+            commentBinding.tvDate.setText(obj.getCreationDate());
 
-            if (!TextUtils.isEmpty(obj.getUser_profile_pic())) {
-                Picasso.with(mContext).load(obj.getUser_profile_pic()).resize(100, 100)
+            Picasso.with(mContext).cancelRequest(commentBinding.userImage);
+            commentBinding.userImage.setImageDrawable(null);
+            if (!TextUtils.isEmpty(obj.getUserProfile())) {
+                Picasso.with(mContext).load(Constants.BaseURL + obj.getUserProfile()).resize(100, 100)
                         .centerCrop().into(commentBinding.userImage, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -135,10 +133,10 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.commentMediaBinding = commentMediaBinding;
         }
 
-        void bindData(CommentItemBean obj) {
+        void bindData(GetCommentsResponse.DataBean obj) {
 
-            if (!TextUtils.isEmpty(obj.getUser_profile_pic())) {
-                Picasso.with(mContext).load(obj.getUser_profile_pic()).resize(100, 100)
+            if (!TextUtils.isEmpty(obj.getUserProfile())) {
+                Picasso.with(mContext).load(Constants.BaseURL + obj.getUserProfile()).resize(100, 100)
                         .centerCrop().into(commentMediaBinding.userImage, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -158,7 +156,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 commentMediaBinding.progressBar.setVisibility(View.GONE);
             }
 
-            if (!TextUtils.isEmpty(obj.getMedia()))
+            /*if (!TextUtils.isEmpty(obj.getMedia()))
 
             {
                 //cancel any loading images on this view
@@ -167,7 +165,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Target target = new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            /* Save the bitmap or do something with it here */
+                            *//* Save the bitmap or do something with it here *//*
                         Palette.from(bitmap)
                                 .generate(new Palette.PaletteAsyncListener() {
                                     @Override
@@ -203,7 +201,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Picasso.with(mContext).load(obj.getMedia())
                         .resize(300, 300).centerCrop()
                         .into(target);
-            }
+            }*/
         }
     }
 }
