@@ -1,6 +1,7 @@
 package com.sampleboard.view.fragment.dashboard;
 
 import android.app.ActivityOptions;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -9,8 +10,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,6 +49,7 @@ import java.util.Map;
 public class HomeFragment extends BaseFragment implements TimelineInterface {
     private FragmentHomeBinding binding;
     private HomeFragmentViewModel viewModel;
+    private StaggeredGridLayoutManager sm;
     private HomeListAdapter mAdapter;
     private List<TimelineObjResponse> timelineList;
     private int page = 1;
@@ -91,16 +95,16 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
         ((DashBoardActivity) getActivity()).getSupportActionBar().setTitle("");
         binding.includeToolbar.toolbar.setNavigationIcon(ContextCompat.getDrawable(getActivity(), R.mipmap.ic_launcher));
 
-        StaggeredGridLayoutManager sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        sm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         binding.recyclerItems.setLayoutManager(sm);
-        mAdapter = new HomeListAdapter(getActivity(), null, this);
+//        binding.recyclerItems.setItemAnimator();
+        mAdapter = new HomeListAdapter(getActivity(), null, this,this);
         binding.recyclerItems.setAdapter(mAdapter);
+        //Add recyclerview scroll listener
+        binding.recyclerItems.addOnScrollListener(recyclerViewOnScrollListener);
 
         subscribeObservers();
-        if (Utils.isNetworkAvailable(getActivity()))
-            viewModel.getTimeLine("11", page);
-        else
-            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+        fetchTimeLine();
         //Static Data coming from Json stored in assets folder
         /*try {
             Gson gson = new Gson();
@@ -110,6 +114,43 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
             e.printStackTrace();
         }*/
     }
+
+    private void fetchTimeLine() {
+        if (Utils.isNetworkAvailable(getActivity()))
+            viewModel.getTimeLine("11", page);
+        else
+            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+    }
+
+    private boolean loading = true;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            visibleItemCount = sm.getChildCount();
+            totalItemCount = sm.getItemCount();
+            int[] firstVisibleItems = null;
+            firstVisibleItems = sm.findFirstVisibleItemPositions(firstVisibleItems);
+            if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                pastVisibleItems = firstVisibleItems[0];
+            }
+            if (loading) {
+                if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                    loading = false;
+                    Log.d("tag", "LOAD NEXT ITEM");
+                    page++;
+                    fetchTimeLine();
+                }
+            }
+        }
+    };
 
     private void subscribeObservers() {
         if (viewModel != null) {
@@ -136,6 +177,7 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
                         timelineList.addAll(timelineResponse.getData());
                         mAdapter.updateList(timelineList);
                         mAdapter.notifyItemRangeInserted(previousPos, ((timelineList.size() - 1) - previousPos));
+                        loading = true;
                     } else {
                         //No more data
                         Utils.getInstance().showSnakBar(binding.getRoot(), "No more data");
@@ -185,10 +227,15 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
 
     private boolean isLiked;
     private int position;
+    private MutableLiveData<Boolean> isEverythingFine;
+
+    public MutableLiveData<Boolean> getIsEverythingFine() {
+        if(isEverythingFine==null)isEverythingFine = new MutableLiveData<>();
+        return isEverythingFine;
+    }
 
     @Override
     public void onLikeBtnClicked(TimelineObjResponse obj, ImageView imageView, int position, boolean isLiked) {
-        if (obj == null) return;
         if (TextUtils.isEmpty(Utils.getInstance().getUserId(getActivity()))) {
             Utils.getInstance().showSnakBar(binding.getRoot(), "You need to do login first.");
             return;
@@ -205,6 +252,7 @@ public class HomeFragment extends BaseFragment implements TimelineInterface {
         this.position = position;
         if (viewModel != null) {
             viewModel.updateLike(param);
+            isEverythingFine.postValue(true);
         }
     }
 

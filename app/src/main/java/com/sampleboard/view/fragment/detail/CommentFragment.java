@@ -27,13 +27,14 @@ import java.util.List;
  * @author AnujSharma on 12/27/2017.
  */
 
-public class CommentFragment extends BaseFragment implements CommentAdapter.CommentInterface {
+public class CommentFragment extends BaseFragment implements CommentAdapter.CommentInterface, View.OnClickListener {
     private CommentViewModel viewModel;
     private FragmentCommentBinding binding;
     private LinkedList<GetCommentsResponse.DataBean> messageList;
     private CommentAdapter adapter;
     private String postId = "";
     private int page = 1;
+    private GetCommentsResponse.DataBean singleMessageObj;
 
     @Nullable
     @Override
@@ -66,12 +67,30 @@ public class CommentFragment extends BaseFragment implements CommentAdapter.Comm
             });
 
             //Observer for message response
-            viewModel.getMessageResponse().observe(this, messageResponse -> {
+            viewModel.getGetCommentResponse().observe(this, messageResponse -> {
                 if (messageResponse != null) {
                     if (messageResponse.getCode() == 1) {
                         manageMessageList(messageResponse.getData());
                     } else {
                         Utils.getInstance().showSnakBar(binding.getRoot(), messageResponse.getMessage());
+                    }
+                }
+            });
+
+            //Observer for post comment
+            viewModel.getPostCommentResponse().observe(this, postComment -> {
+                if (postComment != null) {
+                    if (postComment.getCode() == 1) {
+                        //Add Comment to Existing list
+                        if (messageList == null) messageList = new LinkedList<>();
+                        if (singleMessageObj != null)
+                            messageList.add(singleMessageObj);
+                        adapter.updateList(messageList);
+                        adapter.notifyItemInserted(messageList.size() - 1);
+
+                        binding.emptyLayout.setVisibility(View.GONE);
+                    } else {
+                        Utils.getInstance().showSnakBar(binding.getRoot(), postComment.getMessage());
                     }
                 }
             });
@@ -120,6 +139,8 @@ public class CommentFragment extends BaseFragment implements CommentAdapter.Comm
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+        //set click listener
+        binding.btnSend.setOnClickListener(this);
     }
 
     @Override
@@ -131,5 +152,34 @@ public class CommentFragment extends BaseFragment implements CommentAdapter.Comm
     public void onLikeUnLikeClick() {
 
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_send:
+                if (!TextUtils.isEmpty(Utils.getInstance().getUserId(getActivity()))) {
+                    if (binding.etMessage.getText().toString().trim().length() > 0) {
+                        if (Utils.isNetworkAvailable(getActivity())) {
+                            if (viewModel != null) {
+                                if (singleMessageObj == null)
+                                    singleMessageObj = new GetCommentsResponse.DataBean();
+                                singleMessageObj.setComment(binding.etMessage.getText().toString());
+                                singleMessageObj.setCommentType(CommentAdapter.CommentType.TEXT.toString());
+                                singleMessageObj.setUserName("Anuj");
+                                singleMessageObj.setUserProfile("");
+                                viewModel.postComment(binding.etMessage.getText().toString(), CommentAdapter.CommentType.TEXT, postId, "11");
+                            }
+                        } else {
+                            Utils.getInstance().showSnakBar(binding.getRoot(), getString(R.string.error_internet));
+                        }
+                    }
+                } else {
+                    Utils.getInstance().showSnakBar(binding.getRoot(), "You have to do login first.");
+                }
+
+                break;
+        }
+    }
+
 
 }

@@ -22,10 +22,10 @@ import com.sampleboard.bean.MusicBean;
 import com.sampleboard.bean.api_response.BaseResponse;
 import com.sampleboard.bean.api_response.GetCommentsResponse;
 import com.sampleboard.bean.api_response.GetProfileResponse;
-import com.sampleboard.bean.api_response.PostDetailResponse;
-import com.sampleboard.bean.api_response.UpdateLikeResponse;
 import com.sampleboard.bean.api_response.LoginRegisterResponse;
+import com.sampleboard.bean.api_response.PostDetailResponse;
 import com.sampleboard.bean.api_response.TimelineResponse;
+import com.sampleboard.bean.api_response.UpdateLikeResponse;
 import com.sampleboard.utils.Constants;
 
 import java.util.List;
@@ -87,6 +87,11 @@ public interface APICallMethods {
 
     @GET(Constants.GET_COMMENTS_API)
     Single<GetCommentsResponse> getComments(@Query("post_id") String postId, @Query("page") int page);
+
+    @FormUrlEncoded
+    @POST(Constants.POST_COMMENTS_API)
+    Single<BaseResponse> postComment(@FieldMap Map<String, String> param);
+
     /*
     @FormUrlEncoded
     @POST(ConstantFile.CHECK_IS_DRIVER)

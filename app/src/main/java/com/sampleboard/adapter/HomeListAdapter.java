@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,12 +23,11 @@ import com.sampleboard.bean.api_response.TimelineObjResponse;
 import com.sampleboard.interfaces.TimelineInterface;
 import com.sampleboard.utils.CustomAnimationDrawableNew;
 import com.sampleboard.utils.Utils;
+import com.sampleboard.view.fragment.dashboard.HomeFragment;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author AnujSharma
@@ -42,11 +40,13 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     //    public final static int COLOR_ANIMATION_DURATION = 1000;
     private int mDefaultBackgroundColor;
     private TimelineInterface listener;
+    private Fragment fragment;
 
-    public HomeListAdapter(Context ctx, List<TimelineObjResponse> response, TimelineInterface listener) {
+    public HomeListAdapter(Context ctx, List<TimelineObjResponse> response, TimelineInterface listener, Fragment fragment) {
         this.mContext = ctx;
         this.mResponse = response;
         this.listener = listener;
+        this.fragment = fragment;
     }
 
     public void updateList(List<TimelineObjResponse> response) {
@@ -109,8 +109,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 vh.mTitle.setTextColor(textSwatch.getTitleTextColor());
                                 Utils.animateViewColor(vh.mInfoContainer, mDefaultBackgroundColor, textSwatch.getRgb());
                             });
-                    if (bitmap != null)
-                        vh.mImage.setImageBitmap(bitmap);
+                    vh.mImage.setImageBitmap(bitmap);
                 }
 
                 @Override
@@ -138,18 +137,6 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.bottom_anim);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
-
     @Override
     public int getItemCount() {
         return (mResponse == null) ? 0 : mResponse.size();
@@ -158,7 +145,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /*
     View Holder For Trip History
      */
-    public class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+    private class LoadMoreViewHolder extends RecyclerView.ViewHolder {
         //        CardView mCardView;
         private LinearLayout mParentLayout;
         private RelativeLayout mInfoContainer;
@@ -186,70 +173,76 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             mLikeImgInitial.setOnClickListener(v -> {
+                if (listener != null && mResponse.get(getAdapterPosition()) != null) {
+                    //Hit API to set is_liked 1
+                    listener.onLikeBtnClicked(mResponse.get(getAdapterPosition()), null, getAdapterPosition(), true);
+                }
 
+                if (fragment instanceof HomeFragment) {
+                    ((HomeFragment) fragment).getIsEverythingFine().observe(fragment, aBoolean -> {
+                        if (aBoolean) {
+                            mLikeImgInitial.setClickable(false);
+                            CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) mContext.getResources().getDrawable(
+                                    R.drawable.animation_list_layout)) {
+                                @Override
+                                public void onAnimationFinish() {
+                                    mLikeImgInitial.setVisibility(View.GONE);
+                                    mLikeImgFinal.setVisibility(View.VISIBLE);
+                                    mLikeImgFinal.setClickable(true);
+                                }
 
+                                @Override
+                                public void onAnimtionStart() {
+                                    final LinearInterpolator interpolator = new LinearInterpolator();
+                                    int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
+                                            true);
+                                    mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
+                                    mLikesCount.animate()
+                                            .alpha(0)
+                                            .setDuration(100)
+                                            .setStartDelay(200)
+                                            .setInterpolator(interpolator)
+                                            .withEndAction(() -> {
+                                                mLikesCount.animate()
+                                                        .alpha(1)
+                                                        .setDuration(100)
+                                                        .setInterpolator(interpolator);
+                                                mLikesCount.setText(String.valueOf(updatedCount));
+                                                mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+                                            });
+                                }
 
-                mLikeImgInitial.setClickable(false);
-                CustomAnimationDrawableNew cad = new CustomAnimationDrawableNew((AnimationDrawable) mContext.getResources().getDrawable(
-                        R.drawable.animation_list_layout)) {
-                    @Override
-                    public void onAnimationFinish() {
-                        mLikeImgInitial.setVisibility(View.GONE);
-                        mLikeImgFinal.setVisibility(View.VISIBLE);
-                        mLikeImgFinal.setClickable(true);
-                    }
-
-                    @Override
-                    public void onAnimtionStart() {
-                        final LinearInterpolator interpolator = new LinearInterpolator();
-                        int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
-                                true);
-                        mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
-                        //Hit API to set is_liked 1
-                        if (listener != null) {
-                            listener.onLikeBtnClicked(mResponse.get(getAdapterPosition()), null, getAdapterPosition(), true);
+                            };
+                            mLikeImgInitial.setBackgroundDrawable(cad);
+                            cad.start();
                         }
-                        mLikesCount.animate()
-                                .alpha(0)
-                                .setDuration(100)
-                                .setStartDelay(200)
-                                .setInterpolator(interpolator)
-                                .withEndAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mLikesCount.animate()
-                                                .alpha(1)
-                                                .setDuration(100)
-                                                .setInterpolator(interpolator);
-                                        mLikesCount.setText(String.valueOf(updatedCount));
-                                        mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.red));
-                                    }
-                                });
-                    }
+                    });
+                }
 
-                };
-                mLikeImgInitial.setBackgroundDrawable(cad);
-                cad.start();
+
             });
 
             mLikeImgFinal.setOnClickListener(v -> {
-
-
-                mLikeImgInitial.setVisibility(View.VISIBLE);
-                mLikeImgInitial.setClickable(true);
-                mLikeImgFinal.setVisibility(View.GONE);
-                mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.app_textcolor));
-                mLikeImgFinal.setClickable(false);
-                mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
-                int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
-                        false);
-                //Hit API to set is_liked 0
-                if (listener != null) {
+                if (listener != null && mResponse.get(getAdapterPosition()) != null) {
+                    //Hit API to set is_liked 0
                     listener.onLikeBtnClicked(mResponse.get(getAdapterPosition()), null, getAdapterPosition(), false);
                 }
+                ((HomeFragment) fragment).getIsEverythingFine().observe(fragment, aBoolean -> {
+                    if (aBoolean) {
+                        mLikeImgInitial.setVisibility(View.VISIBLE);
+                        mLikeImgInitial.setClickable(true);
+                        mLikeImgFinal.setVisibility(View.GONE);
+                        mLikesCount.setTextColor(ContextCompat.getColor(mContext, R.color.app_textcolor));
+                        mLikeImgFinal.setClickable(false);
+                        mLikeImgInitial.setBackgroundResource(R.drawable.animation_list_layout);
+                        int updatedCount = updateLikesCounter(mResponse.get(getAdapterPosition()).getLikeCount(),
+                                false);
 
-                mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
-                mLikesCount.setText(String.valueOf(updatedCount));
+
+                        mResponse.get(getAdapterPosition()).setLikeCount(updatedCount);
+                        mLikesCount.setText(String.valueOf(updatedCount));
+                    }
+                });
             });
         }
     }

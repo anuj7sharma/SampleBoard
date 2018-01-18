@@ -23,7 +23,7 @@ import java.util.LinkedList;
  */
 
 public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    enum CommentType {
+    public enum CommentType {
         TEXT,
         IMAGE,
     }
